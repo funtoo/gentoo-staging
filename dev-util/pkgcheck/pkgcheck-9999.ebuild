@@ -1,23 +1,23 @@
 # Copyright 1999-2015 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/dev-util/pkgcore-checks/pkgcore-checks-9999.ebuild,v 1.9 2015/03/30 06:03:29 radhermit Exp $
+# $Header: /var/cvsroot/gentoo-x86/dev-util/pkgcheck/pkgcheck-9999.ebuild,v 1.2 2015/04/02 03:17:57 radhermit Exp $
 
 EAPI=5
 PYTHON_COMPAT=( python2_7 )
 inherit distutils-r1
 
 if [[ ${PV} == *9999 ]] ; then
-	EGIT_REPO_URI="git://github.com/pkgcore/pkgcore-checks.git"
+	EGIT_REPO_URI="https://github.com/pkgcore/pkgcheck.git"
 	inherit git-r3
 else
 	KEYWORDS="~amd64 ~hppa ~ia64 ~ppc ~ppc64 ~sparc ~x86"
-	SRC_URI="http://pkgcore-checks.googlecode.com/files/${P}.tar.bz2"
+	SRC_URI="mirror://pypi/${PN:0:1}/${PN}/${P}.tar.gz"
 fi
 
-DESCRIPTION="pkgcore developmental repoman replacement"
-HOMEPAGE="http://www.pkgcore.org/"
+DESCRIPTION="pkgcore-based QA utility"
+HOMEPAGE="https://github.com/pkgcore/pkgcheck"
 
-LICENSE="GPL-2"
+LICENSE="|| ( BSD GPL-2 )"
 SLOT="0"
 
 RDEPEND="=sys-apps/pkgcore-9999[${PYTHON_USEDEP}]

@@ -5,7 +5,4 @@
 		<email>radhermit@gentoo.org</email>
 		<name>Tim Harder</name>
 	</maintainer>
-	<upstream>
-		<remote-id type="google-code">pkgcore-checks</remote-id>
-	</upstream>
 </pkgmetadata>
