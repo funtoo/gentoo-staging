@@ -1,6 +1,6 @@
-# Copyright 1999-2014 Gentoo Foundation
+# Copyright 1999-2015 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/app-admin/fleet/fleet-0.8.3.ebuild,v 1.1 2014/11/01 20:35:53 alunduil Exp $
+# $Header: /var/cvsroot/gentoo-x86/app-admin/fleet/fleet-0.9.2.ebuild,v 1.1 2015/04/05 15:00:43 alunduil Exp $
 
 EAPI=5
 
@@ -22,8 +22,8 @@ src_compile() {
 	./build || die 'Build failed'
 }
 
+RESTRICT="test"  # Tests fail due to Gentoo bug #500452
 src_test() {
-	# Tests fail due to Gentoo bug #500452
 	./test || die 'Tests failed'
 }
 
@@ -40,11 +40,4 @@ src_install() {
 	keepdir /etc/${PN}
 	insinto /etc/${PN}
 	newins "${PN}".conf.sample "${PN}".conf
-}
-
-pkg_postinst() {
-	ewarn "If you're upgrading from a version less than 0.8.0, please read the messages!"
-	elog "The fleet binary name changed to fleetd."
-	elog "If you're using systemd, update your configuration:"
-	elog "  systemctl disable fleet && systemctl enable fleetd"
 }
