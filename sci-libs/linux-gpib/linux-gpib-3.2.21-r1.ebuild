@@ -1,6 +1,6 @@
 # Copyright 1999-2015 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/sci-libs/linux-gpib/linux-gpib-3.2.21.ebuild,v 1.3 2015/04/07 09:41:26 dilfridge Exp $
+# $Header: /var/cvsroot/gentoo-x86/sci-libs/linux-gpib/linux-gpib-3.2.21-r1.ebuild,v 1.1 2015/04/07 10:03:34 dilfridge Exp $
 
 EAPI=5
 
@@ -13,11 +13,13 @@ inherit eutils linux-mod autotools perl-module python-single-r1 toolchain-funcs 
 DESCRIPTION="Kernel module and driver library for GPIB (IEEE 488.2) hardware"
 HOMEPAGE="http://linux-gpib.sourceforge.net/"
 SRC_URI="mirror://sourceforge/linux-gpib/${P}.tar.gz
-	firmware? ( http://linux-gpib.sourceforge.net/firmware/gpib_firmware-2006-11-12.tar.gz )"
+	firmware? ( http://linux-gpib.sourceforge.net/firmware/gpib_firmware-2006-11-12.tar.gz )
+	http://dev.gentoo.org/~dilfridge/distfiles/${PN}-3.2.21-ctrl-c.patch.gz
+"
 
 LICENSE="GPL-2"
 SLOT="0"
-KEYWORDS="amd64 ~arm ~x86"
+KEYWORDS="~amd64 ~arm ~x86"
 IUSE="isa pcmcia static debug guile perl php python tcl doc firmware"
 
 COMMONDEPEND="
@@ -39,6 +41,7 @@ PATCHES=(
 	"${FILESDIR}"/${PN}-3.2.21-build.patch
 	"${FILESDIR}"/${PN}-3.2.16-perl.patch
 	"${FILESDIR}"/${PN}-3.2.16-reallydie.patch
+	"${WORKDIR}"/${PN}-3.2.21-ctrl-c.patch
 )
 
 pkg_setup () {
@@ -180,4 +183,10 @@ pkg_postinst () {
 		einfo ""
 	fi
 
+	if [[ $REPLACING_VERSIONS < "3.2.21-r1" ]]; then
+		ewarn "sci-libs/linux-gpib-3.2.21-r1 introduces incompatible changes to the kernel"
+		ewarn "interface. You may need to reboot to make sure the newly built driver modules"
+		ewarn "are used (some of the driver modules cannot be unloaded)."
+		ewarn "If you do not do this, every gpib call will just result in an error message."
+	fi
 }

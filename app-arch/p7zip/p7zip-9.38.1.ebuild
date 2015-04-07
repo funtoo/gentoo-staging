@@ -1,8 +1,8 @@
 # Copyright 1999-2015 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/app-arch/p7zip/p7zip-9.20.1-r4.ebuild,v 1.6 2015/04/07 10:10:39 jlec Exp $
+# $Header: /var/cvsroot/gentoo-x86/app-arch/p7zip/p7zip-9.38.1.ebuild,v 1.2 2015/04/07 10:10:39 jlec Exp $
 
-EAPI=4
+EAPI=5
 
 WX_GTK_VER="2.8"
 
@@ -14,8 +14,8 @@ SRC_URI="mirror://sourceforge/${PN}/${PN}_${PV}_src_all.tar.bz2"
 
 LICENSE="LGPL-2.1 rar? ( unRAR )"
 SLOT="0"
-KEYWORDS="alpha amd64 ~arm hppa ia64 ppc ppc64 ~s390 sparc x86 ~x86-fbsd ~x86-freebsd ~x86-interix ~amd64-linux ~x86-linux ~ppc-macos ~x64-macos ~x86-macos ~sparc-solaris"
-IUSE="doc kde rar +pch static wxwidgets"
+KEYWORDS="~alpha ~amd64 ~arm ~hppa ~ia64 ~ppc ~ppc64 ~s390 ~sparc ~x86 ~x86-fbsd ~x86-freebsd ~x86-interix ~amd64-linux ~x86-linux ~ppc-macos ~x64-macos ~x86-macos ~sparc-solaris"
+IUSE="doc kde rar +pch static wxwidgets abi_x86_x32"
 
 REQUIRED_USE="kde? ( wxwidgets )"
 
@@ -24,15 +24,12 @@ RDEPEND="
 	wxwidgets? ( x11-libs/wxGTK:2.8[X,-odbc] )"
 DEPEND="${RDEPEND}
 	amd64? ( dev-lang/yasm )
+	abi_x86_x32? ( >=dev-lang/yasm-1.2.0-r1 )
 	x86? ( dev-lang/nasm )"
 
 S=${WORKDIR}/${PN}_${PV}
 
 src_prepare() {
-	epatch \
-		"${FILESDIR}"/${P}-execstack.patch \
-		"${FILESDIR}"/${P}-QA.patch
-
 	if ! use pch; then
 		sed "s:PRE_COMPILED_HEADER=StdAfx.h.gch:PRE_COMPILED_HEADER=:g" -i makefile.* || die
 	fi
@@ -42,26 +39,27 @@ src_prepare() {
 		-e 's:-m64 ::g' \
 		-e 's:-O::g' \
 		-e 's:-pipe::g' \
-		-e "/^CC/s:\$(ALLFLAGS):${CFLAGS} \$(ALLFLAGS):g" \
-		-e "/^CXX/s:\$(ALLFLAGS):${CXXFLAGS} \$(ALLFLAGS):g" \
+		-e "/^CXX=/s:g++:$(tc-getCXX):" \
+		-e "/^CC=/s:gcc:$(tc-getCC):" \
+		-e '/ALLFLAGS/s:-s ::' \
+		-e "/OPTFLAGS=/s:=.*:=${CXXFLAGS}:" \
 		-i makefile* || die
 
 	# remove non-free RAR codec
 	if use rar; then
 		ewarn "Enabling nonfree RAR decompressor"
 	else
-		sed -e '/Rar/d' -i makefile* || die
+		sed \
+			-e '/Rar/d' \
+			-e '/RAR/d' \
+			-i makefile* CPP/7zip/Bundles/Format7zFree/makefile || die
 		rm -rf CPP/7zip/Compress/Rar || die
-		epatch "${FILESDIR}"/9.04-makefile.patch
 	fi
 
-	sed -i \
-		-e "/^CXX=/s:g++:$(tc-getCXX):" \
-		-e "/^CC=/s:gcc:$(tc-getCC):" \
-		-e '/ALLFLAGS/s:-s ::' \
-		makefile* || die "changing makefiles"
-
-	if use amd64; then
+	if use abi_x86_x32; then
+		sed -i -e "/^ASM=/s:amd64:x32:" makefile*
+		cp -f makefile.linux_amd64_asm makefile.machine || die
+	elif use amd64; then
 		cp -f makefile.linux_amd64_asm makefile.machine || die
 	elif use x86; then
 		cp -f makefile.linux_x86_asm_gcc_4.X makefile.machine || die
@@ -82,7 +80,9 @@ src_prepare() {
 		sed -e 's/-lc_r/-pthread/' makefile.freebsd > makefile.machine
 	fi
 
-	use static && sed -i -e '/^LOCAL_LIBS=/s/LOCAL_LIBS=/&-static /' makefile.machine
+	if use static; then
+		sed -i -e '/^LOCAL_LIBS=/s/LOCAL_LIBS=/&-static /' makefile.machine || die
+	fi
 
 	if use kde || use wxwidgets; then
 		einfo "Preparing dependency list"
@@ -147,7 +147,7 @@ src_install() {
 	dodoc ChangeLog README TODO
 
 	if use doc; then
-		dodoc DOCS/*.txt
-		dohtml -r DOCS/MANUAL/*
+		dodoc DOC/*.txt
+		dohtml -r DOC/MANUAL/*
 	fi
 }
