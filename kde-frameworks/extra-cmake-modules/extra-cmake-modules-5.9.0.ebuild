@@ -1,26 +1,22 @@
 # Copyright 1999-2015 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/dev-libs/extra-cmake-modules/extra-cmake-modules-1.7.0.ebuild,v 1.1 2015/02/14 21:40:44 johu Exp $
+# $Header: /var/cvsroot/gentoo-x86/kde-frameworks/extra-cmake-modules/extra-cmake-modules-5.9.0.ebuild,v 1.1 2015/04/11 17:09:48 kensington Exp $
 
 EAPI=5
 
 PYTHON_COMPAT=( python{2_7,3_3,3_4} )
-
-inherit versionator cmake-utils python-any-r1
-
-FRAMEWORKS_DIR=5.$(get_version_component_range 2)
+KDE_AUTODEPS="false"
+KDE_DEBUG="false"
+inherit kde5 python-any-r1
 
 DESCRIPTION="Extra modules and scripts for CMake"
 HOMEPAGE="https://projects.kde.org/projects/kdesupport/extra-cmake-modules"
-SRC_URI="mirror://kde/stable/frameworks/${FRAMEWORKS_DIR}/${P}.tar.xz"
 
 LICENSE="BSD"
-SLOT="0"
-KEYWORDS="~amd64 ~x86"
+KEYWORDS=" ~amd64 ~x86"
 IUSE="doc"
 
 DEPEND="
-	app-arch/xz-utils
 	>=dev-util/cmake-2.8.12
 	doc? (
 		${PYTHON_DEPS}
