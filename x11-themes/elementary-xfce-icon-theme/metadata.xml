@@ -2,10 +2,7 @@
 <!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
 <pkgmetadata>
   <maintainer>
-    <email>jauhien@gentoo.org</email>
-    <name>Jauhien Piatlicki</name>
+    <email>calchan@gentoo.org</email>
+    <name>Denis Dupeyron</name>
   </maintainer>
-  <use>
-    <flag name="bson">Support BSON file format for package DB</flag>
-  </use>
 </pkgmetadata>
