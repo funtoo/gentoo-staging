@@ -1,6 +1,6 @@
 # Copyright 1999-2015 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/dev-db/mysql-workbench/mysql-workbench-6.2.3-r1.ebuild,v 1.3 2015/04/08 18:45:26 mgorny Exp $
+# $Header: /var/cvsroot/gentoo-x86/dev-db/mysql-workbench/mysql-workbench-6.3.3.ebuild,v 1.1 2015/04/26 08:43:14 graaff Exp $
 
 EAPI=5
 GCONF_DEBUG="no"
@@ -16,7 +16,7 @@ MY_P="${PN}-community-${PV}-src"
 
 DESCRIPTION="MySQL Workbench"
 HOMEPAGE="http://dev.mysql.com/workbench/"
-SRC_URI="mirror://mysql/Downloads/MySQLGUITools/${MY_P}.tar.gz"
+SRC_URI="mirror://mysql/Downloads/MySQLGUITools/${MY_P}.tar.gz https://github.com/antlr/website-antlr3/blob/gh-pages/download/antlr-3.4-complete.jar?raw=true -> antlr-3.4-complete.jar"
 
 LICENSE="GPL-2"
 SLOT="0"
@@ -63,18 +63,20 @@ RDEPEND="${CDEPEND}
 
 DEPEND="${CDEPEND}
 		dev-lang/swig
+		virtual/jre
 		virtual/pkgconfig"
 
 S="${WORKDIR}"/"${MY_P}"
 
+src_unpack() {
+	unpack ${PN}-community-${PV}-src.tar.gz
+}
+
 src_prepare() {
 	## Patch CMakeLists.txt
 	epatch "${FILESDIR}/${PN}-6.2.3-CMakeLists.patch" \
-		"${FILESDIR}/${PN}-6.1.7-wbcopytables.patch" \
-		"${FILESDIR}/${PN}-6.1.7-mysql_options4.patch" \
-		"${FILESDIR}/${PN}-6.2.3-ctemplate.patch" \
-		"${FILESDIR}/${PN}-6.2.3-paramiko.patch" \
-		"${FILESDIR}/${PN}-6.2.3-glib.patch"
+		"${FILESDIR}/${PN}-6.2.5-wbcopytables.patch" \
+		"${FILESDIR}/${PN}-6.3.3-mysql_options4.patch"
 
 	## remove hardcoded CXXFLAGS
 	sed -i -e 's/-O0 -g3//' ext/scintilla/gtk/CMakeLists.txt || die
@@ -92,7 +94,7 @@ src_configure() {
 		-DPYTHON_INCLUDE_DIR="$(python_get_includedir)"
 		-DPYTHON_LIBRARY="$(python_get_library_path)"
 	)
-	cmake-utils_src_configure
+	ANTLR_JAR_PATH="${DISTDIR}/antlr-3.4-complete.jar" cmake-utils_src_configure
 }
 
 src_compile() {
