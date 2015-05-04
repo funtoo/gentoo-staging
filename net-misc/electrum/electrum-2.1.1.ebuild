@@ -1,6 +1,6 @@
 # Copyright 1999-2015 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/net-misc/electrum/electrum-2.0.0.ebuild,v 1.2 2015/03/14 19:53:20 blueness Exp $
+# $Header: /var/cvsroot/gentoo-x86/net-misc/electrum/electrum-2.1.1.ebuild,v 1.1 2015/05/04 12:53:43 blueness Exp $
 
 EAPI="5"
 
@@ -9,17 +9,17 @@ PYTHON_REQ_USE="ncurses?"
 
 inherit eutils distutils-r1 gnome2-utils
 
-MY_P=Electrum-2.0
+MY_P="Electrum-${PV}"
 DESCRIPTION="User friendly Bitcoin client"
 HOMEPAGE="https://electrum.org/"
-SRC_URI="https://electrum.org/download/${MY_P}.tar.gz"
+SRC_URI="https://download.electrum.org/${MY_P}.tar.gz"
 
 LICENSE="GPL-3"
 SLOT="0"
 KEYWORDS="~amd64 ~x86"
 LINGUAS="ar_SA cs_CZ da_DK de_DE el_GR eo_UY es_ES fr_FR hu_HU hy_AM id_ID it_IT ja_JP ky_KG lv_LV nl_NL pl_PL pt_BR pt_PT ro_RO ru_RU sk_SK sl_SI ta_IN th_TH vi_VN zh_CN"
 
-IUSE="aliases amodem cli coinbase_com cosign +fiat graph greenaddress_it gtk3 ncurses qrcode +qt4 sync trustedcoin_com vkb"
+IUSE="cli cosign +fiat greenaddress_it gtk3 ncurses qrcode +qt4 sync trustedcoin_com vkb"
 
 for lingua in ${LINGUAS}; do
 	IUSE+=" linguas_${lingua}"
@@ -27,12 +27,8 @@ done
 
 REQUIRED_USE="
 	|| ( cli gtk3 ncurses qt4 )
-	aliases? ( qt4 )
-	amodem? ( qt4 )
-	coinbase_com? ( qt4 )
 	cosign? ( qt4 )
 	fiat? ( qt4 )
-	graph? ( qt4 )
 	greenaddress_it? ( qt4 )
 	qrcode? ( qt4 )
 	sync? ( qt4 )
@@ -59,13 +55,9 @@ RDEPEND="
 	)
 	qrcode? ( media-gfx/zbar[python,v4l,${PYTHON_USEDEP}] )
 	qt4? (
-		coinbase_com? ( dev-python/PyQt4[${PYTHON_USEDEP},webkit] )
 		dev-python/PyQt4[${PYTHON_USEDEP}]
 	)
 	ncurses? ( dev-lang/python )
-	aliases? ( dev-python/dnspython[${PYTHON_USEDEP}] )
-	amodem? ( dev-python/amodem[${PYTHON_USEDEP}] )
-	graph? ( dev-python/matplotlib[${PYTHON_USEDEP}] )
 "
 
 S="${WORKDIR}/${MY_P}"
@@ -120,13 +112,8 @@ src_prepare() {
 	# btchipwallet requires python btchip module (and dev-python/pyusb)
 	# trezor requires python trezorlib module
 	for plugin in  \
-		$(usex aliases       '' openalias       )  \
-		$(usex amodem        '' audio           )  \
-		btchipwallet  \
-		$(usex coinbase_com  '' coinbase_buyback)  \
 		$(usex cosign        '' cosigner_pool   )  \
 		$(usex fiat          '' exchange_rate   )  \
-		$(usex graph         '' plot            )  \
 		$(usex greenaddress_it '' greenaddress_instant)  \
 		$(usex sync          '' labels          )  \
 		trezor  \
