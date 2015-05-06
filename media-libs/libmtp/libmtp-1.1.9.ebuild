@@ -1,18 +1,17 @@
 # Copyright 1999-2015 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/media-libs/libmtp/libmtp-1.1.8.ebuild,v 1.6 2015/05/06 07:08:48 yngwin Exp $
+# $Header: /var/cvsroot/gentoo-x86/media-libs/libmtp/libmtp-1.1.9.ebuild,v 1.1 2015/05/06 07:23:14 yngwin Exp $
 
 EAPI=5
+inherit eutils udev user
 
 if [[ ${PV} == 9999* ]]; then
 	EGIT_REPO_URI="git://git.code.sf.net/p/${PN}/code"
 	inherit autotools git-r3
 else
 	SRC_URI="mirror://sourceforge/${PN}/${P}.tar.gz"
-	KEYWORDS="amd64 ~arm hppa ~ia64 ppc ppc64 x86 ~amd64-fbsd ~x86-fbsd"
+	KEYWORDS="~amd64 ~arm ~hppa ~ia64 ~ppc ~ppc64 ~x86 ~amd64-fbsd ~x86-fbsd"
 fi
-
-inherit eutils udev user
 
 DESCRIPTION="An implementation of Microsoft's Media Transfer Protocol (MTP)"
 HOMEPAGE="http://libmtp.sourceforge.net/"
@@ -30,11 +29,6 @@ DEPEND="${RDEPEND}
 pkg_setup() {
 	DOCS="AUTHORS README TODO"
 	enewgroup plugdev
-}
-
-src_unpack() {
-	[[ ${PV} == 9999* ]] && git-r3_src_unpack
-	default_src_unpack
 }
 
 src_prepare() {
