@@ -1,6 +1,6 @@
 # Copyright 1999-2015 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/dev-qt/qtcore/qtcore-4.8.6-r1.ebuild,v 1.2 2015/04/15 03:43:10 dlan Exp $
+# $Header: /var/cvsroot/gentoo-x86/dev-qt/qtcore/qtcore-4.8.6-r2.ebuild,v 1.1 2015/05/07 08:49:35 yngwin Exp $
 
 EAPI=5
 
@@ -37,6 +37,7 @@ PATCHES=(
 	"${FILESDIR}/${PN}-4.8.5-moc-boost-lexical-cast.patch"
 	"${FILESDIR}/${PN}-4.8.5-honor-ExcludeSocketNotifiers-in-glib-event-loop.patch" # bug 514968
 	"${FILESDIR}/${PN}-4.8.5-qeventdispatcher-recursive.patch" # bug 514968
+	"${FILESDIR}/${PN}-4.8.6-QNAM-corruptions-fix.patch" # bug 548622
 )
 
 QT4_TARGET_DIRECTORIES="
