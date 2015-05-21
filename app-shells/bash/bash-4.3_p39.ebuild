@@ -1,6 +1,6 @@
 # Copyright 1999-2015 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/app-shells/bash/bash-4.3_p33-r2.ebuild,v 1.2 2015/05/21 05:46:07 mattst88 Exp $
+# $Header: /var/cvsroot/gentoo-x86/app-shells/bash/bash-4.3_p39.ebuild,v 1.1 2015/05/21 04:06:28 vapier Exp $
 
 EAPI="4"
 
@@ -38,7 +38,7 @@ SRC_URI="mirror://gnu/bash/${MY_P}.tar.gz $(patches)"
 
 LICENSE="GPL-3"
 SLOT="0"
-KEYWORDS="alpha ~amd64 ~arm ~arm64 ~hppa ~ia64 ~m68k ~mips ~ppc ~ppc64 ~s390 ~sh ~sparc ~x86 ~amd64-fbsd ~sparc-fbsd ~x86-fbsd"
+KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~hppa ~ia64 ~m68k ~mips ~ppc ~ppc64 ~s390 ~sh ~sparc ~x86 ~amd64-fbsd ~sparc-fbsd ~x86-fbsd"
 IUSE="afs bashlogger examples mem-scramble +net nls plugins +readline vanilla"
 
 DEPEND=">=sys-libs/ncurses-5.2-r2
@@ -84,11 +84,9 @@ src_prepare() {
 	touch -r . doc/*
 
 	epatch "${FILESDIR}"/${PN}-4.3-compat-lvl.patch
-	epatch "${FILESDIR}"/${PN}-4.3-parse-time-keyword.patch
 	epatch "${FILESDIR}"/${PN}-4.3-append-process-segfault.patch
 	epatch "${FILESDIR}"/${PN}-4.3-mapfile-improper-array-name-validation.patch
 	epatch "${FILESDIR}"/${PN}-4.3-arrayfunc.patch
-	epatch "${FILESDIR}"/${PN}-4.3-declare-visibility.patch
 
 	epatch_user
 }
