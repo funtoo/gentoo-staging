@@ -1,6 +1,6 @@
 # Copyright 1999-2015 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/dev-python/m2crypto/m2crypto-0.22.3-r3.ebuild,v 1.4 2015/05/25 17:41:50 floppym Exp $
+# $Header: /var/cvsroot/gentoo-x86/dev-python/m2crypto/m2crypto-0.22.3-r4.ebuild,v 1.2 2015/05/25 17:41:50 floppym Exp $
 
 EAPI=5
 
@@ -23,7 +23,6 @@ IUSE=""
 # swig-3.0.5 results in broken constants, #538920
 RDEPEND=">=dev-libs/openssl-0.9.8:0="
 DEPEND="${RDEPEND}
-	<dev-lang/swig-3.0.5
 	>=dev-lang/swig-1.3.28:0
 	dev-python/setuptools[${PYTHON_USEDEP}]
 "
@@ -33,22 +32,10 @@ S="${WORKDIR}/${MY_PN}-${PV}"
 # Tests access network, and fail randomly. Bug #431458.
 RESTRICT=test
 
-python_prepare_all() {
-	epatch "${FILESDIR}"/${P}-cross-compile.patch
-
-	# use pre-swigged sources
-	sed -i -e '/sources/s:\.i:_wrap.c:' setup.py || die
-
-	distutils-r1_python_prepare_all
-}
-
-python_configure_all() {
-	set -- swig -python -includeall -I"${EPREFIX}"/usr/include \
-		-o SWIG/_m2crypto_wrap.c SWIG/_m2crypto.i
-
-	echo "${@}"
-	"${@}" || die 'swig failed'
-}
+PATCHES=( 
+	"${FILESDIR}"/0.22.3-Use-swig-generated-python-loader.patch
+	"${FILESDIR}"/0.22.3-packaging.patch
+)
 
 python_test() {
 	esetup.py test
