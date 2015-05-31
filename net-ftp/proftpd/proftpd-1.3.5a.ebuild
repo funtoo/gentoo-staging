@@ -1,6 +1,6 @@
 # Copyright 1999-2015 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/net-ftp/proftpd/proftpd-1.3.5-r2.ebuild,v 1.2 2015/05/30 13:57:11 idella4 Exp $
+# $Header: /var/cvsroot/gentoo-x86/net-ftp/proftpd/proftpd-1.3.5a.ebuild,v 1.1 2015/05/30 21:00:27 slyfox Exp $
 
 EAPI=5
 inherit eutils multilib systemd
@@ -72,12 +72,6 @@ __prepare_module() {
 }
 
 src_prepare() {
-	epatch "${FILESDIR}"/${P}-netaddr-segv.patch
-	# Bug 546644 security patch CVE-2015-3306
-	# CVE-2015-3306.patch was re-based, CVE-2015-3306-test.patch is as it came in
-	# https://github.com/proftpd/proftpd/commit/3ef395d81327558e6e6def43df9138b1cd4955dd
-	epatch "${FILESDIR}"/{CVE-2015-3306.patch,CVE-2015-3306-test.patch}
-
 	# Skip 'install-conf' / Support LINGUAS
 	sed -i -e "/install-all/s/ install-conf//" Makefile.in
 	sed -i -e "s/^LANGS=.*$/LANGS=${LINGUAS}/" locale/Makefile.in
