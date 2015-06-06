@@ -1,6 +1,6 @@
 # Copyright 1999-2015 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/sys-fs/udev/udev-220.ebuild,v 1.1 2015/06/05 19:29:09 williamh Exp $
+# $Header: /var/cvsroot/gentoo-x86/sys-fs/udev/udev-220-r1.ebuild,v 1.1 2015/06/06 17:29:39 williamh Exp $
 
 EAPI=5
 
@@ -287,6 +287,7 @@ multilib_src_install() {
 			install-dist_udevrulesDATA
 			install-girDATA
 			install-pkgconfiglibDATA
+			install-pkgconfigdataDATA
 			install-typelibsDATA
 			install-dist_docDATA
 			libudev-install-hook
@@ -306,6 +307,7 @@ multilib_src_install() {
 			rootbin_PROGRAMS=udevadm
 			lib_LTLIBRARIES="${lib_LTLIBRARIES}"
 			pkgconfiglib_DATA="${pkgconfiglib_DATA}"
+			pkgconfigdata_DATA="src/udev/udev.pc"
 			INSTALL_DIRS='$(sysconfdir)/udev/rules.d \
 					$(sysconfdir)/udev/hwdb.d \
 					$(sysconfdir)/systemd/network'
