@@ -1,6 +1,6 @@
 # Copyright 1999-2015 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/dev-ruby/rspec-rails/rspec-rails-3.2.0.ebuild,v 1.2 2015/03/13 12:40:01 patrick Exp $
+# $Header: /var/cvsroot/gentoo-x86/dev-ruby/rspec-rails/rspec-rails-3.2.3.ebuild,v 1.1 2015/06/12 04:25:45 graaff Exp $
 
 EAPI=5
 
@@ -24,9 +24,9 @@ IUSE=""
 
 SUBVERSION="$(get_version_component_range 1-2)"
 
-ruby_add_rdepend ">=dev-ruby/activesupport-3.0
-	>=dev-ruby/actionpack-3.0
-	>=dev-ruby/railties-3.0
+ruby_add_rdepend ">=dev-ruby/activesupport-3.0:*
+	>=dev-ruby/actionpack-3.0:*
+	>=dev-ruby/railties-3.0:*
 	=dev-ruby/rspec-${SUBVERSION}*"
 
 # Depend on the package being already installed for tests, because
