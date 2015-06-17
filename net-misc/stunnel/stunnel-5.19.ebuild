@@ -1,10 +1,10 @@
 # Copyright 1999-2015 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/net-misc/stunnel/stunnel-5.08.ebuild,v 1.10 2015/04/27 00:28:08 blueness Exp $
+# $Header: /var/cvsroot/gentoo-x86/net-misc/stunnel/stunnel-5.19.ebuild,v 1.1 2015/06/17 11:30:51 blueness Exp $
 
 EAPI="5"
 
-inherit ssl-cert eutils systemd user
+inherit ssl-cert eutils multilib systemd user
 
 DESCRIPTION="TLS/SSL - Port Wrapper"
 HOMEPAGE="http://www.stunnel.org/index.html"
@@ -18,11 +18,11 @@ SRC_URI="ftp://ftp.stunnel.org/stunnel/archive/${PV%%.*}.x/${P}.tar.gz
 
 LICENSE="GPL-2"
 SLOT="0"
-KEYWORDS="alpha sparc"
+KEYWORDS="~alpha ~amd64 ~arm ~hppa ~ia64 ~mips ~ppc ~ppc64 ~s390 ~sparc ~x86 ~amd64-linux ~arm-linux ~x86-linux ~ppc-macos ~x86-macos"
 IUSE="ipv6 selinux tcpd"
 
 DEPEND="tcpd? ( sys-apps/tcp-wrappers )
-	dev-libs/openssl"
+	dev-libs/openssl:="
 RDEPEND="${DEPEND}
 	selinux? ( sec-policy/selinux-stunnel )"
 
@@ -35,10 +35,13 @@ src_prepare() {
 	# Hack away generation of certificate
 	sed -i -e "s/^install-data-local:/do-not-run-this:/" \
 		tools/Makefile.in || die "sed failed"
+
+	echo "CONFIG_PROTECT=\"/etc/stunnel/stunnel.conf\"" > "${T}"/20stunnel
 }
 
 src_configure() {
 	econf \
+		--libdir="${EPREFIX}/usr/$(get_libdir)" \
 		$(use_enable ipv6) \
 		$(use_enable tcpd libwrap) \
 		--with-ssl="${EPREFIX}"/usr \
@@ -62,6 +65,8 @@ src_install() {
 	insinto /etc/stunnel
 	doins "${FILESDIR}"/stunnel.conf
 	doinitd "${FILESDIR}"/stunnel
+
+	doenvd "${T}"/20stunnel
 
 	systemd_dounit "${S}/tools/stunnel.service"
 	systemd_newtmpfilesd "${FILESDIR}"/stunnel.tmpfiles.conf stunnel.conf
