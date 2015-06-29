@@ -1,6 +1,6 @@
 # Copyright 1999-2015 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/dev-qt/qtsingleapplication/qtsingleapplication-2.6.1_p20130904-r4.ebuild,v 1.1 2015/05/11 15:44:05 pesa Exp $
+# $Header: /var/cvsroot/gentoo-x86/dev-qt/qtlockedfile/qtlockedfile-2.4.1_p20150629.ebuild,v 1.2 2015/06/29 17:35:06 pesa Exp $
 
 EAPI=5
 
@@ -8,31 +8,20 @@ inherit multibuild qmake-utils
 
 MY_P=qt-solutions-${PV#*_p}
 
-DESCRIPTION="Qt library to start applications only once per user"
-HOMEPAGE="http://doc.qt.digia.com/solutions/4/qtsingleapplication/index.html"
+DESCRIPTION="QFile extension with advisory locking functions"
+HOMEPAGE="https://code.qt.io/cgit/qt-solutions/qt-solutions.git/"
 SRC_URI="http://dev.gentoo.org/~pesa/distfiles/${MY_P}.tar.xz"
 
 LICENSE="|| ( LGPL-2.1 GPL-3 )"
 SLOT="0"
 KEYWORDS="~amd64 ~arm ~ppc ~ppc64 ~x86 ~amd64-linux ~x86-linux"
-IUSE="doc +qt4 qt5 X"
+IUSE="doc +qt4 qt5"
 
 REQUIRED_USE="|| ( qt4 qt5 )"
 
 DEPEND="
-	dev-qt/qtlockedfile[qt4?,qt5?]
-	qt4? (
-		dev-qt/qtcore:4
-		X? ( dev-qt/qtgui:4 )
-	)
-	qt5? (
-		dev-qt/qtcore:5
-		dev-qt/qtnetwork:5
-		X? (
-			dev-qt/qtgui:5
-			dev-qt/qtwidgets:5
-		)
-	)
+	qt4? ( dev-qt/qtcore:4 )
+	qt5? ( dev-qt/qtcore:5 )
 "
 RDEPEND="${DEPEND}"
 
@@ -43,17 +32,11 @@ pkg_setup() {
 }
 
 src_prepare() {
-	epatch "${FILESDIR}/${PV}-unbundle-qtlockedfile.patch"
-	epatch "${FILESDIR}/${PV}-no-gui.patch"
-
 	echo 'SOLUTIONS_LIBRARY = yes' > config.pri
-	use X || echo 'QTSA_NO_GUI = yes' >> config.pri
+	echo 'QT -= gui' >> src/qtlockedfile.pri
 
 	sed -i -e "s/-head/-${PV%.*}/" common.pri || die
-	sed -i -e '/SUBDIRS+=examples/d' ${PN}.pro || die
-
-	# to ensure unbundling
-	rm -f src/qtlockedfile*
+	sed -i -e '/SUBDIRS+=example/d' ${PN}.pro || die
 
 	multibuild_copy_sources
 }
@@ -67,7 +50,6 @@ src_configure() {
 			eqmake5
 		fi
 	}
-
 	multibuild_foreach_variant run_in_build_dir myconfigure
 }
 
@@ -85,14 +67,11 @@ src_install() {
 
 		# headers
 		insinto "$(${MULTIBUILD_VARIANT}_get_headerdir)"/QtSolutions
-		doins src/qtsinglecoreapplication.h
-		use X && doins src/{QtSingleApplication,${PN}.h}
+		doins src/QtLockedFile src/${PN}.h
 
 		# .prf files
 		insinto "$(${MULTIBUILD_VARIANT}_get_mkspecsdir)"/features
-		doins "${FILESDIR}"/qtsinglecoreapplication.prf
-		use X && doins "${FILESDIR}"/${PN}.prf
+		doins "${FILESDIR}"/${PN}.prf
 	}
-
 	multibuild_foreach_variant run_in_build_dir myinstall
 }
