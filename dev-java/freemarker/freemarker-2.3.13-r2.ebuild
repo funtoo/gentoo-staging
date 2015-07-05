@@ -1,6 +1,6 @@
 # Copyright 1999-2015 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/dev-java/freemarker/freemarker-2.3.13-r2.ebuild,v 1.1 2015/07/05 08:16:30 monsieurp Exp $
+# $Header: /var/cvsroot/gentoo-x86/dev-java/freemarker/freemarker-2.3.13-r2.ebuild,v 1.3 2015/07/05 15:34:25 monsieurp Exp $
 
 EAPI="5"
 
