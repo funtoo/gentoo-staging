@@ -1,6 +1,7 @@
-# Copyright 1999-2008 Gentoo Foundation
+# Copyright 1999-2015 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/dev-java/sun-httpserver-bin/sun-httpserver-bin-2.0.1.ebuild,v 1.5 2008/03/28 17:59:05 nixnut Exp $
+# $Header: /var/cvsroot/gentoo-x86/dev-java/sun-httpserver-bin/sun-httpserver-bin-2.0.1-r1.ebuild,v 1.2 2015/07/06 15:32:40 monsieurp Exp $
+EAPI=5
 
 inherit java-pkg-2
 
@@ -22,8 +23,9 @@ DEPEND="app-arch/unzip
 S="${WORKDIR}/jaxws-si"
 
 src_unpack() {
+	MY_JAVA=$(java-config -J)
 
-	echo "A" | java -jar "${DISTDIR}/${A}" -console > /dev/null || die "unpack failed"
+	echo "A" | ${MY_JAVA} -jar "${DISTDIR}/${A}" -console > /dev/null || die "unpack failed"
 
 	unpack ./jaxws-src.zip || die "unzip failed"
 
@@ -34,7 +36,5 @@ src_compile() {
 }
 
 src_install() {
-
 	java-pkg_dojar lib/http.jar
-
 }
