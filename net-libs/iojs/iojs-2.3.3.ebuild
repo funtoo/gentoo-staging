@@ -1,36 +1,42 @@
 # Copyright 1999-2015 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/net-libs/nodejs/nodejs-0.12.4-r1.ebuild,v 1.1 2015/05/26 10:14:04 mgorny Exp $
+# $Header: /var/cvsroot/gentoo-x86/net-libs/iojs/iojs-2.3.3.ebuild,v 1.1 2015/07/06 02:37:51 patrick Exp $
 
 EAPI=5
 
-# has known failures. sigh.
-RESTRICT="test"
-
 PYTHON_COMPAT=( python2_7 )
-PYTHON_REQ_USE="threads"
 
-inherit pax-utils python-single-r1 toolchain-funcs
+MY_PV="v${PV}"
+MY_P="${PN}-${MY_PV}"
 
-DESCRIPTION="Evented IO for V8 Javascript"
-HOMEPAGE="http://nodejs.org/"
-SRC_URI="http://nodejs.org/dist/v${PV}/node-v${PV}.tar.gz"
+inherit flag-o-matic pax-utils python-single-r1 toolchain-funcs
+
+DESCRIPTION="An npm compatible platform originally based on node.js"
+HOMEPAGE="http://iojs.org/"
+SRC_URI="http://iojs.org/dist/${MY_PV}/${MY_P}.tar.xz"
 
 LICENSE="Apache-1.1 Apache-2.0 BSD BSD-2 MIT"
 SLOT="0"
 KEYWORDS="~amd64 ~arm ~x86 ~x64-macos"
-IUSE="debug icu +npm +snapshot +ssl"
+IUSE="bundled-libs debug icu +npm snapshot +ssl"
 
 RDEPEND="icu? ( dev-libs/icu )
 	${PYTHON_DEPS}
-	ssl? ( dev-libs/openssl:0=[-bindist] )
-	>=net-libs/http-parser-2.3
-	>=dev-libs/libuv-1.4.2"
+	!bundled-libs? (
+		>=net-libs/http-parser-2.5
+		>=dev-libs/libuv-1.6.1
+		>=dev-libs/openssl-1.0.2c[-bindist]
+	)"
 DEPEND="${RDEPEND}
-	!!net-libs/iojs"
-
-S="${WORKDIR}/node-v${PV}"
+	!!net-libs/nodejs"
+S="${WORKDIR}/${MY_P}"
 REQUIRED_USE="${PYTHON_REQUIRED_USE}"
+
+pkg_pretend() {
+	if ! test-flag-CXX -std=c++11 ; then
+		die "Your compiler doesn't support C++11. Use GCC 4.8, Clang 3.3 or newer."
+	fi
+}
 
 src_prepare() {
 	tc-export CC CXX PKG_CONFIG
@@ -54,36 +60,44 @@ src_prepare() {
 	sed -i -e "s/'lib'/'${LIBDIR}'/" lib/module.js || die
 	sed -i -e "s|\"lib\"|\"${LIBDIR}\"|" deps/npm/lib/npm.js || die
 
+	# Avoid a test that I've only been able to reproduce from emerge. It doesnt
+	# seem sandbox related either (invoking it from a sandbox works fine).
+	# The issue is that no stdin handle is openened when asked for one.
+	# It doesn't really belong upstream , so it'll just be removed until someone
+	# with more gentoo-knowledge than me (jbergstroem) figures it out.
+	rm test/parallel/test-stdout-close-unref.js || die
+
 	# debug builds. change install path, remove optimisations and override buildtype
 	if use debug; then
 		sed -i -e "s|out/Release/|out/Debug/|g" tools/install.py || die
 		BUILDTYPE=Debug
 	fi
+
+	epatch_user
 }
 
 src_configure() {
 	local myconf=()
 	local myarch=""
-	use debug && myconf+=( --debug )
-	use icu && myconf+=( --with-intl=system-icu )
+	use bundled-libs || myconf+=( --shared-openssl --shared-libuv --shared-http-parser --shared-zlib )
 	use npm || myconf+=( --without-npm )
-	use snapshot || myconf+=( --without-snapshot )
+	use icu && myconf+=( --with-intl=system-icu )
+	use snapshot && myconf+=( --with-snapshot )
 	use ssl || myconf+=( --without-ssl )
+	use debug && myconf+=( --debug )
 
 	case ${ABI} in
 		x86) myarch="ia32";;
 		amd64) myarch="x64";;
+		x32) myarch="x32";;
 		arm) myarch="arm";;
+		arm64) myarch="arm64";;
 		*) die "Unrecognized ARCH ${ARCH}";;
 	esac
 
 	"${PYTHON}" configure \
 		--prefix="${EPREFIX}"/usr \
 		--dest-cpu=${myarch} \
-		--shared-openssl \
-		--shared-libuv \
-		--shared-http-parser \
-		--shared-zlib \
 		--without-dtrace \
 		"${myconf[@]}" || die
 }
@@ -99,7 +113,7 @@ src_install() {
 	emake install DESTDIR="${ED}" PREFIX=/usr
 	use npm && dodoc -r "${LIBDIR}"/node_modules/npm/html
 	rm -rf "${LIBDIR}"/node_modules/npm/{doc,html} || die
-	find "${LIBDIR}"/node_modules -type f -name "LICENSE*" -or -name "LICENCE*" -delete
+	find "${LIBDIR}"/node_modules -type f -name "LICENSE*" -or -name "LICENCE*" -delete || die
 
 	# set up a symlink structure that npm expects..
 	dodir /usr/include/node/deps/{v8,uv}
@@ -108,12 +122,13 @@ src_install() {
 		dosym ../.. /usr/include/node/${var}
 	done
 
-	pax-mark -m "${ED}"/usr/bin/node
+	pax-mark -m "${ED}"/usr/bin/iojs
 }
 
 src_test() {
+	out/${BUILDTYPE}/cctest || die
 	declare -xl TESTTYPE="${BUILDTYPE}"
-	"${PYTHON}" tools/test.py --mode=${TESTTYPE} -J message simple || die
+	"${PYTHON}" tools/test.py --mode=${TESTTYPE} -J message parallel sequential || die
 }
 
 pkg_postinst() {
