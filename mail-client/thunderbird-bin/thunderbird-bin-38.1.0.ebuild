@@ -1,14 +1,16 @@
 # Copyright 1999-2015 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/mail-client/thunderbird-bin/thunderbird-bin-31.6.0.ebuild,v 1.3 2015/04/24 09:58:24 ago Exp $
+# $Header: /var/cvsroot/gentoo-x86/mail-client/thunderbird-bin/thunderbird-bin-38.1.0.ebuild,v 1.1 2015/07/16 18:18:29 axs Exp $
 
 EAPI="5"
 MOZ_ESR="0"
+MOZ_LIGHTNING_VER="4.0.1"
 
 # Can be updated using scripts/get_langs.sh from mozilla overlay
-MOZ_LANGS=(ar ast be bg bn-BD br ca cs da de el en en-GB en-US es-AR es-ES et eu
-fi fr fy-NL ga-IE gd gl he hu id is it ja ko lt nb-NO nl nn-NO pa-IN pl pt-BR
-pt-PT rm ro ru si sk sl sq sr sv-SE ta-LK tr uk vi zh-CN zh-TW)
+MOZ_LANGS=(ar ast be bg bn-BD br ca cs cy da de el en en-GB en-US es-AR
+es-ES et eu fi fr fy-NL ga-IE gd gl he hr hsb hu hy-AM id is it ja ko lt
+nb-NO nl nn-NO pa-IN pl pt-BR pt-PT rm ro ru si sk sl sq sr sv-SE ta-LK tr
+uk vi zh-CN zh-TW )
 
 # Convert the ebuild version to the upstream mozilla version, used by
 MOZ_PN="${PN/-bin}"
@@ -25,17 +27,27 @@ MOZ_P="${MOZ_PN}-${MOZ_PV}"
 # Upstream ftp release URI that's used by mozlinguas.eclass
 # We don't use the http mirror because it deletes old tarballs.
 MOZ_FTP_URI="ftp://ftp.mozilla.org/pub/mozilla.org/${MOZ_PN}/releases/"
+MOZ_HTTP_URI="http://ftp.mozilla.org/pub/mozilla.org/${MOZ_PN}/releases/"
 
 inherit eutils multilib pax-utils fdo-mime gnome2-utils mozlinguas nsplugins
 
 DESCRIPTION="Thunderbird Mail Client"
 SRC_URI="${SRC_URI}
-	amd64? ( ${MOZ_FTP_URI}/${MOZ_PV}/linux-x86_64/en-US/${MOZ_P}.tar.bz2 -> ${PN}_x86_64-${PV}.tar.bz2 )
-	x86? ( ${MOZ_FTP_URI}/${MOZ_PV}/linux-i686/en-US/${MOZ_P}.tar.bz2 -> ${PN}_i686-${PV}.tar.bz2 )"
+	amd64? (
+		${MOZ_FTP_URI}/${MOZ_PV}/linux-x86_64/en-US/${MOZ_P}.tar.bz2 -> ${PN}_x86_64-${PV}.tar.bz2
+		${MOZ_HTTP_URI}/${MOZ_PV}/linux-x86_64/en-US/${MOZ_P}.tar.bz2 -> ${PN}_x86_64-${PV}.tar.bz2
+	)
+	x86? (
+		${MOZ_FTP_URI}/${MOZ_PV}/linux-i686/en-US/${MOZ_P}.tar.bz2 -> ${PN}_i686-${PV}.tar.bz2
+		${MOZ_HTTP_URI}/${MOZ_PV}/linux-i686/en-US/${MOZ_P}.tar.bz2 -> ${PN}_i686-${PV}.tar.bz2
+	)
+	${MOZ_FTP_URI/${MOZ_PN}/calendar/lightning}/${MOZ_LIGHTNING_VER}/linux/lightning.xpi -> lightning-${MOZ_LIGHTNING_VER}.xpi
+	${MOZ_HTTP_URI/${MOZ_PN}/calendar/lightning}/${MOZ_LIGHTNING_VER}/linux/lightning.xpi -> lightning-${MOZ_LIGHTNING_VER}.xpi
+"
 HOMEPAGE="http://www.mozilla.com/thunderbird"
 RESTRICT="strip mirror"
 
-KEYWORDS="-* amd64 x86"
+KEYWORDS="-* ~amd64 ~x86"
 SLOT="0"
 LICENSE="MPL-2.0 GPL-2 LGPL-2.1"
 IUSE="+crashreporter selinux"
@@ -44,15 +56,15 @@ DEPEND="app-arch/unzip"
 
 RDEPEND="virtual/freedesktop-icon-theme
 	dev-libs/atk
+	>=sys-apps/dbus-0.60
 	>=dev-libs/dbus-glib-0.72
-	dev-libs/glib:2
+	>=dev-libs/glib-2.26:2
 	>=media-libs/alsa-lib-1.0.16
 	media-libs/fontconfig
 	>=media-libs/freetype-2.4.10:2
-	>=sys-apps/dbus-0.60
 	>=x11-libs/cairo-1.10[X]
 	x11-libs/gdk-pixbuf:2
-	>=x11-libs/gtk+-2.14:2
+	>=x11-libs/gtk+-2.18:2
 	x11-libs/libX11
 	x11-libs/libXext
 	x11-libs/libXrender
@@ -79,6 +91,7 @@ src_unpack() {
 
 	# Unpack language packs
 	mozlinguas_src_unpack
+	xpi_unpack lightning-${MOZ_LIGHTNING_VER}.xpi
 }
 
 src_install() {
@@ -102,9 +115,16 @@ src_install() {
 	# Install thunderbird in /opt
 	dodir ${MOZILLA_FIVE_HOME%/*}
 	mv "${S}" "${D}"${MOZILLA_FIVE_HOME}
+	cd "${WORKDIR}" || die # PWD no longer exists so move to somewhere that does
 
 	# Install language packs
+	MOZEXTENSION_TARGET="distribution/bundles" \
 	mozlinguas_src_install
+
+	# Install language packs for calendar
+	mozlinguas_xpistage_langpacks \
+		"${ED%/}/${MOZILLA_FIVE_HOME%/}/distribution/extensions/{e2fda1a4-762b-4020-b5ad-a41df1933103}" \
+		"${WORKDIR}"/lightning-${MOZ_LIGHTNING_VER} lightning calendar
 
 	# Create /usr/bin/thunderbird-bin
 	dodir /usr/bin/
@@ -138,6 +158,13 @@ pkg_preinst() {
 pkg_postinst() {
 	fdo-mime_desktop_database_update
 	gnome2_icon_cache_update
+
+	elog "If calendar fails to show up in extensions, or if you need to force it"
+	elog "to be reloaded in your profile (ie: after re-emerging ${PN}"
+	elog "to enable or disable locales via LINGUAS), please open config editor"
+	elog "and set extensions.lastAppVersion to 38.0.0 to force a reload. If this"
+	elog "fails to show the calendar extension after restarting with above change"
+	elog "please file a bug report."
 }
 
 pkg_postrm() {
