@@ -1,13 +1,15 @@
 # Copyright 2010-2015 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/net-p2p/bitcoind/bitcoind-0.11.0.ebuild,v 1.2 2015/07/17 20:48:48 blueness Exp $
+# $Header: /var/cvsroot/gentoo-x86/net-p2p/bitcoind/bitcoind-0.10.2-r1.ebuild,v 1.1 2015/07/17 22:18:00 blueness Exp $
 
 EAPI=5
 
-BITCOINCORE_COMMITHASH="d26f951802c762de04fb68e1a112d611929920ba"
-BITCOINCORE_LJR_DATE="20150711"
-BITCOINCORE_IUSE="examples ljr logrotate test upnp +wallet zeromq"
-BITCOINCORE_POLICY_PATCHES="cltv cpfp rbf spamfilter"
+BITCOINCORE_COMMITHASH="16f45600c8c372a738ffef544292864256382601"
+BITCOINCORE_SRC_SUFFIX="-r1"
+BITCOINCORE_LJR_PV="0.10.1"
+BITCOINCORE_LJR_DATE="20150428"
+BITCOINCORE_IUSE="examples ljr logrotate test upnp +wallet xt zeromq"
+BITCOINCORE_POLICY_PATCHES="cpfp dcmp rbf spamfilter"
 BITCOINCORE_NEED_LEVELDB=1
 BITCOINCORE_NEED_LIBSECP256K1=1
 inherit bash-completion-r1 bitcoincore user systemd
@@ -15,7 +17,7 @@ inherit bash-completion-r1 bitcoincore user systemd
 DESCRIPTION="Original Bitcoin crypto-currency wallet for automated services"
 LICENSE="MIT"
 SLOT="0"
-KEYWORDS="~amd64 ~arm ~arm64 ~mips ~ppc ~x86 ~amd64-linux ~x86-linux"
+KEYWORDS="~amd64 ~arm ~arm64 ~x86 ~amd64-linux ~x86-linux"
 
 RDEPEND="
 	logrotate? (
@@ -32,10 +34,12 @@ pkg_setup() {
 
 src_prepare() {
 	sed -i 's/have bitcoind &&//;s/^\(complete -F _bitcoind bitcoind\) bitcoin-cli$/\1/' contrib/${PN}.bash-completion
+	epatch "${FILESDIR}/0.10.0-openrc-compat.patch"
 	bitcoincore_src_prepare
 }
 
 src_configure() {
+	# NOTE: --enable-zmq actually disables it
 	bitcoincore_conf \
 		--with-daemon
 }
@@ -58,7 +62,7 @@ src_install() {
 	fowners bitcoin:bitcoin /var/lib/bitcoin/.bitcoin
 	dosym /etc/bitcoin/bitcoin.conf /var/lib/bitcoin/.bitcoin/bitcoin.conf
 
-	dodoc doc/assets-attribution.md doc/bips.md doc/tor.md
+	dodoc doc/assets-attribution.md doc/tor.md
 	doman contrib/debian/manpages/{bitcoind.1,bitcoin.conf.5}
 
 	newbashcomp contrib/${PN}.bash-completion ${PN}
