@@ -1,6 +1,6 @@
 # Copyright 1999-2015 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/app-admin/logstash-bin/logstash-bin-1.4.3.ebuild,v 1.1 2015/07/01 08:04:27 idella4 Exp $
+# $Header: /var/cvsroot/gentoo-x86/app-admin/logstash-bin/logstash-bin-1.5.3.ebuild,v 1.1 2015/07/21 13:14:40 idella4 Exp $
 
 EAPI=5
 
@@ -16,6 +16,9 @@ SLOT="0"
 KEYWORDS="~amd64"
 IUSE=""
 
+RESTRICT="strip"
+QA_PREBUILT="opt/logstash/vendor/jruby/lib/jni/*/libjffi*.so"
+
 DEPEND=""
 RDEPEND="|| ( virtual/jre:1.8 virtual/jre:1.7 )"
 
@@ -30,7 +33,7 @@ src_install() {
 
 	insinto "/opt/${MY_PN}"
 	doins -r .
-	fperms 0755 "/opt/${MY_PN}/bin/${MY_PN}"
+	fperms 0755 "/opt/${MY_PN}/bin/${MY_PN}" "/opt/${MY_PN}/vendor/jruby/bin/jruby"
 
 	insinto /etc/logrotate.d
 	doins "${FILESDIR}/${MY_PN}.logrotate"
