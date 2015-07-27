@@ -1,12 +1,12 @@
-# Copyright 1999-2012 Gentoo Foundation
+# Copyright 1999-2015 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/dev-dotnet/zeitgeist-sharp/zeitgeist-sharp-0.8.0.0.ebuild,v 1.4 2012/06/28 17:08:17 jlec Exp $
+# $Header: /var/cvsroot/gentoo-x86/dev-dotnet/zeitgeist-sharp/zeitgeist-sharp-0.8.0.0-r2.ebuild,v 1.1 2015/07/27 18:33:49 jlec Exp $
 
-EAPI=4
+EAPI=5
 
 AUTOTOOLS_AUTORECONF=yes
 
-inherit autotools-utils mono versionator
+inherit autotools-utils mono-env versionator
 
 DIR_PV=$(get_version_component_range 1-2)
 DIR_PV2=$(get_version_component_range 1-3)
@@ -18,7 +18,7 @@ SRC_URI="
 	doc? ( http://launchpad.net/zeitgeist-sharp/${DIR_PV}/${DIR_PV2}/+download/${PN}-docs-${DIR_PV2}.tar.gz )"
 
 SLOT="0"
-KEYWORDS="~amd64 ~x86 ~amd64-linux ~x86-linux"
+KEYWORDS="~amd64 ~ppc ~x86 ~amd64-linux ~x86-linux"
 LICENSE="GPL-3"
 IUSE="doc"
 
@@ -35,9 +35,18 @@ AUTOTOOLS_IN_SOURCE_BUILD=1
 
 PATCHES=(
 	"${FILESDIR}"/${P}-zg-0.9.patch
-	"${FILESDIR}"/${P}-automake-1.12.patch )
+	"${FILESDIR}"/${P}-automake-1.12.patch
+	"${FILESDIR}"/${P}-fix-tools-version.patch
+)
+
+src_prepare() {
+	sed \
+		-e "s:@expanded_libdir@:@libdir@:" \
+		-i Zeitgeist/zeitgeist-sharp.pc.in || die
+	autotools-utils_src_prepare
+}
 
 src_install() {
+	use doc && HTML_DOCS=( "${WORKDIR}"/${PN}-docs/. )
 	autotools-utils_src_install
-	use doc && dohtml -r "${WORKDIR}"/${PN}-docs/*
 }
