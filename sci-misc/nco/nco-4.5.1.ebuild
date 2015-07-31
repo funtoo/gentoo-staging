@@ -1,6 +1,6 @@
 # Copyright 1999-2015 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/sci-misc/nco/nco-4.4.2.ebuild,v 1.4 2015/07/31 07:45:44 jlec Exp $
+# $Header: /var/cvsroot/gentoo-x86/sci-misc/nco/nco-4.5.1.ebuild,v 1.1 2015/07/31 07:56:36 jlec Exp $
 
 EAPI=5
 
@@ -14,8 +14,7 @@ SRC_URI="http://nco.sf.net/src/${P}.tar.gz"
 LICENSE="GPL-3"
 SLOT="0/${PV}"
 KEYWORDS="~amd64 ~ppc ~x86 ~amd64-linux ~x86-linux"
-
-IUSE="dap doc gsl ncap2 static-libs test udunits"
+IUSE="dap doc gsl ncap2 openmp static-libs test udunits"
 
 RDEPEND="
 	>=sci-libs/netcdf-4:=[dap=,tools]
@@ -32,6 +31,7 @@ src_configure() {
 		$(use_enable dap dap-netcdf)
 		$(use_enable gsl)
 		$(use_enable ncap2)
+		$(use_enable openmp)
 		$(use_enable udunits udunits2)
 	)
 	if has_version '>=sci-libs/netcdf-4[hdf5]'; then
@@ -44,8 +44,7 @@ src_configure() {
 }
 
 src_install() {
+	use doc && DOCS=( doc/nco.pdf ) && HTML_DOCS=( doc/nco.html )
 	autotools-utils_src_install
-	cd doc
-	doinfo *.info*
-	use doc && dohtml nco.html && dodoc nco.pdf
+	doinfo doc/*.info*
 }
