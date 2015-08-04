@@ -1,6 +1,6 @@
 # Copyright 1999-2015 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/x11-misc/zim/zim-0.62.ebuild,v 1.2 2015/08/03 20:18:38 sping Exp $
+# $Header: /var/cvsroot/gentoo-x86/x11-misc/zim/zim-0.63.ebuild,v 1.1 2015/08/03 20:32:43 sping Exp $
 
 EAPI=5
 
@@ -29,7 +29,6 @@ DEPEND="${RDEPEND}
 
 PATCHES=(
 	"${FILESDIR}"/${PN}-0.60-remove-ubuntu-theme.patch
-	"${FILESDIR}"/${P}-desktop.patch
 )
 
 python_prepare() {
