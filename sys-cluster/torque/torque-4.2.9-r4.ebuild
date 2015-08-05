@@ -1,6 +1,6 @@
 # Copyright 1999-2015 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/sys-cluster/torque/torque-4.2.9-r3.ebuild,v 1.1 2015/04/30 18:07:29 jsbronder Exp $
+# $Header: /var/cvsroot/gentoo-x86/sys-cluster/torque/torque-4.2.9-r4.ebuild,v 1.1 2015/08/05 17:23:36 jsbronder Exp $
 
 EAPI=5
 
@@ -19,11 +19,11 @@ IUSE="cpusets +crypt doc drmaa kernel_linux munge nvidia server +syslog tk"
 
 DEPEND_COMMON="
 	sys-libs/ncurses
-	sys-libs/readline
+	sys-libs/readline:*
 	cpusets? ( sys-apps/hwloc )
 	munge? ( sys-auth/munge )
 	nvidia? ( >=x11-drivers/nvidia-drivers-275 )
-	tk? ( dev-lang/tk )
+	tk? ( dev-lang/tk:* )
 	syslog? ( virtual/logger )
 	!games-util/qstat"
 
@@ -166,64 +166,13 @@ pkg_preinst() {
 pkg_postinst() {
 	elog "    If this is the first time torque has been installed, then you are not"
 	elog "ready to start the server.  Please refer to the documentation located at:"
-	elog "http://www.clusterresources.com/wiki/doku.php?id=torque:torque_wiki"
-	echo ""
-	elog "    For a basic setup, you may use emerge --config ${PN}"
-	echo ""
+	elog "http://docs.adaptivecomputing.com/torque/${PN//./-}/Content/topics/1-installConfig/initializeConfigOnServer.htm"
 	if [[ -z "${REPLACING_VERSIONS}" ]] || [[ ${REPLACING_VERSIONS} < 4 ]]; then
+		echo
 		elog "Important 4.0+ updates"
 		elog "  - The on-wire protocol version has been changed."
 		elog "    Versions of Torque before 4.0.0 are no longer able to communicate."
 		elog "  - pbs_iff has been replaced by trqauthd, you will now need to add"
 		elog "    trqauthd to your default runlevel."
 	fi
-}
-
-# root will be setup as the primary operator/manager, the local machine
-# will be added as a node and we'll create a simple queue, batch.
-pkg_config() {
-	local h="$(echo "${ROOT}/${PBS_SERVER_HOME}" | sed 's:///*:/:g')"
-	local rc=0
-
-	ebegin "Configuring Torque"
-	einfo "Using ${h} as the pbs homedir"
-	einfo "Using ${PBS_SERVER_NAME} as the pbs_server"
-
-	# Check for previous configuration and bail if found.
-	if [ -e "${h}/server_priv/acl_svr/operators" ] \
-		|| [ -e "${h}/server_priv/nodes" ] \
-		|| [ -e "${h}/mom_priv/config" ]; then
-		ewarn "Previous Torque configuration detected.  Press Enter to"
-		ewarn "continue or Control-C to abort now"
-		read
-	fi
-
-	# pbs_mom configuration.
-	echo "\$pbsserver ${PBS_SERVER_NAME}" > "${h}/mom_priv/config" || die
-	echo "\$logevent 255" >> "${h}/mom_priv/config" || die
-
-	if use server; then
-		local qmgr="${EROOT}/usr/bin/qmgr -c"
-		# pbs_server bails on repeated backslashes.
-		if ! "${EROOT}"/usr/sbin/pbs_server -f -d "${h}" -t create; then
-			eerror "Failed to start pbs_server"
-			rc=1
-		else
-			${qmgr} "set server operators = root@$(hostname -f)" ${PBS_SERVER_NAME} \
-				&& ${qmgr} "create queue batch" ${PBS_SERVER_NAME} \
-				&& ${qmgr} "set queue batch queue_type = Execution" ${PBS_SERVER_NAME} \
-				&& ${qmgr} "set queue batch started = True" ${PBS_SERVER_NAME} \
-				&& ${qmgr} "set queue batch enabled = True" ${PBS_SERVER_NAME} \
-				&& ${qmgr} "set server default_queue = batch" ${PBS_SERVER_NAME} \
-				&& ${qmgr} "set server resources_default.nodes = 1" ${PBS_SERVER_NAME} \
-				&& ${qmgr} "set server scheduling = True" ${PBS_SERVER_NAME} \
-				|| die
-
-			"${EROOT}"/usr/bin/qterm -t quick ${PBS_SERVER_NAME} || rc=1
-
-			# Add the local machine as a node.
-			echo "$(hostname -f) np=1" > "${h}/server_priv/nodes" || die
-		fi
-	fi
-	eend ${rc}
 }
