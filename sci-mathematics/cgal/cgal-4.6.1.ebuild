@@ -1,6 +1,6 @@
 # Copyright 1999-2015 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/sci-mathematics/cgal/cgal-4.3.ebuild,v 1.5 2015/08/08 10:42:39 xmw Exp $
+# $Header: /var/cvsroot/gentoo-x86/sci-mathematics/cgal/cgal-4.6.1.ebuild,v 1.1 2015/08/08 10:57:06 xmw Exp $
 
 EAPI=5
 
@@ -9,8 +9,8 @@ CMAKE_BUILD_TYPE=Release
 inherit multilib cmake-utils
 
 MY_P=CGAL-${PV}
-PID=32995
-DPID=33000
+PID=34900
+DPID=34902
 
 DESCRIPTION="C++ library for geometric algorithms and data structures"
 HOMEPAGE="http://www.cgal.org/ https://gforge.inria.fr/projects/cgal/"
@@ -20,7 +20,7 @@ SRC_URI="
 
 LICENSE="LGPL-3 GPL-3 Boost-1.0"
 SLOT="0"
-KEYWORDS="amd64 x86 ~amd64-linux ~x86-linux"
+KEYWORDS="~amd64 ~x86 ~amd64-linux ~x86-linux"
 IUSE="doc examples +gmp mpfi qt4"
 
 RDEPEND="
@@ -52,7 +52,7 @@ src_prepare() {
 }
 
 src_configure() {
-	local mycmakeargs+=(
+	local mycmakeargs=(
 		-DCGAL_INSTALL_LIB_DIR=$(get_libdir)
 		-DWITH_CGAL_Qt3=OFF
 		-DWITH_LEDA=OFF
