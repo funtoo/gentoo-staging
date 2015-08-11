@@ -1,6 +1,6 @@
 # Copyright 1999-2015 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/app-text/mupdf/mupdf-1.5-r1.ebuild,v 1.8 2015/08/06 11:47:08 ago Exp $
+# $Id$
 
 EAPI=5
 
@@ -41,7 +41,8 @@ src_prepare() {
 		"${FILESDIR}"/${PN}-1.3-CFLAGS.patch \
 		"${FILESDIR}"/${PN}-1.5-old-debian-files.patch \
 		"${FILESDIR}"/${PN}-1.3-pkg-config.patch \
-		"${FILESDIR}"/${PN}-1.5-Makerules-openssl-curl.patch
+		"${FILESDIR}"/${PN}-1.5-Makerules-openssl-curl.patch \
+		"${FILESDIR}"/${PN}-1.5-format-security-error.patch
 
 	if has_version ">=media-libs/openjpeg-2.1:2" ; then
 		epatch \
