@@ -12,7 +12,7 @@ if [[ ${PV} == "9999" ]] ; then
 	EGIT_REPO_URI="git://anongit.gentoo.org/proj/grss.git"
 	inherit git-2
 else
-	SRC_URI="http://dev.gentoo.org/~blueness/${PN}/${P}.tar.bz2"
+	SRC_URI="http://dev.gentoo.org/~blueness/${PN}/${P}.tar.gz"
 	KEYWORDS="~amd64"
 fi
 
@@ -31,7 +31,10 @@ RDEPEND="
 	dev-vcs/git
 	net-misc/rsync
 	sys-apps/portage
-	sys-kernel/genkernel"
+	|| (
+		sys-kernel/genkernel
+		sys-kernel/genkernel-next
+	)"
 
 src_install() {
 	distutils-r1_src_install
