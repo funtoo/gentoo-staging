@@ -4,7 +4,7 @@
 
 EAPI=5
 
-EGO_PN=github.com/docker/machine/...
+EGO_PN=github.com/docker/${PN##*-}/...
 
 if [[ ${PV} = *9999* ]]; then
 	inherit golang-vcs
@@ -16,8 +16,8 @@ else
 fi
 inherit golang-build
 
-DESCRIPTION="Machine management for a container-centric world"
-HOMEPAGE="https://docs.docker.com/machine/ "
+DESCRIPTION="A Docker-native clustering system"
+HOMEPAGE="https://docs.docker.com/${PN##*-}/"
 LICENSE="Apache-2.0"
 SLOT="0"
 IUSE=""
