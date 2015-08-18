@@ -10,15 +10,11 @@ WEBAPP_NO_AUTO_INSTALL="yes"
 
 inherit bash-completion-r1 distutils-r1 eutils versionator webapp
 
-MY_PN="Django"
-MY_P="${MY_PN}-${PV}"
+MY_P="Django-${PV}"
 
 DESCRIPTION="High-level Python web framework"
 HOMEPAGE="http://www.djangoproject.com/ http://pypi.python.org/pypi/Django"
-SRC_URI="
-	https://www.djangoproject.com/m/releases/$(get_version_component_range 1-2)/${MY_P}.tar.gz
-	mirror://pypi/${MY_PN:0:1}/${MY_PN}/${MY_P}.tar.gz
-	"
+SRC_URI="https://www.djangoproject.com/m/releases/$(get_version_component_range 1-2)/${MY_P}.tar.gz"
 
 LICENSE="BSD"
 SLOT="0"
@@ -37,6 +33,11 @@ DEPEND="${RDEPEND}
 		dev-python/pytz[${PYTHON_USEDEP}]
 		dev-python/pyyaml[${PYTHON_USEDEP}]
 		)"
+
+#		dev-python/python-sqlparse[${PYTHON_USEDEP}]
+#		dev-python/bcrypt[${PYTHON_USEDEP}]
+#		dev-python/selenium[${PYTHON_USEDEP}]
+#		sci-libs/gdal[geos,${PYTHON_USEDEP}]
 
 S="${WORKDIR}/${MY_P}"
 
@@ -68,6 +69,20 @@ python_test() {
 		|| die "Tests fail with ${EPYTHON}"
 }
 
+src_install() {
+	distutils-r1_src_install
+	webapp_src_install
+
+	elog "Additional Backend support can be enabled via"
+	optfeature "MySQL backend support in python 2.7 only" dev-python/mysql-python
+	optfeature "MySQL backend support in python 2.7 - 3.4" dev-python/mysqlclient
+	optfeature "PostgreSQL backend support" dev-python/psycopg:2
+	optfeature "GEO Django" sci-libs/gdal[geos]
+	optfeature "Memcached support" dev-python/pylibmc dev-python/python-memcached
+	optfeature "ImageField Support" virtual/python-imaging
+	echo ""
+}
+
 python_install_all() {
 	newbashcomp extras/django_bash_completion ${PN}-admin
 	bashcomp_alias ${PN}-admin django-admin.py
@@ -82,24 +97,7 @@ python_install_all() {
 	distutils-r1_python_install_all
 }
 
-src_install() {
-	distutils-r1_src_install
-	webapp_src_install
-}
-
 pkg_postinst() {
-	elog "Additional Backend support can be enabled via"
-	optfeature "MySQL backend support in python 2.7 only" dev-python/mysql-python
-	optfeature "MySQL backend support in python 2.7 - 3.4" dev-python/mysqlclient
-	optfeature "PostgreSQL backend support" dev-python/psycopg:2
-	echo ""
-	elog "Other features can be enhanced by"
-	optfeature "GEO Django" sci-libs/gdal[geos]
-	optfeature "Memcached support" dev-python/python-memcached
-	optfeature "ImageField Support" virtual/python-imaging
-	optfeature "Password encryption" dev-python/bcrypt
-	optfeature "High-level abstractions for Django forms" dev-python/django-formtools
-	echo ""
 	elog "A copy of the admin media is available to webapp-config for installation in a"
 	elog "webroot, as well as the traditional location in python's site-packages dir"
 	elog "for easy development."

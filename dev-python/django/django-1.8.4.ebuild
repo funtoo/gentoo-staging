@@ -5,21 +5,24 @@
 EAPI=5
 
 PYTHON_COMPAT=( python2_7 python3_{3,4} pypy )
-
 PYTHON_REQ_USE='sqlite?'
 WEBAPP_NO_AUTO_INSTALL="yes"
 
 inherit bash-completion-r1 distutils-r1 eutils versionator webapp
 
-MY_P="Django-${PV}"
+MY_PN="Django"
+MY_P="${MY_PN}-${PV}"
 
 DESCRIPTION="High-level Python web framework"
 HOMEPAGE="http://www.djangoproject.com/ http://pypi.python.org/pypi/Django"
-SRC_URI="https://www.djangoproject.com/m/releases/$(get_version_component_range 1-2)/${MY_P}.tar.gz"
+SRC_URI="
+	https://www.djangoproject.com/m/releases/$(get_version_component_range 1-2)/${MY_P}.tar.gz
+	mirror://pypi/${MY_PN:0:1}/${MY_PN}/${MY_P}.tar.gz
+	"
 
 LICENSE="BSD"
 SLOT="0"
-KEYWORDS="amd64 ~ia64 ~ppc ~ppc64 ~sparc x86 ~x86-fbsd ~amd64-linux ~x86-linux ~ppc-macos ~x64-macos ~x86-macos"
+KEYWORDS="~amd64 ~ia64 ~ppc ~ppc64 ~sparc ~x86 ~x86-fbsd ~amd64-linux ~x86-linux ~ppc-macos ~x64-macos ~x86-macos"
 IUSE="doc sqlite test"
 
 RDEPEND=""
@@ -29,23 +32,18 @@ DEPEND="${RDEPEND}
 	test? (
 		${PYTHON_DEPS//sqlite?/sqlite}
 		dev-python/docutils[${PYTHON_USEDEP}]
-		<dev-python/numpy-1.9[$(python_gen_usedep 'python*')]
+		dev-python/numpy[$(python_gen_usedep 'python*')]
 		dev-python/pillow[${PYTHON_USEDEP}]
-		dev-python/pyyaml[${PYTHON_USEDEP}]
 		dev-python/pytz[${PYTHON_USEDEP}]
+		dev-python/pyyaml[${PYTHON_USEDEP}]
 		)"
-
-#		dev-python/bcrypt[${PYTHON_USEDEP}]
-#		dev-python/selenium[${PYTHON_USEDEP}]
 
 S="${WORKDIR}/${MY_P}"
 
 WEBAPP_MANUAL_SLOT="yes"
 
 PATCHES=(
-	"${FILESDIR}"/${PN}-1.5-py3tests.patch
-	"${FILESDIR}"/${PN}-1.6-objects.patch
-	"${FILESDIR}"/${PN}-1.6.10-bashcomp.patch
+	"${FILESDIR}"/${PN}-1.7.6-bashcomp.patch
 )
 
 pkg_setup() {
@@ -53,13 +51,12 @@ pkg_setup() {
 }
 
 python_prepare_all() {
-	# Disable tests requiring network connection.
-	sed \
-		-e "s:test_sensitive_cookie_not_cached:_&:g" \
-		-i tests/cache/tests.py || die
+	# Prevent d'loading in the doc build
+	sed -e '/^    "sphinx.ext.intersphinx",/d' -i docs/conf.py || die
 
 	distutils-r1_python_prepare_all
 }
+
 python_compile_all() {
 	use doc && emake -C docs html
 }
@@ -71,25 +68,12 @@ python_test() {
 		|| die "Tests fail with ${EPYTHON}"
 }
 
-src_install() {
-	distutils-r1_src_install
-	webapp_src_install
-
-	elog "Additional Backend support can be enabled via"
-	optfeature "MySQL backend support in python 2.7 only" dev-python/mysql-python
-	optfeature "MySQL backend support in python 2.7 - 3.4" dev-python/mysql-connector-python
-	optfeature "PostgreSQL backend support" dev-python/psycopg:2
-	optfeature "Memcached support" dev-python/pylibmc dev-python/python-memcached
-	optfeature "ImageField Support" virtual/python-imaging
-	echo ""
-}
-
 python_install_all() {
 	newbashcomp extras/django_bash_completion ${PN}-admin
 	bashcomp_alias ${PN}-admin django-admin.py
 
 	if use doc; then
-		rm -fr docs/_build/html/_sources || die
+		rm -fr docs/_build/html/_sources || die
 		local HTML_DOCS=( docs/_build/html/. )
 	fi
 
@@ -98,7 +82,24 @@ python_install_all() {
 	distutils-r1_python_install_all
 }
 
+src_install() {
+	distutils-r1_src_install
+	webapp_src_install
+}
+
 pkg_postinst() {
+	elog "Additional Backend support can be enabled via"
+	optfeature "MySQL backend support in python 2.7 only" dev-python/mysql-python
+	optfeature "MySQL backend support in python 2.7 - 3.4" dev-python/mysqlclient
+	optfeature "PostgreSQL backend support" dev-python/psycopg:2
+	echo ""
+	elog "Other features can be enhanced by"
+	optfeature "GEO Django" sci-libs/gdal[geos]
+	optfeature "Memcached support" dev-python/pylibmc dev-python/python-memcached
+	optfeature "ImageField Support" virtual/python-imaging
+	optfeature "Password encryption" dev-python/bcrypt
+	optfeature "High-level abstractions for Django forms" dev-python/django-formtools
+	echo ""
 	elog "A copy of the admin media is available to webapp-config for installation in a"
 	elog "webroot, as well as the traditional location in python's site-packages dir"
 	elog "for easy development."

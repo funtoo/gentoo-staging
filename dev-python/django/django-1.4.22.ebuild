@@ -4,10 +4,8 @@
 
 EAPI=5
 
-PYTHON_COMPAT=( python2_7 python3_{3,4} pypy )
-
+PYTHON_COMPAT=( python2_7 )
 PYTHON_REQ_USE='sqlite?'
-WEBAPP_NO_AUTO_INSTALL="yes"
 
 inherit bash-completion-r1 distutils-r1 eutils versionator webapp
 
@@ -19,49 +17,48 @@ SRC_URI="https://www.djangoproject.com/m/releases/$(get_version_component_range 
 
 LICENSE="BSD"
 SLOT="0"
-KEYWORDS="amd64 ~ia64 ~ppc ~ppc64 ~sparc x86 ~x86-fbsd ~amd64-linux ~x86-linux ~ppc-macos ~x64-macos ~x86-macos"
-IUSE="doc sqlite test"
+KEYWORDS="~amd64 ~ia64 ~ppc ~ppc64 ~sparc ~x86 ~x86-fbsd ~amd64-linux ~x86-linux ~ppc-macos ~x64-macos ~x86-macos"
+IUSE="sqlite test"
 
 RDEPEND=""
 DEPEND="${RDEPEND}
 	dev-python/setuptools[${PYTHON_USEDEP}]
-	doc? ( >=dev-python/sphinx-1.0.7[${PYTHON_USEDEP}] )
 	test? (
 		${PYTHON_DEPS//sqlite?/sqlite}
 		dev-python/docutils[${PYTHON_USEDEP}]
 		<dev-python/numpy-1.9[$(python_gen_usedep 'python*')]
 		dev-python/pillow[${PYTHON_USEDEP}]
-		dev-python/pyyaml[${PYTHON_USEDEP}]
 		dev-python/pytz[${PYTHON_USEDEP}]
+		dev-python/pyyaml[${PYTHON_USEDEP}]
+		virtual/python-imaging[${PYTHON_USEDEP}]
 		)"
 
-#		dev-python/bcrypt[${PYTHON_USEDEP}]
+#		app-text/pytextile[${PYTHON_USEDEP}]
+#		dev-python/markdown[${PYTHON_USEDEP}]
 #		dev-python/selenium[${PYTHON_USEDEP}]
+#		dev-python/py-bcrypt[${PYTHON_USEDEP}]
 
 S="${WORKDIR}/${MY_P}"
 
 WEBAPP_MANUAL_SLOT="yes"
 
 PATCHES=(
-	"${FILESDIR}"/${PN}-1.5-py3tests.patch
-	"${FILESDIR}"/${PN}-1.6-objects.patch
-	"${FILESDIR}"/${PN}-1.6.10-bashcomp.patch
+	"${FILESDIR}"/${PN}-1.4.19-bashcomp.patch
 )
-
-pkg_setup() {
-	webapp_pkg_setup
-}
 
 python_prepare_all() {
 	# Disable tests requiring network connection.
 	sed \
-		-e "s:test_sensitive_cookie_not_cached:_&:g" \
-		-i tests/cache/tests.py || die
+		-e "s/test_correct_url_value_passes/_&/" \
+		-e "s/test_correct_url_with_redirect/_&/" \
+		-i tests/modeltests/validation/tests.py || die
+	sed \
+		-e "s/test_urlfield_3/_&/" \
+		-e "s/test_urlfield_4/_&/" \
+		-e "s/test_urlfield_10/_&/" \
+		-i tests/regressiontests/forms/tests/fields.py || die
 
 	distutils-r1_python_prepare_all
-}
-python_compile_all() {
-	use doc && emake -C docs html
 }
 
 python_test() {
@@ -88,19 +85,20 @@ python_install_all() {
 	newbashcomp extras/django_bash_completion ${PN}-admin
 	bashcomp_alias ${PN}-admin django-admin.py
 
-	if use doc; then
-		rm -fr docs/_build/html/_sources || die
-		local HTML_DOCS=( docs/_build/html/. )
-	fi
-
 	insinto "${MY_HTDOCSDIR#${EPREFIX}}"
 	doins -r django/contrib/admin/static/admin/.
 	distutils-r1_python_install_all
 }
 
 pkg_postinst() {
-	elog "A copy of the admin media is available to webapp-config for installation in a"
-	elog "webroot, as well as the traditional location in python's site-packages dir"
-	elog "for easy development."
-	webapp_pkg_postinst
+	elog "A copy of the admin media is available to"
+	elog "webapp-config for installation in a webroot,"
+	elog "as well as the traditional location in python's"
+	elog "site-packages dir for easy development"
+	elog
+	ewarn "If you build Django ${PV} without USE=\"vhosts\""
+
+	# XXX: call webapp_pkg_postinst? the old ebuild didn't do that...
+	ewarn "webapp-config will automatically install the"
+	ewarn "admin media into the localhost webroot."
 }
