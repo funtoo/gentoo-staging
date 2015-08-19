@@ -242,7 +242,6 @@ src_prepare() {
 		'third_party/libvpx' \
 		'third_party/libvpx/source/libvpx/third_party/x86inc' \
 		'third_party/libxml/chromium' \
-		'third_party/libwebm' \
 		'third_party/libyuv' \
 		'third_party/lss' \
 		'third_party/lzma_sdk' \
@@ -496,20 +495,6 @@ src_configure() {
 	popd > /dev/null || die
 
 	third_party/libaddressinput/chromium/tools/update-strings.py || die
-
-	cat <<EOF >chrome/test/data/webui_test_resources.grd || die
-<?xml version="1.0" encoding="UTF-8"?>
-<grit latest_public_release="0" current_release="1">
-	<outputs>
-		<output filename="chrome/test/data/grit/webui_test_resources.h" type="rc_header">
-			<emit emit_type='prepend'></emit>
-		</output>
-		<output filename="webui_test_resources.pak" type="data_package" />
-	</outputs>
-	<release seq="1">
-	</release>
-</grit>
-EOF
 
 	einfo "Configuring Chromium..."
 	build/linux/unbundle/replace_gyp_files.py ${myconf} || die

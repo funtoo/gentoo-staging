@@ -56,7 +56,6 @@ RDEPEND=">=app-accessibility/speech-dispatcher-0.8:=
 	media-libs/libpng:0=
 	>=media-libs/libwebp-0.4.0:=
 	media-libs/speex:=
-	net-libs/libsrtp:=
 	pulseaudio? ( media-sound/pulseaudio:= )
 	sys-apps/dbus:=
 	sys-apps/pciutils:=
@@ -215,6 +214,15 @@ src_prepare() {
 		'third_party/boringssl' \
 		'third_party/brotli' \
 		'third_party/cacheinvalidation' \
+		'third_party/catapult' \
+		'third_party/catapult/tracing/third_party/components/polymer' \
+		'third_party/catapult/tracing/third_party/d3' \
+		'third_party/catapult/tracing/third_party/gl-matrix' \
+		'third_party/catapult/tracing/third_party/jszip' \
+		'third_party/catapult/tracing/third_party/tvcm' \
+		'third_party/catapult/tracing/third_party/tvcm/third_party/beautifulsoup/polymer_soup.py' \
+		'third_party/catapult/tracing/third_party/tvcm/third_party/rcssmin' \
+		'third_party/catapult/tracing/third_party/tvcm/third_party/rjsmin' \
 		'third_party/cld_2' \
 		'third_party/cros_system_api' \
 		'third_party/cython/python_flags.py' \
@@ -237,11 +245,13 @@ src_prepare() {
 		'third_party/libjingle' \
 		'third_party/libphonenumber' \
 		'third_party/libsecret' \
+		'third_party/libsrtp' \
 		'third_party/libudev' \
 		'third_party/libusb' \
 		'third_party/libvpx' \
 		'third_party/libvpx/source/libvpx/third_party/x86inc' \
 		'third_party/libxml/chromium' \
+		'third_party/libwebm' \
 		'third_party/libyuv' \
 		'third_party/lss' \
 		'third_party/lzma_sdk' \
@@ -271,15 +281,6 @@ src_prepare() {
 		'third_party/smhasher' \
 		'third_party/sqlite' \
 		'third_party/tcmalloc' \
-		'third_party/trace-viewer' \
-		'third_party/trace-viewer/tracing/third_party/components/polymer' \
-		'third_party/trace-viewer/tracing/third_party/d3' \
-		'third_party/trace-viewer/tracing/third_party/gl-matrix' \
-		'third_party/trace-viewer/tracing/third_party/jszip' \
-		'third_party/trace-viewer/tracing/third_party/tvcm' \
-		'third_party/trace-viewer/tracing/third_party/tvcm/third_party/beautifulsoup/polymer_soup.py' \
-		'third_party/trace-viewer/tracing/third_party/tvcm/third_party/rcssmin' \
-		'third_party/trace-viewer/tracing/third_party/tvcm/third_party/rjsmin' \
 		'third_party/usrsctp' \
 		'third_party/web-animations-js' \
 		'third_party/webdriver' \
@@ -319,6 +320,7 @@ src_configure() {
 
 	# Use system-provided libraries.
 	# TODO: use_system_hunspell (upstream changes needed).
+	# TODO: use_system_libsrtp (bug #459932).
 	# TODO: use_system_libusb (http://crbug.com/266149).
 	# TODO: use_system_libvpx (http://crbug.com/494939).
 	# TODO: use_system_opus (https://code.google.com/p/webrtc/issues/detail?id=3077).
@@ -334,7 +336,6 @@ src_configure() {
 		-Duse_system_libevent=1
 		-Duse_system_libjpeg=1
 		-Duse_system_libpng=1
-		-Duse_system_libsrtp=1
 		-Duse_system_libwebp=1
 		-Duse_system_libxml=1
 		-Duse_system_libxslt=1
@@ -495,6 +496,8 @@ src_configure() {
 	popd > /dev/null || die
 
 	third_party/libaddressinput/chromium/tools/update-strings.py || die
+
+	touch chrome/test/data/webui/i18n_process_css_test.html || die
 
 	einfo "Configuring Chromium..."
 	build/linux/unbundle/replace_gyp_files.py ${myconf} || die
