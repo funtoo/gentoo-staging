@@ -11,11 +11,12 @@ MY_P="${P/_/-}"
 
 DESCRIPTION="Cross platform Make"
 HOMEPAGE="http://www.cmake.org/"
-SRC_URI="http://www.cmake.org/files/v$(get_version_component_range 1-2)/${MY_P}.tar.gz"
+SRC_URI="http://www.cmake.org/files/v$(get_version_component_range 1-2)/${MY_P}.tar.gz
+	http://www.cmake.org/gitweb?p=cmake.git;a=patch;h=b9ec9392da21a3421e48c6961976060d872faffb -> ${PN}-3.3.1-FindPkgConfig_remove_variable_dereference.patch"
 
 LICENSE="CMake"
 SLOT="0"
-KEYWORDS="~amd64 ~arm ~arm64 ~hppa ~m68k ~mips ~ppc64 ~s390 ~sh ~x86 ~amd64-fbsd ~sparc-fbsd ~x86-fbsd ~hppa-hpux ~ia64-hpux ~x86-interix ~amd64-linux ~arm-linux ~x86-linux ~ppc-macos ~x64-macos ~x86-macos ~sparc-solaris ~x64-solaris ~x86-solaris"
+KEYWORDS="~amd64 ~arm ~arm64 ~hppa ~m68k ~mips ~ppc ~ppc64 ~s390 ~sh ~x86 ~amd64-fbsd ~sparc-fbsd ~x86-fbsd ~hppa-hpux ~ia64-hpux ~x86-interix ~amd64-linux ~arm-linux ~x86-linux ~ppc-macos ~x64-macos ~x86-macos ~sparc-solaris ~x64-solaris ~x86-solaris"
 IUSE="doc emacs system-jsoncpp ncurses qt4 qt5"
 
 RDEPEND="
@@ -62,6 +63,9 @@ PATCHES=(
 	# respect python eclasses
 	"${FILESDIR}"/${PN}-2.8.10.2-FindPythonLibs.patch
 	"${FILESDIR}"/${PN}-3.1.0-FindPythonInterp.patch
+
+	#upstream fixes (can usually be removed with a version bump)
+	"${DISTDIR}/${PN}-3.3.1-FindPkgConfig_remove_variable_dereference.patch"
 )
 
 cmake_src_bootstrap() {
