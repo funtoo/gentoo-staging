@@ -4,7 +4,7 @@
 
 EAPI=5
 
-PYTHON_COMPAT=( python2_7 python3_{3,4} pypy pypy3 )
+PYTHON_COMPAT=( python{2_7,3_3,3_4} pypy )
 
 inherit distutils-r1
 
@@ -14,11 +14,12 @@ SRC_URI="mirror://pypi/${P:0:1}/${PN}/${P}.tar.gz"
 
 LICENSE="Apache-2.0"
 SLOT="0"
-KEYWORDS="amd64 arm x86"
+KEYWORDS="~amd64 ~arm ~x86"
 IUSE="test"
 
 RDEPEND="
 	>=dev-python/pyasn1-0.1.3[${PYTHON_USEDEP}]
+	dev-python/traceback2[${PYTHON_USEDEP}]
 	"
 DEPEND="${RDEPEND}
 	>=dev-python/setuptools-0.6.10[${PYTHON_USEDEP}]
