@@ -20,6 +20,7 @@ REQUIRED_USE="^^ ( cdinstall gog )"
 RESTRICT="mirror bindist gog? ( fetch )"
 
 RDEPEND="|| ( games-fps/eduke32 games-fps/duke3d )"
+DEPEND="gog? ( app-arch/unzip )"
 
 S=${WORKDIR}
 
@@ -44,12 +45,7 @@ src_unpack() {
 			die "Error locating data files.";
 		fi
 	else
-		dd \
-			ibs="$(head -n 519 "${DISTDIR}/${GOG_FILE}" | wc -c | tr -d ' ')" \
-			skip=1 \
-			if="${DISTDIR}/${GOG_FILE}" \
-			of="${T}"/${GOG_FILE}.zip || die
-		unpack_zip "${T}"/${GOG_FILE}.zip
+		unpack_zip "${DISTDIR}"/${GOG_FILE}
 		cd data/noarch/data || die
 
 		# convert to lowercase
