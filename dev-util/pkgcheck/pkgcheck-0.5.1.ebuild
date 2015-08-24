@@ -20,19 +20,14 @@ HOMEPAGE="https://github.com/pkgcore/pkgcheck"
 LICENSE="|| ( BSD GPL-2 )"
 SLOT="0"
 
-RDEPEND="=sys-apps/pkgcore-9999[${PYTHON_USEDEP}]
-	=dev-python/snakeoil-9999[${PYTHON_USEDEP}]"
+RDEPEND=">=sys-apps/pkgcore-0.9.2[${PYTHON_USEDEP}]
+	>=dev-python/snakeoil-0.6.5[${PYTHON_USEDEP}]"
 DEPEND="${RDEPEND}
 	dev-python/setuptools[${PYTHON_USEDEP}]"
-[[ ${PV} == *9999 ]] && DEPEND+=" dev-python/sphinx[${PYTHON_USEDEP}]"
 
 pkg_setup() {
 	# disable snakeoil 2to3 caching...
 	unset PY2TO3_CACHEDIR
-}
-
-python_compile_all() {
-	[[ ${PV} == *9999 ]] && emake -C doc man
 }
 
 python_test() {
@@ -42,12 +37,6 @@ python_test() {
 python_install_all() {
 	local DOCS=( AUTHORS NEWS.rst )
 	distutils-r1_python_install_all
-
-	if [[ ${PV} == *9999 ]]; then
-		emake -C doc PREFIX=/usr DESTDIR="${D}" install_man
-	else
-		doman man/*
-	fi
 }
 
 pkg_postinst() {
