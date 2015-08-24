@@ -14,14 +14,14 @@ MY_P="${PN}-sources-${PV}"
 SV="$(get_version_component_range 1-2)"
 
 # creating the binary:
-# JAVA_PKG_FORCE_VM="$available-1.6" USE="doc source" ebuild scala-*.ebuild compile
+# JAVA_PKG_FORCE_VM="$available-1.7" USE="doc source" ebuild scala-*.ebuild compile
 # cd $WORDKIR
-# tar -cjf scala-2.11.1-gentoo-binary.tar.bz2 scala-2.11.1/build/pack/bin \
-# scala-2.11.1/build/pack/lib/ scala-2.11.1/build/pack/man \
-# scala-2.11.1/src/actors/ scala-2.11.1/src/forkjoin/ \
-# scala-2.11.1/src/library scala-2.11.1/src/library-aux/ \
-# scala-2.11.1/src/reflect/ scala-2.11.1/docs/TODO \
-# scala-2.11.1/doc/README scala-2.11.1/build/scaladoc/compiler
+# tar -cjf scala-2.11.2-gentoo-binary.tar.bz2 scala-2.11.2/build/pack/bin \
+# scala-2.11.2/build/pack/lib/ scala-2.11.2/build/pack/man \
+# scala-2.11.2/src/actors/ scala-2.11.2/src/forkjoin/ \
+# scala-2.11.2/src/library scala-2.11.2/src/library-aux/ \
+# scala-2.11.2/src/reflect/ scala-2.11.2/docs/TODO \
+# scala-2.11.2/doc/README scala-2.11.2/build/scaladoc/compiler
 
 # In the pullJarFiles function in tools/binary-repo-lib.sh it executes find commands
 # to search for .desired.sha1 files, which contain sha1 hashes that are appended
@@ -73,21 +73,19 @@ COMMON_DEP="dev-java/ant-core:0
 DEPEND="${COMMON_DEP}
 	java-virtuals/jdk-with-com-sun:0
 	!binary? (
-		>=virtual/jdk-1.6.0
-		<virtual/jdk-1.9.0
+		|| ( =virtual/jdk-1.7* =virtual/jdk-1.8* )
 		dev-java/ant-core:0
 		dev-java/ant-contrib:0
 		dev-java/ant-nodeps:0
 		media-gfx/graphviz
 	)
 	binary? (
-		>=virtual/jdk-1.7.0
-		<virtual/jdk-1.9.0
+		|| ( =virtual/jdk-1.7* =virtual/jdk-1.8* )
 	)
 	app-arch/xz-utils:0"
 
 RDEPEND="${COMMON_DEP}
-	>=virtual/jre-1.6
+	>=virtual/jre-1.7
 	app-eselect/eselect-scala
 	!dev-lang/scala-bin:0"
 
@@ -165,6 +163,8 @@ src_compile() {
 			# java.lang.OutOfMemoryError: PermGen space
 			eant -Djavac.args="-encoding UTF-8" -Duser.home="${WORKDIR}" \
 				docscomp
+			eant -Djavac.args="-encoding UTF-8" -Duser.home="${WORKDIR}" \
+				docs
 		fi
 	else
 		einfo "Skipping compilation, USE=binary is set."
@@ -212,9 +212,9 @@ src_install() {
 	fi
 	popd
 
-	local docdir="build/scaladoc/compiler"
+	local docdir="build/scaladoc"
 	dodoc docs/TODO doc/README
 	if use doc; then
-		dohtml -r "${docdir}"
+		dohtml -r "${docdir}"/{compiler,library}
 	fi
 }
