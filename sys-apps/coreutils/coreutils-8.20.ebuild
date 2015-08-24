@@ -13,7 +13,7 @@ SRC_URI="mirror://gnu-alpha/coreutils/${P}.tar.xz
 	mirror://gnu/${PN}/${P}.tar.xz
 	mirror://gentoo/${P}.tar.xz
 	mirror://gentoo/${P}-patches-${PATCH_VER}.tar.xz
-	http://dev.gentoo.org/~ryao/dist/${P}-patches-${PATCH_VER}.tar.xz"
+	https://dev.gentoo.org/~ryao/dist/${P}-patches-${PATCH_VER}.tar.xz"
 
 LICENSE="GPL-3"
 SLOT="0"
@@ -80,7 +80,7 @@ src_configure() {
 	econf \
 		--with-packager="Gentoo" \
 		--with-packager-version="${PVR} (p${PATCH_VER:-0})" \
-		--with-packager-bug-reports="http://bugs.gentoo.org/" \
+		--with-packager-bug-reports="https://bugs.gentoo.org/" \
 		--enable-install-program="arch" \
 		--enable-no-install-program="groups,hostname,kill,su,uptime" \
 		--enable-largefile \

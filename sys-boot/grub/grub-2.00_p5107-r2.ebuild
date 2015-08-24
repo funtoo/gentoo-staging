@@ -20,7 +20,7 @@ if [[ ${PV} != 9999 ]]; then
 	else
 		SRC_URI="mirror://gnu/${PN}/${P}.tar.xz
 			mirror://gentoo/${P}.tar.xz
-			http://dev.gentoo.org/~floppym/dist/${P}.tar.xz"
+			https://dev.gentoo.org/~floppym/dist/${P}.tar.xz"
 		S=${WORKDIR}/${P%_*}
 	fi
 	KEYWORDS="amd64 x86"
@@ -279,7 +279,7 @@ pkg_postinst() {
 	mount-boot_pkg_postinst
 
 	elog "For information on how to configure GRUB2 please refer to the guide:"
-	elog "    http://wiki.gentoo.org/wiki/GRUB2_Quick_Start"
+	elog "    https://wiki.gentoo.org/wiki/GRUB2_Quick_Start"
 
 	if has_version 'sys-boot/grub:0'; then
 		elog "A migration guide for GRUB Legacy users is available:"
