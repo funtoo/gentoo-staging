@@ -2,7 +2,7 @@
 <!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
 <pkgmetadata>
 	<herd>kde</herd>
-	<upstream>
-		<remote-id type="launchpad">signon-ui</remote-id>
-	</upstream>
+	<use>
+		<flag name="kdepim">KDE PIM integration via <pkg>kde-apps/kdepimlibs</pkg></flag>
+	</use>
 </pkgmetadata>
