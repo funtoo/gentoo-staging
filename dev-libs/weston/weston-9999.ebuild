@@ -1,4 +1,4 @@
-# Copyright 1999-2014 Gentoo Foundation
+# Copyright 1999-2015 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
 # $Id$
 
@@ -19,14 +19,15 @@ HOMEPAGE="http://wayland.freedesktop.org/"
 
 if [[ $PV = 9999* ]]; then
 	SRC_URI="${SRC_PATCHES}"
+	KEYWORDS=""
 else
 	SRC_URI="http://wayland.freedesktop.org/releases/${P}.tar.xz"
+	KEYWORDS="~amd64 ~arm ~x86 ~arm-linux"
 fi
 
 LICENSE="MIT CC-BY-SA-3.0"
 SLOT="0"
-KEYWORDS="~amd64 ~arm ~x86 ~arm-linux"
-IUSE="colord dbus +drm +egl editor examples fbdev gles2 headless +opengl rdp +resize-optimization rpi +launch screen-sharing static-libs +suid systemd test unwind wayland-compositor +X xwayland"
+IUSE="colord dbus +drm +egl editor examples fbdev gles2 headless ivi +opengl rdp +resize-optimization rpi +launch screen-sharing static-libs +suid systemd test unwind wayland-compositor +X xwayland"
 
 REQUIRED_USE="
 	drm? ( egl )
@@ -38,7 +39,8 @@ REQUIRED_USE="
 "
 
 RDEPEND="
-	>=dev-libs/wayland-1.6.0
+	>=dev-libs/libinput-0.8.0
+	>=dev-libs/wayland-1.8.1
 	media-libs/lcms:2
 	media-libs/libpng:0=
 	media-libs/libwebp:0=
@@ -126,6 +128,7 @@ src_configure() {
 		$(use_enable dbus) \
 		$(use_enable drm drm-compositor) \
 		$(use_enable headless headless-compositor) \
+		$(use_enable ivi ivi-shell) \
 		$(use_enable rdp rdp-compositor) \
 		$(use_enable rpi rpi-compositor) \
 		$(use_enable wayland-compositor) \
@@ -139,7 +142,6 @@ src_configure() {
 		$(use_enable suid setuid-install) \
 		$(use_enable xwayland) \
 		$(use_enable xwayland xwayland-test) \
-		--disable-libinput-backend \
 		${myconf}
 }
 

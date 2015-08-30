@@ -1,4 +1,4 @@
-# Copyright 1999-2013 Gentoo Foundation
+# Copyright 1999-2015 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
 # $Id$
 
@@ -6,10 +6,11 @@ EAPI=5
 
 if [[ ${PV} = 9999* ]]; then
 	EGIT_REPO_URI="git://anongit.freedesktop.org/git/wayland/${PN}"
-	GIT_ECLASS="git-2"
+	GIT_ECLASS="git-r3"
 	EXPERIMENTAL="true"
 fi
 VIRTUALX_REQUIRED="test"
+RESTRICT="test"
 
 inherit autotools readme.gentoo toolchain-funcs virtualx $GIT_ECLASS
 
@@ -21,39 +22,40 @@ if [[ $PV = 9999* ]]; then
 	KEYWORDS=""
 else
 	SRC_URI="http://wayland.freedesktop.org/releases/${P}.tar.xz"
-	KEYWORDS="~arm ~amd64 ~x86 ~arm-linux"
+	KEYWORDS="~amd64 ~arm ~x86 ~arm-linux"
 fi
 
 LICENSE="MIT CC-BY-SA-3.0"
 SLOT="0"
-IUSE="colord +drm +egl editor examples fbdev gles2 headless +opengl rdp +resize-optimization rpi static-libs +suid systemd tablet test unwind view wayland-compositor +X xwayland"
+IUSE="colord dbus +drm +egl editor examples fbdev gles2 headless ivi +opengl rdp +resize-optimization rpi +launch screen-sharing static-libs +suid systemd test unwind wayland-compositor +X xwayland"
 
 REQUIRED_USE="
 	drm? ( egl )
 	egl? ( || ( gles2 opengl ) )
-	fbdev? ( drm )
 	gles2? ( !opengl )
+	screen-sharing? ( rdp )
 	test? ( X )
 	wayland-compositor? ( egl )
 "
 
 RDEPEND="
-	>=dev-libs/wayland-1.1.90
-	media-libs/mesa[egl?,wayland]
+	>=dev-libs/libinput-0.8.0
+	>=dev-libs/wayland-1.8.1
 	media-libs/lcms:2
-	media-libs/libpng:=
-	media-libs/libwebp
+	media-libs/libpng:0=
+	media-libs/libwebp:0=
 	virtual/jpeg
-	sys-libs/pam
 	>=x11-libs/cairo-1.11.3[gles2(-)?,opengl?]
 	>=x11-libs/libdrm-2.4.30
 	x11-libs/libxkbcommon
 	x11-libs/pixman
+	x11-misc/xkeyboard-config
 	fbdev? (
 		>=sys-libs/mtdev-1.1.0
 		>=virtual/udev-136
 	)
 	colord? ( >=x11-misc/colord-0.1.27 )
+	dbus? ( sys-apps/dbus )
 	drm? (
 		media-libs/mesa[gbm]
 		>=sys-libs/mtdev-1.1.0
@@ -61,12 +63,14 @@ RDEPEND="
 	)
 	egl? (
 		media-libs/glu
-		media-libs/mesa[gles2]
+		media-libs/mesa[gles2,wayland]
 	)
 	editor? ( x11-libs/pango )
-	view? (
-		app-text/poppler:=[cairo]
-		dev-libs/glib:2
+	gles2? (
+		media-libs/mesa[wayland]
+	)
+	opengl? (
+		media-libs/mesa[wayland]
 	)
 	rdp? ( >=net-misc/freerdp-1.1.0_beta1_p20130710 )
 	rpi? (
@@ -77,19 +81,20 @@ RDEPEND="
 		sys-auth/pambase[systemd]
 		sys-apps/systemd[pam]
 	)
+	launch? ( sys-auth/pambase )
 	unwind? ( sys-libs/libunwind )
 	X? (
 		x11-libs/libxcb
 		x11-libs/libX11
 	)
 	xwayland? (
+		x11-base/xorg-server[wayland]
 		x11-libs/cairo[xcb]
 		x11-libs/libxcb
 		x11-libs/libXcursor
 	)
 "
 DEPEND="${RDEPEND}
-	gnome-base/librsvg
 	virtual/pkgconfig
 "
 
@@ -118,19 +123,23 @@ src_configure() {
 	fi
 
 	econf \
+		$(use_enable examples demo-clients-install) \
 		$(use_enable fbdev fbdev-compositor) \
+		$(use_enable dbus) \
 		$(use_enable drm drm-compositor) \
 		$(use_enable headless headless-compositor) \
+		$(use_enable ivi ivi-shell) \
 		$(use_enable rdp rdp-compositor) \
 		$(use_enable rpi rpi-compositor) \
 		$(use_enable wayland-compositor) \
 		$(use_enable X x11-compositor) \
+		$(use_enable launch weston-launch) \
 		$(use_enable colord) \
 		$(use_enable egl) \
 		$(use_enable unwind libunwind) \
 		$(use_enable resize-optimization) \
+		$(use_enable screen-sharing) \
 		$(use_enable suid setuid-install) \
-		$(use_enable tablet tablet-shell) \
 		$(use_enable xwayland) \
 		$(use_enable xwayland xwayland-test) \
 		${myconf}
@@ -149,35 +158,4 @@ src_install() {
 	default
 
 	readme.gentoo_src_install
-
-	pushd clients || die
-
-	if use opengl && use egl && use !gles2; then
-		dobin weston-gears
-	fi
-	if use editor; then
-		dobin weston-editor
-	fi
-	if use view; then
-		dobin weston-view
-	fi
-	if use examples; then
-		use egl && dobin weston-simple-egl
-		dobin \
-			weston-calibrator \
-			weston-clickdot \
-			weston-cliptest \
-			weston-dnd \
-			weston-eventdemo \
-			weston-flower \
-			weston-fullscreen \
-			weston-image \
-			weston-resizor \
-			weston-simple-shm \
-			weston-simple-touch \
-			weston-smoke \
-			weston-transformed
-	fi
-	popd
-
 }

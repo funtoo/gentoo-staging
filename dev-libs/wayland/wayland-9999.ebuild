@@ -1,4 +1,4 @@
-# Copyright 1999-2014 Gentoo Foundation
+# Copyright 1999-2015 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
 # $Id$
 
@@ -18,19 +18,25 @@ HOMEPAGE="http://wayland.freedesktop.org/"
 
 if [[ $PV = 9999* ]]; then
 	SRC_URI="${SRC_PATCHES}"
+	KEYWORDS=""
 else
 	SRC_URI="http://wayland.freedesktop.org/releases/${P}.tar.xz"
+	KEYWORDS="~alpha ~amd64 ~arm ~hppa ~ia64 ~m68k ~mips ~ppc ~ppc64 ~s390 ~sh ~sparc ~x86"
 fi
 
 LICENSE="MIT"
 SLOT="0"
-KEYWORDS="~alpha ~amd64 ~arm ~hppa ~ia64 ~m68k ~ppc ~ppc64 ~s390 ~sh ~sparc ~x86"
 IUSE="doc static-libs"
 
 RDEPEND=">=dev-libs/expat-2.1.0-r3:=[${MULTILIB_USEDEP}]
 	>=virtual/libffi-3.0.13-r1:=[${MULTILIB_USEDEP}]"
 DEPEND="${RDEPEND}
-	doc? ( app-doc/doxygen )
+	doc? (
+		>=app-doc/doxygen-1.6[dot]
+		app-text/xmlto
+		>=media-gfx/graphviz-2.26.0
+		sys-apps/grep[pcre]
+	)
 	virtual/pkgconfig"
 
 src_configure() {
