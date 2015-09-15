@@ -195,9 +195,9 @@ configure_cmake_standard() {
 		if ! use extraengine ; then
 			mycmakeargs+=(
 				-DWITHOUT_FEDERATED_STORAGE_ENGINE=1
-				-DPLUGIN_FEDERATED=0
+				-DPLUGIN_FEDERATED=NO
 				-DWITHOUT_FEDERATEDX_STORAGE_ENGINE=1
-				-DPLUGIN_FEDERATEDX=0 )
+				-DPLUGIN_FEDERATEDX=NO )
 		fi
 
 		mycmakeargs+=(
@@ -234,6 +234,10 @@ configure_cmake_standard() {
 		if mysql_version_is_at_least "10.1.1" ; then
 			mycmakeargs+=(  $(cmake-utils_use_with innodb-lz4 INNODB_LZ4)
 					$(cmake-utils_use_with innodb-lzo INNODB_LZO) )
+		fi
+
+		if in_iuse innodb-snappy ; then
+			mycmakeargs+=( $(cmake-utils_use_with innodb-snappy INNODB_SNAPPY)  )
 		fi
 
 		if mysql_version_is_at_least "10.1.2" ; then
