@@ -4,10 +4,10 @@
 
 EAPI=5
 
-inherit eutils autotools multilib-minimal
+inherit autotools eutils multilib-minimal
 
-DESCRIPTION="A new platform layer for Node"
-HOMEPAGE="https://github.com/joyent/libuv"
+DESCRIPTION="Cross-platform asychronous I/O"
+HOMEPAGE="https://github.com/libuv/libuv"
 SRC_URI="https://github.com/libuv/libuv/archive/v${PV}.tar.gz -> ${P}.tar.gz"
 
 LICENSE="BSD BSD-2 ISC MIT"
@@ -15,21 +15,19 @@ SLOT="0/1"
 KEYWORDS="~amd64 ~arm ~ppc ~ppc64 ~sparc ~x86 ~amd64-linux ~x86-linux"
 IUSE="static-libs"
 
-DEPEND="virtual/pkgconfig"
+DEPEND="sys-devel/libtool
+	virtual/pkgconfig[${MULTILIB_USEDEP}]"
 
 src_prepare() {
 	echo "m4_define([UV_EXTRA_AUTOMAKE_FLAGS], [serial-tests])" \
 		> m4/libuv-extra-automake-flags.m4 || die
-
-	sed -i \
-		-e '/libuv_la_CFLAGS/s#-g##' \
-		Makefile.am || die "fixing CFLAGS failed!"
 
 	eautoreconf
 }
 
 multilib_src_configure() {
 	ECONF_SOURCE="${S}" econf \
+		cc_cv_cflags__g=no \
 		$(use_enable static-libs static)
 }
 
