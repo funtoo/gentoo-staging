@@ -30,6 +30,17 @@
 
 #--- END OF EXAMPLES ---
 
+# Sergey Popov <pinkbyte@gentoo.org> (25 Nov 2015)
+# Dead upstream, security issues, see bug #557856
+# Removal in a month
+net-p2p/bittorrent
+
+# Andreas K. Huettel <dilfridge@gentoo.org> (22 Nov 2015)
+# txt2html got accidentally packaged twice, as TextToHTML
+# and as txt2html. Masking the version with nonstandard PN
+# for removal in 30 days.
+dev-perl/TextToHTML
+
 # Michael Sterrett <mr_bones_@gentoo.org> (22 Nov 2015)
 # Upstream is gone and doesn't build on modern systems.
 # Masked for removal on 20151222
@@ -60,15 +71,6 @@ app-pda/libsyncml
 app-pda/msynctool
 app-pda/multisync-gui
 app-pda/osynctool
-
-# Andreas K. Hüttel <dilfridge@gentoo.org> (13 Nov 2015)
-# dev-perl/Coro is incompatible with Perl 5.22 and there is no fix
-# in sight. Masking it and its reverse dependencies for removal in
-# 30 days.
-dev-perl/Coro
-dev-perl/Net-Server-Coro
-dev-perl/Net-IMAP-Simple
-dev-perl/Net-IMAP-Simple-SSL
 
 # Patrice Clement <monsieurp@gentoo.org> (12 Nov 2015)
 # Upstream dead + ebuild was never stabilised.
@@ -104,12 +106,12 @@ sci-chemistry/pymol-apbs-plugin
 # - ABIFLAGS reintroduced for 3.3+.
 # Resulting API/ABI change can break reverse dependencies, especially
 # if upstream hardcodes paths or library names.
-=app-eselect/eselect-python-20151117
+>=app-eselect/eselect-python-20151117
 =dev-lang/python-2.7.10-r4
 =dev-lang/python-3.3.5-r4
 =dev-lang/python-3.4.3-r4
 =dev-lang/python-3.5.0-r3
-=dev-lang/python-exec-2.1
+>=dev-lang/python-exec-2.1
 
 # Justin Lecher <jlec@gentoo.org> (10 Nov 2015)
 # Vulnerable package CVE-2014-{1932,1933}
@@ -186,11 +188,6 @@ dev-java/castor
 # Chí-Thanh Christopher Nguyễn <chithanh@gentoo.org> (29 Oct 2015)
 # Mask until it is decided how to address xorg-server file collisions #564358
 =x11-drivers/xf86-input-evdev-2.10.0
-
-# Patrice Clement <monsieurp@gentoo.org> (29 Oct 2015)
-# No release since 2007. Has dependencies on old ebuilds.
-# Removal in 30 days. See #564370
-dev-db/octopus
 
 # Ian Delaney <idella4@gentoo.org> (27 Oct 2015)
 # fails to build dev-lisp/sbcl-1.2.16 #563812
@@ -660,8 +657,8 @@ dev-java/sun-jce-bin
 
 # Julian Ospald <hasufell@gentoo.org> (26 Jun 2013)
 # Depends on masked dev-lang/lua-5.2
->=games-emulation/sdlmame-0.149
->=games-emulation/sdlmess-0.149
+=games-emulation/sdlmame-0.149
+=games-emulation/sdlmess-0.149
 
 # Chí-Thanh Christopher Nguyễn <chithanh@gentoo.org> (25 Jun 2013)
 # Mask new ptlib/opal for breakage, tracked in bug #474742
