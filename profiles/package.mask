@@ -30,6 +30,11 @@
 
 #--- END OF EXAMPLES ---
 
+# José María Alonso Josa <nimiux@gentoo.org> (15 Dec 2015)
+# Refers to same package as dev-lisp/clx
+# Masked for removal in 30 days, bug 568188
+dev-lisp/cl-clx
+
 # Andreas K. Huettel <dilfridge@gentoo.org> (11 Dec 2015)
 # Ancient, smells funny, disowned by upstream, needs syck
 # Masked for removal in 30 days, bug 565012
@@ -190,11 +195,6 @@ dev-python/imaging
 # dev-python/imaging to dev-python/pillow
 # obsolete now #508266
 virtual/python-imaging
-
-# Lars Wendler <polynomial-c@gentoo.org> (10 Nov 2015)
-# Masked apache-2.4.17 due to broken REDIRECT_URL
-# behavior. See Gentoo bug #565348 for more details.
-=www-servers/apache-2.4.17
 
 # Pacho Ramos <pacho@gentoo.org> (09 Nov 2015)
 # Nobody willing to maintain/bump it. Use qemu instead

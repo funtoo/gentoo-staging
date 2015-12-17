@@ -96,13 +96,6 @@ multilib_src_test() {
 		# create directories because mysqladmin might right out of order
 		mkdir -p "${T}"/var-tests{,/log}
 
-		# Create a symlink to provided binaries so the tests can find them when client-libs is off
-		if ! use client-libs ; then
-			ln -srf /usr/bin/my_print_defaults "${BUILD_DIR}/client/my_print_defaults" || die
-			ln -srf /usr/bin/perror "${BUILD_DIR}/client/perror" || die
-			mysql-multilib_disable_test main.perror "String mismatch due to not building local perror"
-		fi
-
 		# These are failing in Percona 5.6 for now and are believed to be
 		# false positives:
 		#
@@ -138,7 +131,7 @@ multilib_src_test() {
 			engines/funcs.db_alter_collate_ascii engines/funcs.db_alter_collate_utf8 \
 			engines/funcs.db_create_character_set engines/funcs.db_create_character_set_collate \
 			main.percona_bug1289599 main.mysqlhotcopy_archive main.mysqlhotcopy_myisam ; do
-				mysql-multilib_disable_test  "$t" "False positives in Gentoo"
+				mysql-multilib-r1_disable_test  "$t" "False positives in Gentoo"
 		done
 
 		# Run mysql tests
