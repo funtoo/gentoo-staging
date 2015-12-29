@@ -30,6 +30,17 @@
 
 #--- END OF EXAMPLES ---
 
+# Michael Palimaka <kensington@gentoo.org> (27 Dec 2015)
+# Fails to build. Dead upstream. Masked for removal in 30 days.
+# Bug 541522
+dev-util/pmk
+
+# Mikle Kolyada <zlogene@gentoo.org> (26 Dec 2015)
+# Dead upstream (last activity in 2003)
+# Nothing in the tree depends on it
+# Masked for removal
+dev-perl/SpeedyCGI
+
 # Sergey Popov <pinkbyte@gentoo.org> (25 Dec 2015)
 # Old versions lacks multilib support and proper subslots
 # Masked for removal
@@ -122,10 +133,6 @@ dev-java/jscience
 # Dev channel releases are only for people who are developers or want more
 # experimental features and accept a more unstable release.
 >=www-client/chromium-49
-
-# Mike Gilbert <floppym@gentoo.org> (06 Dec 2015)
-# Masked for testing.
-=sys-apps/dbus-1.10*
 
 # Patrice Clement <monsieurp@gentoo.org> (06 Dec 2015)
 # We maintain old versions which were never stabilised
@@ -264,11 +271,6 @@ app-eselect/eselect-esd
 # Pacho Ramos <pacho@gentoo.org> (09 Nov 2015)
 # Dead for years, see bug #248489. Removal in a month.
 dev-tex/latex-unicode
-
-# Patrice Clement <monsieurp@gentoo.org> (07 Nov 2015)
-# Duplicate package since it already exists as virtual/perl-Parse-CPAN-meta.
-# Masked for removal in 30 days.
-dev-perl/Parse-CPAN-Meta
 
 # Michał Górny <mgorny@gentoo.org> (30 Oct 2015)
 # Uses unsafe ioctls that could result in data corruption. Upstream
