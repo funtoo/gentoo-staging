@@ -56,7 +56,7 @@ REQUIRED_USE="
 "
 
 COMMON_DEPEND="
-	!libav? ( >=media-video/ffmpeg-2.4.0:0=[encode?,threads,vaapi?,vdpau?] )
+	!libav? ( >=media-video/ffmpeg-2.4:0=[encode?,threads,vaapi?,vdpau?] )
 	libav? ( >=media-video/libav-11:0=[encode?,threads,vaapi?,vdpau?] )
 	sys-libs/zlib
 	alsa? ( >=media-libs/alsa-lib-1.0.18 )
@@ -174,7 +174,6 @@ src_configure() {
 
 		--disable-libmpv-static
 		--disable-static-build
-		--disable-build-date	# Create reproducible build
 		--disable-optimize		# Do not add '-O2' to CFLAGS
 		--disable-debug-build	# Do not add '-g' to CFLAGS
 
@@ -217,7 +216,6 @@ src_configure() {
 		$(use_enable openal)
 		$(use_enable alsa)
 		--disable-coreaudio
-		--disable-wasapi
 
 		# Video outputs
 		--disable-cocoa
@@ -261,6 +259,9 @@ src_configure() {
 	else
 		mywafargs+=(--disable-vaapi-x-egl)
 	fi
+
+	# Create reproducible non-live builds
+	[[ ${PV} != *9999* ]] && mywafargs+=(--disable-build-date)
 
 	waf-utils_src_configure "${mywafargs[@]}"
 }
