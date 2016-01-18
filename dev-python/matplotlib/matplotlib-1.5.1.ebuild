@@ -74,6 +74,7 @@ DEPEND="${COMMON_DEPEND}
 		dev-python/mock[${PY2_USEDEP}]
 		dev-python/numpydoc[${PYTHON_USEDEP}]
 		dev-python/sphinx[${PYTHON_USEDEP}]
+		!~dev-python/sphinx-1.3.4
 		dev-python/xlwt[${PYTHON_USEDEP}]
 		dev-texlive/texlive-latexextra
 		dev-texlive/texlive-fontsrecommended
@@ -109,6 +110,11 @@ RDEPEND="${COMMON_DEPEND}
 # A few C++ source files are written to srcdir.
 # Other than that, the ebuild shall be fit for out-of-source build.
 DISTUTILS_IN_SOURCE_BUILD=1
+
+PATCHES=(
+	"${FILESDIR}"/${P}-test-fix-backport.patch
+	"${FILESDIR}"/${P}-test-fix-backport-2.patch
+	)
 
 pkg_setup() {
 	unset DISPLAY # bug #278524
@@ -153,11 +159,6 @@ python_prepare_all() {
 	sed \
 		-e "s:/usr/:${EPREFIX}/usr/:g" \
 		-i setupext.py || die
-
-	# https://github.com/matplotlib/matplotlib/issues/5829
-	sed \
-		-e '/rasterize_10dpi/s:5e-2:10:g' \
-		-i lib/matplotlib/tests/test_image.py || die
 
 	export XDG_RUNTIME_DIR="${T}/runtime-dir"
 	mkdir "${XDG_RUNTIME_DIR}" || die
