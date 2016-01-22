@@ -16,7 +16,7 @@ SRC_URI="mirror://gentoo/${P}.tar.xz
 
 LICENSE="GPL-2"
 SLOT="0"
-KEYWORDS="~alpha amd64 arm arm64 ~hppa ia64 m68k ~mips ppc ~ppc64 s390 sh ~sparc ~x86 ~sparc-fbsd ~x86-fbsd"
+KEYWORDS="~alpha amd64 arm arm64 hppa ia64 m68k ~mips ppc ppc64 s390 sh ~sparc ~x86 ~sparc-fbsd ~x86-fbsd"
 IUSE="multilib"
 
 DEPEND="app-arch/xz-utils
@@ -47,6 +47,7 @@ src_unpack() {
 	unpacker
 	cd "${S}"
 	epatch "${FILESDIR}"/${P}-memory-corruption.patch #568714
+	epatch "${FILESDIR}"/${P}-disable-same.patch
 	epatch_user
 }
 
