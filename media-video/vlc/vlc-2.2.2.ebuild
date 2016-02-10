@@ -122,7 +122,7 @@ RDEPEND="
 	projectm? ( media-libs/libprojectm:0 media-fonts/dejavu:0 )
 	pulseaudio? ( >=media-sound/pulseaudio-1:0 )
 	qt4? ( >=dev-qt/qtgui-4.6:4 >=dev-qt/qtcore-4.6:4 )
-	qt5? ( >=dev-qt/qtgui-5.1:5 >=dev-qt/qtcore-5.1:5 >=dev-qt/qtwidgets-5.1:5
+	qt5? ( >=dev-qt/qtgui-5.1:5 >=dev-qt/qtcore-5.1:5 >=dev-qt/qtwidgets-5.5.1-r1:5
 	>=dev-qt/qtx11extras-5.1:5 )
 	rdp? ( >=net-misc/freerdp-1.0.1:0=[client] )
 	samba? ( || ( ( >=net-fs/samba-3.4.6:0[smbclient] <net-fs/samba-4.0.0_alpha1:0[smbclient] )
@@ -222,6 +222,9 @@ PATCHES=(
 
 	# Bug #541678
 	"${FILESDIR}"/qt4-select.patch
+
+	# Allow QT5.5 since Gentoo has a patched QTwidgets
+	"${FILESDIR}"/${PN}-2.2.2-qt5widgets.patch
 )
 
 S="${WORKDIR}/${MY_P}"
