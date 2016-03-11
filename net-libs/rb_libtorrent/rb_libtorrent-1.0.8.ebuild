@@ -4,7 +4,7 @@
 
 EAPI=5
 
-PYTHON_COMPAT=( python2_7 python3_{3,4,5} )
+PYTHON_COMPAT=( python2_7 python3_{4,5} )
 PYTHON_REQ_USE="threads"
 DISTUTILS_OPTIONAL=true
 AUTOTOOLS_AUTORECONF=true
@@ -47,9 +47,7 @@ src_prepare() {
 }
 
 src_configure() {
-	if use python_targets_python3_3 ;then
-		boost_py3="--with-boost-python=3.3"
-	elif use python_targets_python3_4 ;then
+	if use python_targets_python3_4 ;then
 		boost_py3="--with-boost-python=3.4"
 	elif use python_targets_python3_5 ;then
 		boost_py3="--with-boost-python=3.5"
