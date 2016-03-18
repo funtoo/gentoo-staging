@@ -30,6 +30,11 @@
 
 #--- END OF EXAMPLES ---
 
+# Michael Palimaka <kensington@gentoo.org> (17 Mar 2016)
+# Dead upstream. Doesn't work with new Twitter API.
+# Masked for removal in 30 days.
+net-im/qtwitter
+
 # James Le Cuirot <chewi@gentoo.org> (14 Mar 2016)
 # Bye bye Java 6! If you really still need it then gnu_andrew will
 # continue to maintain icedtea:6 in java-overlay but it is not
@@ -165,7 +170,7 @@ www-apps/horde-turba
 # Breaks some of its rev deps, still in beta stage
 >=dev-lang/ocaml-4.03_beta
 >=dev-ml/camlp4-4.03
->=dev-ml/ppx_tools-0.99.3_p20160217
+>=dev-ml/ppx_tools-4.03
 
 # James Le Cuirot <chewi@gentoo.org> (29 Feb 2016)
 # Dead upstream and doesn't build with Java 8. Removal in 30 days.
