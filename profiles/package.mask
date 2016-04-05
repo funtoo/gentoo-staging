@@ -30,6 +30,16 @@
 
 #--- END OF EXAMPLES ---
 
+# Patrick Lauer <patrick@gentoo.org> (05 Apr 2016)
+# --configtest is broken, mask until 2.3.1 release
+=app-admin/logstash-bin-2.3.0*
+
+# Anthony G. Basile <blueness@gentoo.org> (04 Apr 2016)
+# Dead upstream and no real users
+# Masking for removal in 30 days
+sys-apps/rsbac-admin
+sys-kernel/rsbac-sources
+
 # James Le Cuirot <chewi@gentoo.org> (03 Apr 2016)
 # Legacy migration package that is no longer needed. See
 # bug #549508. Removal in 30 days.
@@ -535,7 +545,7 @@ www-apps/trac-downloads
 
 # Markos Chandras <hwoarang@gentoo.org> (18 Nov 2014)
 # Mask latest development version for testing
-=x11-misc/lightdm-1.17*
+>=x11-misc/lightdm-1.17
 
 # Mike Pagano <mpagano@gentoo.org> (16 Oct 2014)
 # A regression in kernels 3.17.0 lead to file system corruption
