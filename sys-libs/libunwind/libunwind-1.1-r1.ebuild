@@ -12,7 +12,7 @@ SRC_URI="http://download.savannah.nongnu.org/releases/libunwind/${P}.tar.gz"
 
 LICENSE="MIT"
 SLOT="7"
-KEYWORDS="amd64 arm hppa ia64 ~mips ppc ppc64 x86 ~amd64-fbsd ~x86-fbsd ~amd64-linux ~x86-linux"
+KEYWORDS="~amd64 ~arm ~hppa ~ia64 ~mips ~ppc ~ppc64 ~x86 ~amd64-fbsd ~x86-fbsd ~amd64-linux ~x86-linux"
 IUSE="debug debug-frame libatomic lzma static-libs"
 
 RESTRICT="test" #461958 -- re-enable tests with >1.1 again for retesting, this is here for #461394
@@ -37,12 +37,11 @@ src_prepare() {
 
 	sed -i -e '/LIBLZMA/s:-lzma:-llzma:' configure{.ac,} || die #444050
 	epatch "${FILESDIR}"/${P}-lzma.patch #444050
+	epatch "${FILESDIR}"/${P}-fix-CVE-2015-3239.patch #585830
 	elibtoolize
 }
 
 src_configure() {
-	# do not $(use_enable) because the configure.in is broken and parses
-	# --disable-debug the same as --enable-debug.
 	# https://savannah.nongnu.org/bugs/index.php?34324
 	# --enable-cxx-exceptions: always enable it, headers provide the interface
 	# and on some archs it is disabled by default causing a mismatch between the
@@ -57,7 +56,7 @@ src_configure() {
 		$(use_enable lzma minidebuginfo) \
 		$(use_enable static-libs static) \
 		$(use_enable debug conservative_checks) \
-		$(use debug && echo --enable-debug)
+		$(use_enable debug)
 }
 
 src_test() {
