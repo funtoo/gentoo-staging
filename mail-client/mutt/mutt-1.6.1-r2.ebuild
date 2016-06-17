@@ -106,6 +106,7 @@ src_prepare() {
 		-e '/ReachingUs = N_(/a\"This release of Mutt is heavily enriched by NeoMutt patches.\\nFor this reason, any bugs are better reported at https://bugs.gentoo.org/\\nor directly to the NeoMutt project.\\n\\n"' \
 		version.c || die "Failed to add bug instructions"
 
+	epatch "${FILESDIR}"/mutt-1.6.1-neomutt-index_format_truncation_problem.patch
 	local upatches=
 	# allow user patches
 	eapply_user && upatches=" with user patches"
@@ -153,17 +154,10 @@ src_configure() {
 		--with-regex \
 		--with-exec-shell=${EPREFIX}/bin/sh"
 
-	case $CHOST in
-		*-solaris*)
-			# Solaris has no flock in the standard headers
-			myconf+=" --enable-fcntl --disable-flock"
-			# wchar_t depends on locale
-			myconf+=" --without-wc-funcs"
-		;;
-		*)
-			myconf+=" --disable-fcntl --enable-flock"
-		;;
-	esac
+	if [[ ${CHOST} == *-solaris* ]] ; then
+		# arrows in index view do not show when using wchar_t
+		myconf+=" --without-wc-funcs"
+	fi
 
 	# mutt prioritizes gdbm over bdb, so we will too.
 	# hcache feature requires at least one database is in USE.
