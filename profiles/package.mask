@@ -30,6 +30,15 @@
 
 #--- END OF EXAMPLES ---
 
+# Michael Palimaka <kensington@gentoo.org> (19 Jun 2016)
+# Ancient, untested, never unmasked. Removal in 30 days. Bug 586172.
+sys-auth/pam_keystore
+
+# Michael Palimaka <kensington@gentoo.org> (19 Jun 2016)
+# Fails to build. Unmaintained. Dead upstream.
+# Masked for removal in 30 days. Bug 586348.
+net-misc/mdidentd
+
 # Michael Palimaka <kensington@gentoo.org> (16 Jun 2016)
 # No longer does anything. Masked for removal in 30 days.
 # Bug 585786.
@@ -204,11 +213,6 @@ net-print/foomatic-gui
 # Exported to user maintained overlay kde-sunset.
 kde-apps/superkaramba
 
-# Sergei Trofimovich <slyfox@gentoo.org> (30 May 2016)
-# Masked for removal. Fails to build with modern conduit,
-# bug #584586.
-dev-haskell/pool-conduit
-
 # Johannes Huber <johu@gentoo.org> (26 May 2016)
 # Masked for removal in 30 days. Blocks app-misc/strigi cleanup.
 # Last release in 2014 with KDE SC 4.14.3. No development since
@@ -250,8 +254,9 @@ dev-python/buildutils
 kde-apps/pairs
 
 # Alexis Ballier <aballier@gentoo.org> (24 May 2016)
-# API change, breaks e.g. js_of_ocaml
+# API change, breaks e.g. ocsigenserver
 >=dev-ml/tyxml-4
+>=dev-ml/js_of_ocaml-2.8
 
 # Michał Górny <mgorny@gentoo.org> (24 May 2016)
 # No longer maintained upstream, no longer works with libzpaq-7*.
@@ -311,17 +316,9 @@ dev-perl/Gtk2-WebKit
 # does not build with current CUDA releases. See bug #583068.
 sci-libs/torch
 
-# Sergei Trofimovich <slyfox@gentoo.org> (14 May 2016)
-# Masked for removal. Deprecated, use dev-haskell/tls instead.
-dev-haskell/tls-extra
-
 # Alon Bar-Lev <alonbl@gentoo.org) (13 May 2016)
 # Force gnutls-3.4 testing so we can stabilize it.
 >=net-libs/gnutls-3.5.0
-
-# Sergei Trofimovich <slyfox@gentoo.org> (11 May 2016)
-# Mask standalone hpc. dev-lang/ghc provides bundled hpc.
-dev-haskell/hpc
 
 # Michael Weber <xmw@gentoo.org> (08 May 2016)
 # Replaced by net-libs/libhubbub.
@@ -336,12 +333,6 @@ net-libs/hubbub
 # Broken reverse deps. At least one header file has been moved around.
 >=media-gfx/imagemagick-7.0.1.0
 
-# Rafael G. Martins <rafaelmartins@gentoo.org> (30 Apr 2016)
-# Packages merged upstream with app-text/blogc. Please install
-# app-text/blogc with USE=git and USE=httpd instead. Removal in 30 days.
-dev-vcs/blogc-git-receiver
-www-servers/blogc-runserver
-
 # Sergey Popov <pinkbyte@gentoo.org> (26 Apr 2016)
 # Security mask of older branches, wrt bug #5567810
 <dev-vcs/subversion-1.8
@@ -350,12 +341,6 @@ www-servers/blogc-runserver
 # No release in 6 years and segfaults on modern systems. (bug #311809)
 # Masked for removal on 20160519
 games-sports/toycars
-
-# Sergey Popov <pinkbyte@gentoo.org> (19 Apr 2016)
-# Security mask, wrt bug #577156
-# Should be kept in tree for some time
-# for users, that may experience problems with new versions
-<net-misc/quagga-1.0.20160315
 
 # Andreas K. Hüttel <dilfridge@gentoo.org> (16 Apr 2016)
 # Masked because of security bug 580210
@@ -900,10 +885,6 @@ media-libs/shivavg
 # Added <sys-fs/e2fsprogs as well (halcy0n)
 <sys-libs/e2fsprogs-libs-1.41.8
 <sys-fs/e2fsprogs-1.41.9
-
-# Diego E. Pettenò <flameeyes@gmail.com> (09 Oct 2009)
-# Untested yet; documented only in Russian, help is appreciated.
-sys-auth/pam_keystore
 
 # Diego E. Pettenò <flameeyes@gentoo.org> (08 Aug 2009)
 #  on behalf of QA Team
