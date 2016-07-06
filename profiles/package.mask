@@ -30,6 +30,27 @@
 
 #--- END OF EXAMPLES ---
 
+# Michał Górny <mgorny@gentoo.org> (8 Jul 2016)
+# No development since 2012, upstream repository removed in Jan 2016.
+# No longer builds. Removal in 30 days, #582448.
+dev-util/rootstrap
+
+# Michał Górny <mgorny@gentoo.org> (8 Jul 2016)
+# Deprecated upstream. Replaced by dev-python/chardet.
+# Removal in 30 days, #548866.
+dev-python/charade
+
+# Alexey Korepanov <kaikaikai@yandex.ru> (5 Jul 2016)
+# net-p2p/syncthing-relaysrv has been merged into net-p2p/syncthing
+# both upstream and in Gentoo.
+# Removal in 30 days.
+net-p2p/syncthing-relaysrv
+
+# Agostino Sarubbo <ago@gentoo.org> (5 Jul 2016)
+# Dead upstream and fails to compile, wrt bug #587766
+# Masked for removal in 30 days.
+app-mobilephone/freesmee
+
 # Andreas K. Hüttel <dilfridge@gentoo.org> (3 Jul 2016)
 # One of the last reverse dependencies of the deprecated libgnomeprint*
 # libs and some others; unmaintained; obsolete version.
@@ -243,18 +264,14 @@ sys-fs/redirfs
 # ebuilds are still sitting in ~arch after years in the tree.
 # Masked for removal in 30 days.
 dev-util/ccmalloc
-dev-util/tinlink
 dev-util/cdecl
 dev-util/redet
 dev-util/eggy
 dev-util/mock
 dev-util/par
 dev-util/injectso
-dev-util/dissembler
 dev-util/ghh
-dev-util/lsuio
 dev-util/rec
-dev-util/usb-robot
 dev-util/jif
 dev-util/httpup
 dev-util/crow-designer
@@ -262,18 +279,10 @@ dev-util/qdevelop
 dev-util/intel2gas
 dev-util/webcpp
 dev-util/as11
-dev-util/duma
 dev-util/filepp
-dev-util/pretrace
-dev-util/ald
 dev-util/kdoc
 dev-util/skelgen
 dev-util/ftncheck
-
-# Aaron Bauman <bman@gentoo.org> (5 Jun 2016)
-# Unpatched security vulnerability and dead upstream
-# per bug #500970.  Removal in 30 days
-sys-apps/9base
 
 # Hans de Graaff <graaff@gentoo.org> (4 Jun 2016)
 # Name-versioned dependency that was not used in any
