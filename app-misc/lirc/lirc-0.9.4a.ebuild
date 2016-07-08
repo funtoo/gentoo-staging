@@ -22,7 +22,7 @@ fi
 LICENSE="GPL-2"
 SLOT="0"
 KEYWORDS="~amd64 ~ppc ~ppc64 ~x86"
-IUSE="doc static-libs X audio irman ftdi inputlirc iguanair systemd"
+IUSE="doc static-libs X audio irman ftdi inputlirc iguanair systemd usb"
 
 S="${WORKDIR}/${MY_P}"
 
@@ -48,7 +48,7 @@ RDEPEND="
 	iguanair? ( app-misc/iguanaIR )
 	ftdi? ( dev-embedded/libftdi:0 )
 	inputlirc? ( app-misc/inputlircd )
-	virtual/libusb:0
+	usb? ( virtual/libusb:0 )
 "
 
 src_configure() {
