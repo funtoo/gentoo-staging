@@ -2,7 +2,7 @@
 # Distributed under the terms of the GNU General Public License v2
 # $Id$
 
-EAPI="5"
+EAPI="6"
 
 inherit eutils toolchain-funcs
 
@@ -24,5 +24,10 @@ src_compile() {
 }
 
 src_install() {
-	dobin bin2fex bootinfo fel fex2bin fexc nand-part phoenix_info pio
+	dobin bin2fex fex2bin phoenix_info
+	newbin sunxi-bootinfo bootinfo
+	newbin sunxi-fel fel
+	newbin sunxi-fexc fexc
+	newbin sunxi-nand-part nand-part
+	newbin sunxi-pio pio
 }
