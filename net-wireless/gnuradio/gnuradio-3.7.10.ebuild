@@ -1,4 +1,4 @@
-# Copyright 1999-2015 Gentoo Foundation
+# Copyright 1999-2016 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
 # $Id$
 
@@ -154,7 +154,7 @@ src_configure() {
 		-DENABLE_GR_CORE=ON \
 		-DSYSCONFDIR="${EPREFIX}"/etc \
 		-DPYTHON_EXECUTABLE="${PYTHON}"
-		-DGR_PKG_DOC_DIR='${GR_DOC_DIR}/${CMAKE_PROJECT_NAME}'-"${PVF}"
+		-DGR_PKG_DOC_DIR="${EPREFIX}/usr/share/doc/${PF}"
 	)
 	use vocoder && mycmakeargs+=( -DGR_USE_SYSTEM_LIBGSM=TRUE )
 	cmake-utils_src_configure
@@ -166,9 +166,15 @@ src_install() {
 	if use examples ; then
 		dodir /usr/share/doc/${PF}/
 		mv "${ED}"/usr/share/${PN}/examples "${ED}"/usr/share/doc/${PF}/ || die
+		docompress -x /usr/share/doc/${PF}/examples
 	else
 	# It seems that the examples are always installed
 		rm -rf "${ED}"/usr/share/${PN}/examples || die
+	fi
+
+	if use doc || use examples; then
+		#this doesn't appear useful
+		rm -rf "${ED}"/usr/share/doc/${PF}/xml || die
 	fi
 
 	# We install the mimetypes to the correct locations from the ebuild
@@ -177,7 +183,7 @@ src_install() {
 
 	# Install icons, menu items and mime-types for GRC
 	if use grc ; then
-		local fd_path="${S}/grc/freedesktop"
+		local fd_path="${S}/grc/scripts/freedesktop/"
 		insinto /usr/share/mime/packages
 		doins "${fd_path}/${PN}-grc.xml"
 
