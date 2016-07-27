@@ -5,7 +5,7 @@
 EAPI=6
 PYTHON_COMPAT=( python2_7 )
 
-inherit python-any-r1 xdg-utils toolchain-funcs
+inherit eutils python-any-r1 xdg-utils toolchain-funcs
 
 MY_PV=${PV/_beta/-beta.}
 MY_P=${PN}-${MY_PV}
@@ -16,7 +16,7 @@ SRC_URI="https://github.com/mypaint/libmypaint/releases/download/v${MY_PV}/${MY_
 
 LICENSE="ISC"
 SLOT="0/0"  # first soname component for subslot
-KEYWORDS="~amd64 ~x86"
+KEYWORDS="~amd64 ~hppa ~ppc64 ~x86"
 IUSE="gegl introspection nls openmp"
 
 CDEPEND="
@@ -42,6 +42,7 @@ S="${WORKDIR}"/${MY_P}
 
 src_prepare() {
 	xdg_environment_reset
+	epatch "${FILESDIR}"/${PN}-1.3.0_beta1-as-needed.patch
 	eapply_user
 }
 
