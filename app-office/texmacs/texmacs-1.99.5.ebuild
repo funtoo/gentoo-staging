@@ -4,7 +4,7 @@
 
 EAPI=6
 
-inherit autotools fdo-mime gnome2-utils
+inherit autotools fdo-mime gnome2-utils qmake-utils
 
 MY_P=${P/tex/TeX}-src
 
@@ -14,7 +14,7 @@ SRC_URI="ftp://ftp.texmacs.org/pub/TeXmacs/tmftp/source/${MY_P}.tar.gz"
 
 LICENSE="GPL-3"
 SLOT="0"
-IUSE="imlib jpeg netpbm pdf qt4 svg spell"
+IUSE="imlib jpeg netpbm pdf svg spell"
 KEYWORDS="~alpha ~amd64 ~ppc ~x86 ~x86-interix ~amd64-linux ~x86-linux"
 
 RDEPEND="
@@ -24,10 +24,10 @@ RDEPEND="
 	x11-apps/xmodmap
 	x11-libs/libXext
 	virtual/latex-base
+	dev-qt/qtgui:4
 	imlib? ( media-libs/imlib2 )
 	jpeg? ( || ( media-gfx/imagemagick media-gfx/jpeg2ps ) )
 	netpbm? ( media-libs/netpbm )
-	qt4? ( dev-qt/qtgui:4 )
 	spell? ( app-text/aspell )
 	svg? ( || ( media-gfx/inkscape gnome-base/librsvg:2 ) )
 "
@@ -64,6 +64,7 @@ src_prepare() {
 src_configure() {
 	econf \
 		--enable-optimize="${CXXFLAGS}" \
+		--with-qt="$(qt4_get_bindir)" \
 		$(use_with imlib imlib2) \
 		$(use_enable pdf pdf-renderer)
 }
