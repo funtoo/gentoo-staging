@@ -275,11 +275,6 @@ app-portage/epm
 # Use at your own risk.
 =app-text/xiphos-4.0.4-r1
 
-# Alexis Ballier <aballier@gentoo.org> (24 May 2016)
-# API change, breaks e.g. eliom
->=dev-ml/tyxml-4
->=dev-ml/js_of_ocaml-2.8
-
 # Luca Barbato <lu_zero@gentoo.org> (23 May 2016)
 # Masked for testing, vlc-2.2 configure rejects it.
 =media-video/libav-12*
@@ -361,14 +356,6 @@ dev-libs/libtomcrypt
 # for them for upgrading old user profiles, etc.
 ~mail-client/thunderbird-24.8.0
 ~mail-client/thunderbird-31.8.0
-
-# Alexis Ballier <aballier@gentoo.org> (01 Mar 2016)
-# Breaks some of its rev deps, still in beta stage
->=dev-lang/ocaml-4.03_beta
->=dev-ml/camlp4-4.03
->=dev-ml/ppx_tools-5.0.4.03
->=dev-ml/labltk-8.06.1
->=dev-ml/parmap-1.0_rc7-r1
 
 # Patrick Lauer <patrick@gentoo.org> (22 Feb 2016)
 # Inactive upstream, build failures, obsoleted by rakudo/perl6
