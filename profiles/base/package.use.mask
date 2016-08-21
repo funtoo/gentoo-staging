@@ -5,6 +5,34 @@
 # This file requires >=portage-2.1.1
 # New entries go on top.
 
+# Pacho Ramos <pacho@gentoo.org> (21 Aug 2016)
+# media-libs/libdlna is being removed, bug #540214
+media-video/ushare dlna
+
+# Pacho Ramos <pacho@gentoo.org> (21 Aug 2016)
+# x11-libs/libsvg-cairo is being removed, bug #537918
+dev-ml/cairo-ocaml svg
+
+# Pacho Ramos <pacho@gentoo.org> (21 Aug 2016)
+# net-libs/libzrtpcpp will be removed, bug #528514
+net-libs/ortp zrtp
+
+# Pacho Ramos <pacho@gentoo.org> (20 Aug 2016)
+# xanim is going to be removed, bug #181959
+media-video/mplayer xanim
+
+# Pacho Ramos <pacho@gentoo.org> (20 Aug 2016)
+# mpb is going to be removed, bug #449964
+sci-physics/meep mpb
+
+# Lars Wendler <polynomial-c@gentoo.org> (19 Aug 2016)
+# gnutls is broken for years
+>=net-libs/gsoap-2.8.0 gnutls
+
+# Brian Evans <grknight@gentoo.org> (18 Aug 2016)
+# Mask jdbc as most arches don't support java
+dev-db/mariadb jdbc
+
 # Brian Dolbec <dolsen@gentoo.org> (9 Aug 2016)
 # Mask doc use flag due to needed sphinx pkg update
 >=dev-util/buildbot-0.9.0_rc1 doc
