@@ -8,7 +8,7 @@ PYTHON_COMPAT=( python2_7 )
 PYTHON_REQ_USE="tk"
 DISTUTILS_SINGLE_IMPL="1"
 
-inherit eutils python-single-r1 distutils-r1
+inherit eutils distutils-r1
 
 MY_PN=PySolFC
 SOL_URI="mirror://sourceforge/${PN}"
@@ -31,32 +31,21 @@ RDEPEND="${RDEPEND}
 		dev-tcltk/tktable )
 	sound? ( dev-python/pygame[${PYTHON_USEDEP}] )"
 
+PATCHES=(
+	"${FILESDIR}/${PN}-PIL-imports.patch" #471514
+	"${FILESDIR}/${PN}-gentoo.patch" #591904
+)
+
 python_prepare_all() {
-	local PATCHES=(
-		"${FILESDIR}/${PN}-PIL-imports.patch" #471514
-	)
-
-	distutils-r1_python_prepare_all
-}
-
-pkg_setup() {
-	python-single-r1_pkg_setup
-}
-
-src_prepare() {
-	default
-	distutils-r1_src_prepare
-
 	sed -i \
 		-e "/pysol.desktop/d" \
 		-e "s:share/icons:share/pixmaps:" \
+		-e "s:data_dir =.*:data_dir = \'/usr/share/${PN}\':" \
 		setup.py || die
 
 	mv docs/README{,.txt} || die
-}
 
-src_compile() {
-	distutils-r1_src_compile
+	distutils-r1_python_prepare_all
 }
 
 python_install_all() {
@@ -73,8 +62,4 @@ python_install_all() {
 	HTML_DOCS=( docs/*html )
 
 	distutils-r1_python_install_all
-}
-
-src_install() {
-	distutils-r1_src_install
 }
