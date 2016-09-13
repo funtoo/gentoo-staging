@@ -30,6 +30,26 @@
 
 #--- END OF EXAMPLES ---
 
+# Denis Dupeyron <calchan@gentoo.org> (12 Sep 2016)
+# Masked for testing, see bug #588894.
+=x11-misc/light-locker-1.7.0-r1
+
+# James Le Cuirot <chewi@gentoo.org> (12 Sep 2016)
+# Now only available on Steam. Binaries were removed by the publisher
+# and Humble Bundle over 2 years ago. Removal in 60 days. Bug #588110.
+games-action/awesomenauts
+
+# Sergei Trofimovich <slyfox@gentoo.org> (11 Sep 2016)
+# Mask for removal in 30 days. Uses deprecated conduit-1.0*
+# Upstream suggests using dev-haskell/conduit-combinators
+# instead.
+dev-haskell/base64-conduit
+
+# Sergei Trofimovich <slyfox@gentoo.org> (11 Sep 2016)
+# Mask for removal in 30 days. >=sci-mathematics/agda-2.4
+# now provides 'agda' binary.
+sci-mathematics/agda-executable
+
 # Patrice Clement <monsieurp@gentoo.org> (10 Sep 2016)
 # Upstream dead. This package tries very hard to outsmart autotools and
 # reinvent the wheel by coming up with its own configure script. A complete
@@ -80,11 +100,6 @@ dev-lang/python:3.3
 # No reverse deps, only supports python3.3.
 # Removal in 30 days.
 dev-python/simpletal
-
-# Patrick McLean <chutzpah@gentoo.org> (2 Sep 2016)
-# Forward port of HPN patchset masked for testing.
-# See bug #577768 for more info on test failures with HPN
-=net-misc/openssh-7.3_p1-r3
 
 # Rick Farina <zerochaos@gentoo.org> (2 Sep 2016)
 # All variants of hashcat have now been merged upstream,
