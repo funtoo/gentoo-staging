@@ -30,6 +30,11 @@
 
 #--- END OF EXAMPLES ---
 
+# Gnome Team <gnome@gentoo.org> (19 sep 2016)
+# Gnome 3.22 mask
+>=dev-util/gdbus-codegen-2.50.0
+>=dev-libs/glib-2.50.0
+
 # David Seifert <soap@gentoo.org> (18 Sep 2016)
 # Masked for failing to build with GCC 6, still using ancient
 # distutils.eclass, tightly coupled to dev-libs/xqilla-2.2*.
@@ -96,12 +101,6 @@ dev-libs/dbxml
 ~kde-apps/pim-storage-service-manager-16.08.1
 ~kde-apps/pimcommon-16.08.1
 ~kde-apps/syndication-16.08.1
-
-# Mike Gilbert <floppym@gentoo.org> (13 Sep 2016)
-# Known to be unusable.
-# https://bugs.gentoo.org/591938
-~www-client/chromium-54.0.2840.14
-~www-client/chromium-54.0.2840.16
 
 # Denis Dupeyron <calchan@gentoo.org> (12 Sep 2016)
 # Masked for testing, see bug #588894.
