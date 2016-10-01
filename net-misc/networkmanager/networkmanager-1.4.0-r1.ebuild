@@ -28,7 +28,7 @@ REQUIRED_USE="
 	^^ ( nss gnutls )
 "
 
-KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~ppc ~ppc64 ~x86"
+KEYWORDS="~alpha amd64 ~arm ~arm64 ~ppc ~ppc64 x86"
 
 # gobject-introspection-0.10.3 is needed due to gnome bug 642300
 # wpa_supplicant-0.7.3-r3 is needed due to bug 359271
@@ -42,6 +42,7 @@ COMMON_DEPEND="
 	net-libs/libndp
 	>=net-libs/libsoup-2.40:2.4=
 	net-misc/iputils
+	sys-apps/util-linux[${MULTILIB_USEDEP}]
 	sys-libs/readline:0=
 	>=virtual/libgudev-165:=[${MULTILIB_USEDEP}]
 	audit? ( sys-process/audit )
