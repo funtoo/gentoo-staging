@@ -572,7 +572,9 @@ sci-mathematics/agda-executable
 
 # Lars Wendler <polynomial-c@gentoo.org> (06 Sep 2016)
 # Breaks samba's nmbd process (bug #592502)
+# Masked the possible fixed samba version until more testing has been performed.
 >=sys-libs/tevent-0.9.30
+>=net-fs/samba-4.5.0-r1
 
 # Mike Gilbert <floppym@gentoo.org> (03 Sep 2016)
 # Python 3.3 will be removed from Gentoo in 30 days.
@@ -603,7 +605,7 @@ dev-lang/python:3.3
 
 # Christian Tietz <christian.tietz@mailbox.org> (23 Aug 2016)
 # Depends on masked xfce-base/exo-0.11.1
-=xfce-extra/xfce4-whiskermenu-plugin-2.0.1
+>=xfce-extra/xfce4-whiskermenu-plugin-2.0.1
 
 # Brian Evans <grknight@gentoo.org> (22 Aug 2016)
 # PHP 5.5 has reached end of life and will no longer receive security updates.
