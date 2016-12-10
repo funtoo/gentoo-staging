@@ -10,7 +10,7 @@ HOMEPAGE="https://wiki.gnome.org/Apps/Vinagre"
 
 LICENSE="GPL-3+"
 SLOT="0"
-KEYWORDS="~amd64 ~arm ~ia64 ~ppc ~ppc64 ~x86"
+KEYWORDS="amd64 ~arm ~ia64 ~ppc ~ppc64 x86"
 IUSE="rdp +ssh spice +telepathy zeroconf"
 
 # cairo used in vinagre-tab
@@ -43,7 +43,10 @@ DEPEND="${RDEPEND}
 	>=sys-devel/gettext-0.17
 	virtual/pkgconfig
 	$(vala_depend)
+
+	gnome-base/gnome-common
 "
+# gnome-base/gnome-common needed for eautoreconf
 
 pkg_pretend() {
 	# Needed for VNC ssh tunnel, bug #518574
