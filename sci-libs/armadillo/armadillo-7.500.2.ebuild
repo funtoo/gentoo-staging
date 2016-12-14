@@ -1,8 +1,8 @@
-# Copyright 1999-2015 Gentoo Foundation
+# Copyright 1999-2016 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
 # $Id$
 
-EAPI=5
+EAPI=6
 
 CMAKE_IN_SOURCE_BUILD=1
 
@@ -10,11 +10,11 @@ inherit cmake-utils toolchain-funcs multilib eutils
 
 DESCRIPTION="Streamlined C++ linear algebra library"
 HOMEPAGE="http://arma.sourceforge.net/"
-SRC_URI="mirror://sourceforge/arma/${P}.tar.gz"
+SRC_URI="mirror://sourceforge/arma/${P}.tar.xz"
 
 LICENSE="MPL-2.0"
-SLOT="0/4"
-KEYWORDS="~amd64 ~ppc64 ~x86 ~amd64-linux ~x86-linux"
+SLOT="0/6"
+KEYWORDS="~amd64 ~arm ~ppc64 ~x86 ~amd64-linux ~x86-linux"
 IUSE="arpack blas debug doc examples hdf5 lapack mkl tbb test"
 REQUIRED_USE="test? ( lapack )"
 
@@ -22,7 +22,11 @@ RDEPEND="
 	dev-libs/boost
 	arpack? ( sci-libs/arpack )
 	blas? ( virtual/blas )
-	lapack? ( virtual/lapack )"
+	lapack? ( virtual/lapack )
+"
+#	superlu? ( sci-libs/superlu )
+# needs superlu-5
+
 DEPEND="${RDEPEND}
 	arpack? ( virtual/pkgconfig )
 	blas? ( virtual/pkgconfig )
@@ -44,14 +48,18 @@ src_prepare() {
 src_configure() {
 	local mycmakeargs=(
 		-DINSTALL_LIB_DIR="${EPREFIX}/usr/$(get_libdir)"
-		$(cmake-utils_use debug ARMA_EXTRA_DEBUG)
-		$(cmake-utils_use mkl ARMA_USE_MKL_ALLOC)
-		$(cmake-utils_use tbb ARMA_USE_TBB_ALLOC)
+		-DARMA_EXTRA_DEBUG="$(usex debug)"
+		-DARMA_USE_MKL_ALLOC="$(usex mkl)"
+		-DARMA_USE_TBB_ALLOC="$(usex tbb)"
 	)
 	if use arpack; then
 		mycmakeargs+=(
 			-DARPACK_FOUND=ON
 			-DARPACK_LIBRARY="$($(tc-getPKG_CONFIG) --libs arpack)"
+		)
+	else
+		mycmakeargs+=(
+			-DARPACK_FOUND=OFF
 		)
 	fi
 #	if use atlas; then
@@ -72,11 +80,19 @@ src_configure() {
 			-DBLAS_FOUND=ON
 			-DBLAS_LIBRARIES="$($(tc-getPKG_CONFIG) --libs blas)"
 		)
+	else
+		mycmakeargs+=(
+			-DBLAS_FOUND=OFF
+		)
 	fi
 	if use hdf5; then
 		mycmakeargs+=(
 			-DHDF5_FOUND=ON
 			-DHDF5_LIBRARIES="-lhdf5"
+		)
+	else
+		mycmakeargs+=(
+			-DHDF5_FOUND=OFF
 		)
 	fi
 	if use lapack; then
@@ -84,7 +100,22 @@ src_configure() {
 			-DLAPACK_FOUND=ON
 			-DLAPACK_LIBRARIES="$($(tc-getPKG_CONFIG) --libs lapack)"
 		)
+	else
+		mycmakeargs+=(
+			-DLAPACK_FOUND=OFF
+		)
 	fi
+#	if use superlu; then
+#		mycmakeargs+=(
+#			-DSuperLU_FOUND=ON
+#			-DSuperLU_LIBRARIES="$($(tc-getPKG_CONFIG) --libs superlu)"
+#		)
+#	else
+#		mycmakeargs+=(
+#			-DSuperLU_FOUND=OFF
+#		)
+#	fi
+
 	cmake-utils_src_configure
 }
 
