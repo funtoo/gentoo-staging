@@ -1,4 +1,4 @@
-# Copyright 1999-2016 Gentoo Foundation
+# Copyright 1999-2017 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
 # $Id$
 
@@ -42,6 +42,11 @@ REQUIRED_USE="
 	python? ( ${PYTHON_REQUIRED_USE} )
 "
 PATCHES=( "${FILESDIR}"/${PN}-no-werror.patch )
+
+# xrootd plugins are not intended to be linked with,
+# they are to be loaded at runtime by xrootd,
+# see https://github.com/xrootd/xrootd/issues/447
+QA_SONAME="/usr/lib.*/libXrd*-4.so"
 
 pkg_setup() {
 	enewgroup xrootd

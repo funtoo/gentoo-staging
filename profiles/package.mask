@@ -30,6 +30,63 @@
 
 #--- END OF EXAMPLES ---
 
+# Michael Orlitzky <mjo@gentoo.org> (02 Jan 2017)
+# Ancient version, dead upstream, no homepage, experiencing
+# build failures, no reverse dependencies -- we've hit all
+# the checkboxes. Masked for removal in 30 days. Bug 604464.
+dev-php/PHPonTrax
+
+# Michael Orlitzky <mjo@gentoo.org> (02 Jan 2017)
+# Ancient versions long forgotten by upstream, and
+# now experiencing build problems. Masked for removal
+# in 30 days. Bug 604462.
+dev-php/propel
+dev-php/propel-generator
+dev-php/propel-runtime
+
+# Daniel Campbell <zlg@gentoo.org> (02 Jan 2016)
+# Google Code shutdown and change of versioning scheme
+# needs 'old' versions masked (v94 -> v1.0.0)
+# Masked for removal in 30 days.
+=x11-misc/alock-94
+=x11-misc/alock-94-r1
+=x11-misc/alock-94-r2
+
+# David Seifert <soap@gentoo.org> (29 Dec 2016)
+# Ancient codebase, maintenance nightmare, dead
+# upstream, games-emulation/vbam is spiritual successor
+# Removal in 30 days, #598607
+games-emulation/visualboyadvance
+
+# Hans de Graaff <graaff@gentoo.org> (13 Dec 2016)
+# Mask Rails 4.1.x for removal.
+# This version of Rails has not been supported upstream since Rails
+# 5.0.0 came out and its security can no longer be guaranteed.
+# Masked for removal in 30 days.
+dev-ruby/rails:4.1
+dev-ruby/railties:4.1
+dev-ruby/activerecord:4.1
+dev-ruby/actionmailer:4.1
+dev-ruby/actionpack:4.1
+dev-ruby/actionview:4.1
+dev-ruby/activemodel:4.1
+dev-ruby/activesupport:4.1
+# Still depends on Rails 4.1 for testing
+=dev-ruby/dalli-2.7.4
+# Still depends on activerecord:4.1. No newer upstream version that
+# depends on a newer version.
+net-misc/termtter
+
+# David Seifert <soap@gentoo.org> (27 Dec 2016)
+# New release, masked to iron out bugs
+>=dev-util/boost-build-1.63.0
+>=dev-libs/boost-1.63.0
+
+# David Seifert <soap@gentoo.org> (27 Dec 2016)
+# Fails with more recent boost, dead upstream (bug #600548).
+dev-cpp/luabind
+games-rpg/valyriatear
+
 # Johannes Huber <johu@gentoo.org> (25 Dec 2016)
 # Masked for removal in 30 days. Dead upstream. No reverse dependencies.
 # No maintainer. Was introduced for media-sound/tomahwak. Uses deprecated
@@ -45,26 +102,10 @@ net-libs/qtweetlib
 # No reverse dependencies. Masked for removal in 30 days.
 app-admin/phpsyslogng
 
-# Davide Pesavento <pesa@gentoo.org> (21 Dec 2016)
-# Fails to install (bug 587376 and 584988), upstream stopped maintaining
-# the 5.x release series 2 years ago. Use dev-util/eric:6 instead.
-# Masked for removal in 14 days.
-dev-util/eric:5
-
 # David Seifert <soap@gentoo.org> (20 Dec 2016)
 # Masked for being completely broken and unusable (bug 586356).
 # No reverse dependencies. Masked for removal in 30 days.
 net-analyzer/snips
-
-# Johannes Huber <johu@gentoo.org> (19 Dec 2016)
-# Masked for removal in 14 days. Superseded by kde-apps/kde-l10n.
-# No reverse dependencies.
-kde-apps/ktp-l10n
-
-# Johannes Huber <johu@gentoo.org> (19 Dec 2016)
-# Masked for removal in 14 days. Superseded by dev-libs/kdiagram.
-# No reverse dependencies. Never consumed by unmasked packages.
-kde-apps/kdgantt2
 
 # Tim Harder <radhermit@gentoo.org> (12 Dec 2016)
 # Outdated and broken in the tree.
@@ -120,200 +161,19 @@ dev-python/pygtkspellcheck
 # Removal in 30 days.
 dev-python/shapely
 
-# Bernard Cafarelli <voyageur@gentoo.org> (30 Nov 2016)
-# Do not support gnustep-make v2 mode, last release more than 10 years ago
-# Bugs #591576, #592546
-# Removal in a month
-gnustep-apps/camera
-gnustep-apps/stepulator
-
-# Bernard Cafarelli <voyageur@gentoo.org> (30 Nov 2016)
-# Fails to build, abandoned 10 years ago, bug #590088
-# Removal in a month
-gnustep-apps/gwnet
-gnustep-libs/smbkit
-
-# Pacho Ramos <pacho@gentoo.org> (27 Nov 2016)
-# All stardict stuff and dicts are completely unmaintained and orphan for
-# years (#471350, #533632, #568472, #600718). Removal in a month.
-# Andrew Savchenko <bircoph@gentoo.org> (02 Dec 2016)
-# stardict and most dicts are maintained now, thus removed from
-# this list, but mask is kept for broken stuff
-app-dicts/stardict-hnd-de-vi
-app-dicts/stardict-hnd-en-vi
-app-dicts/stardict-hnd-fr-vi
-app-dicts/stardict-hnd-ru-vi
-app-dicts/stardict-hnd-vi-de
-app-dicts/stardict-hnd-vi-en
-app-dicts/stardict-hnd-vi-fr
-app-dicts/stardict-hnd-vi-vi
-
-# Pacho Ramos <pacho@gentoo.org> (27 Nov 2016)
-# Dead for years, replaced by media-video/devedeng, bug #430564, removal in
-# a month.
-media-video/devede
-
-# Pacho Ramos <pacho@gentoo.org> (27 Nov 2016)
-# Dead for years, still using udisks:0 and no sign to be ever ported, bug
-# #440856 and bug #440858, removal in a month.
-sys-apps/uevt
-sys-auth/pam_usb
-
-# Pacho Ramos <pacho@gentoo.org> (27 Nov 2016)
-# Dead for years, relies on obsolete and vulnerable gksu (#486456), removal
-# in a month.
-net-print/gmso2
-
-# Pacho Ramos <pacho@gentoo.org> (27 Nov 2016)
-# Obsolete, not compatible with mono-4, bug #504036, removal in a month.
-gnome-extra/gnome-do
-gnome-extra/gnome-do-plugins
-
-# Pacho Ramos <pacho@gentoo.org> (27 Nov 2016)
-# Relies on obsolete and vulnerable webkit-gtk, also we cannot update it as
-# deps are also pending to be bumped due to long standing issues that are
-# never handled. Removal in a month, bug #532058
-net-misc/sparkleshare
-
 # Pacho Ramos <pacho@gentoo.org> (27 Nov 2016)
 # Vulnerable to CVE-2015-1431 and nobody taking care of it, bug #538360.
 # Removal in a month.
 www-apps/phpBB
 
 # Pacho Ramos <pacho@gentoo.org> (27 Nov 2016)
-# Vulnerable to CVE-2015-3248 (#552534), and nobody willing to take care of
-# the package. Removal in a month.
-sys-libs/openhpi
-
-# Pacho Ramos <pacho@gentoo.org> (27 Nov 2016)
-# Not compatible with mono-4 (#558934, #545964), removal in a month.
-net-irc/smuxi
-dev-dotnet/smartirc4net
-
-# Pacho Ramos <pacho@gentoo.org> (27 Nov 2016)
-# Doesn't build (#562488), not needed by anything in the tree, removal in a
-# month.
-media-libs/sublib
-
-# Pacho Ramos <pacho@gentoo.org> (27 Nov 2016)
-# Not compatible with mono-4, bug #558106, removal in a month.
-media-sound/banshee
-media-plugins/banshee-community-extensions
-#563234
-dev-dotnet/google-gdata-sharp
-#438420
-media-libs/libkarma
-#565032
-dev-dotnet/taglib-sharp
-app-misc/basenji
-#580590
-dev-dotnet/gudev-sharp
-#582894
-dev-dotnet/zeitgeist-sharp
-#588938
-dev-dotnet/gtk-sharp-beans
-#596614
-dev-dotnet/mono-zeroconf
-
-# Pacho Ramos <pacho@gentoo.org> (27 Nov 2016)
-# Newer versions have huge issues (#589554, #594944), and older ones are not
-# compatible with newer mono and gtk-sharp (#596656). Removal in a month.
-dev-util/monodevelop
-dev-util/monodevelop-database
-dev-util/monodevelop-debugger-gdb
-
-# Pacho Ramos <pacho@gentoo.org> (27 Nov 2016)
-# Needs porting to new python eclasses and nothing needs this in the tree,
-# bug #597482, removal in a month.
-dev-libs/librtfcomp
-
-# Pacho Ramos <pacho@gentoo.org> (27 Nov 2016)
-# Obsolete packages not needed anymore, bug #598852
-dev-dotnet/gtk-sharp-docs
-dev-dotnet/gtk-dotnet-sharp
-
-# Pacho Ramos <pacho@gentoo.org> (27 Nov 2016)
-# Needs porting to new python eclasses, nothing needs this in the tree, bug
-# #599824, removal in a month.
-www-apps/bitten
-
-# Pacho Ramos <pacho@gentoo.org> (27 Nov 2016)
-# Needs porting to new python eclasses and relies on gstreamer-0.10
-# (#599888). Removal in a month.
-media-sound/christine
-
-# Pacho Ramos <pacho@gentoo.org> (27 Nov 2016)
-# Relies on obsolete and vulnerable webkit-gtk versions, bug #600898
-www-client/vimb
-
-# Pacho Ramos <pacho@gentoo.org> (27 Nov 2016)
-# Dead, needs porting to new python eclasses, all orphans (#592160)
-app-pda/synce-core
-app-pda/orange
-dev-libs/librra
-sys-fs/fur
-
-# Pacho Ramos <pacho@gentoo.org> (27 Nov 2016)
-# Orphan, dead, fails to build (#594896), removal in a month.
-app-editors/zoinks
-
-# Pacho Ramos <pacho@gentoo.org> (27 Nov 2016)
-# Fails to build (#596348), relies on obsolete wxGTK:2.8. Removal in a
-# month.
-dev-lang/ucblogo
-
-# Pacho Ramos <pacho@gentoo.org> (27 Nov 2016)
 # Not compatible with mono-4, bug #596600, removal in a month.
 app-misc/tomboy
-x11-plugins/tomboy-reminder
-
-
-# Pacho Ramos <pacho@gentoo.org> (27 Nov 2016)
-# Not compatible with wxGTK:3.0 (#564068), fails to build (#521476), dead.
-# Removal in a month.
-app-misc/roadnav
-dev-libs/libroadnav
 
 # Pacho Ramos <pacho@gentoo.org> (27 Nov 2016)
 # Dead and obsolete lib not needed by anything in the tree (#567946).
 # Removal in a month.
 app-mobilephone/gsmlib
-
-# Pacho Ramos <pacho@gentoo.org> (27 Nov 2016)
-# Not compatible with tcl/tk 8.6, obsolete version, bug #547322.
-# Try to use versions from sci overlay. Removal in a month.
-media-gfx/brlcad
-
-# Mike Gilbert <floppym@gentoo.org> (25 Nov 2016)
-# Modules are now part of app-emulation/open-vm-tools.
-# Removal in 30 days.
-app-emulation/open-vm-tools-kmod
-
-# Michael Palimaka <kensington@gentoo.org> (24 Nov 2016)
-# Discontinued upstream, hosted on googlecode, no reverse dependencies.
-# Use app-emulation/ganeti-instance-debootstrap instead.
-# Bug 598968. Masked for removal in 30 days.
-app-emulation/ganeti-instance-debian-etch
-
-# Michael Palimaka <kensington@gentoo.org> (24 Nov 2016)
-# Discontinued upstream, hosted on googlecode, no reverse dependencies.
-# Masked for removal in 30 days.
-app-cdr/recorder
-
-# Michael Palimaka <kensington@gentoo.org> (24 Nov 2016)
-# Discontinued upstream, hosted on googlecode, no reverse dependencies.
-# Bug 575578. Masked for removal in 30 days.
-dev-cpp/gtkmm-utils
-
-# Mike Gilbert <floppym@gentoo.org> (24 Nov 2016)
-# Dead upstream, hosted on googlecode, no reverse dependencies.
-# Removal in 30 days.
-dev-python/platinfo
-dev-python/pssi
-dev-python/adns-python
-dev-python/py-bcrypt
-dev-python/pygooglevoice
-dev-python/winpdb
 
 # Kent Fredric (19 Nov 2016)
 # virtual/perl-MathBigInt-1.999.726+ Mask Block
@@ -363,15 +223,6 @@ dev-python/winpdb
 # Project is dead.
 # Please migrate to it's successor - net-misc/bgpq3
 net-misc/bgpq
-
-# Lars Wendler <polynomial-c@gentoo.org> (27 Oct 2016)
-# Breaks build of some packages. See tracker bug #598186
->=sys-devel/flex-2.6.2
-
-# Craig Andrews <candrews@integralblue.com> (25 Oct 2016)
-# >=media-tv/kodi-17.0_alpha requires >=media-video/ffmpeg-3.0
-# which is hard masked see #574788
->=media-tv/kodi-17.0_beta3
 
 # Julian Ospald <hasufell@gentoo.org> (21 Jul 2013)
 # Mask all unfetchable versions and those with tons of random
@@ -452,11 +303,6 @@ dev-perl/Params-ValidationCompiler
 =sys-kernel/gentoo-sources-3.18.37
 =sys-kernel/gentoo-sources-4.1.28-r1
 =sys-kernel/gentoo-sources-4.1.28
-
-# Anthony G. Basile <blueness@gentoo.org> (11 Jul 2016)
-# Upstream is in bad shape, bug #585726
-net-dns/namecoind
-net-dns/namecoin-qt
 
 # Andrew Savchenko <bircoph@gentoo.org> (09 Jul 2016)
 # Vulnerable due to wrong suid binary permissions (#345337)

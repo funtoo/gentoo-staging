@@ -2,6 +2,14 @@
 # Distributed under the terms of the GNU General Public License v2
 # $Id$
 
+# Pacho Ramos <pacho@gentoo.org> (31 Dec 2016)
+# Not going to be stable for now
+dev-util/geany-plugins gtkspell
+
+# Pacho Ramos <pacho@gentoo.org> (31 Dec 2016)
+# No stable for arm
+sys-fs/dmraid dietlibc klibc
+
 # Christoph Junghans <junghans@gentoo.org> (27 Nov 2016)
 # no stable mpi on arm yet, but maybe in the future
 <=app-crypt/johntheripper-1.7.9-r6 mpi
@@ -71,6 +79,7 @@ www-client/qupzilla kde
 dev-util/geany-plugins devhelp markdown webkit
 >=gnome-base/gnome-desktop-2.32.1-r2 license-docs
 gnome-base/gvfs google
+media-gfx/gimp webkit
 net-libs/libproxy webkit
 >=net-libs/webkit-gtk-2.4 geoloc
 >=x11-libs/gtk+-3.12.2 cloudprint
