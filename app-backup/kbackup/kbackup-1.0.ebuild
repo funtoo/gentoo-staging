@@ -5,33 +5,36 @@
 EAPI=6
 
 KDE_HANDBOOK="forceoptional"
-KDE_TEST="true"
-VIRTUALX_REQUIRED="test"
 inherit kde5
 
-DESCRIPTION="Bookmarks editor based on KDE Frameworks"
-KEYWORDS="~amd64 ~arm ~x86"
+DESCRIPTION="Program that lets you back up any directories or files"
+HOMEPAGE="http://kde-apps.org/content/show.php/KBackup?content=44998"
+SRC_URI="http://members.aon.at/m.koller/${P}.tar.bz2"
+
+LICENSE="GPL-2"
+KEYWORDS="~amd64 ~x86"
 IUSE=""
 
-DEPEND="
-	$(add_frameworks_dep kbookmarks)
+CDEPEND="
+	$(add_frameworks_dep karchive)
 	$(add_frameworks_dep kcompletion)
 	$(add_frameworks_dep kconfig)
 	$(add_frameworks_dep kconfigwidgets)
 	$(add_frameworks_dep kcoreaddons)
+	$(add_frameworks_dep kdelibs4support)
 	$(add_frameworks_dep ki18n)
 	$(add_frameworks_dep kiconthemes)
 	$(add_frameworks_dep kio)
-	$(add_frameworks_dep kparts)
+	$(add_frameworks_dep knotifications)
 	$(add_frameworks_dep kservice)
 	$(add_frameworks_dep kwidgetsaddons)
-	$(add_frameworks_dep kwindowsystem)
 	$(add_frameworks_dep kxmlgui)
-	$(add_qt_dep qtdbus)
 	$(add_qt_dep qtgui)
 	$(add_qt_dep qtwidgets)
-	$(add_qt_dep qtxml)
 "
-RDEPEND="${DEPEND}
-	!<=kde-apps/konqueror-16.08.3:4
+DEPEND="${CDEPEND}
+	x11-misc/shared-mime-info
+"
+RDEPEND="${CDEPEND}
+	!app-backup/kbackup:4
 "
