@@ -1,10 +1,10 @@
-# Copyright 1999-2016 Gentoo Foundation
+# Copyright 1999-2017 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
 # $Id$
 
 EAPI=6
 
-KDE_TEST="optional"
+KDE_HANDBOOK="true"
 inherit kde5
 
 DESCRIPTION="KIO Slave for Google Drive service"
