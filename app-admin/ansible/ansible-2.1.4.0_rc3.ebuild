@@ -1,4 +1,4 @@
-# Copyright 1999-2016 Gentoo Foundation
+# Copyright 1999-2017 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
 # $Id$
 
@@ -10,9 +10,9 @@ inherit distutils-r1 eutils versionator
 
 DESCRIPTION="Model-driven deployment, config management, and command execution framework"
 HOMEPAGE="http://ansible.com/"
-# This is a release candidate, so we need to do things a little differently
-MY_PV="$(get_version_component_range 1-4)-0.1.rc1"
-SRC_URI="https://github.com/${PN}/${PN}/archive/v${MY_PV}.tar.gz -> ${PN}-${MY_PV}.tar.gz"
+MY_V="$(get_version_component_range 1-4)"
+MY_PV="${MY_V}-0.3.rc3"
+SRC_URI="http://releases.ansible.com/${PN}/${PN}-${MY_PV}.tar.gz"
 
 LICENSE="GPL-3"
 SLOT="0"
@@ -22,7 +22,7 @@ IUSE="keyczar test"
 RDEPEND="
 	keyczar? ( dev-python/keyczar[${PYTHON_USEDEP}] )
 	dev-python/paramiko[${PYTHON_USEDEP}]
-	dev-python/jinja[${PYTHON_USEDEP}]
+	<dev-python/jinja-2.9[${PYTHON_USEDEP}]
 	dev-python/pyyaml[${PYTHON_USEDEP}]
 	dev-python/setuptools[${PYTHON_USEDEP}]
 	>=dev-python/pycrypto-2.6[${PYTHON_USEDEP}]
@@ -45,7 +45,7 @@ DEPEND="
 		dev-vcs/git
 	)"
 
-S=${WORKDIR}/${PN}-${MY_PV}
+S=${WORKDIR}/${PN}-${MY_V}
 
 # not included in release tarball
 RESTRICT="test"
@@ -57,6 +57,5 @@ python_test() {
 python_install_all() {
 	distutils-r1_python_install_all
 
-	# Documentation requires extra dependencies and building steps for release candidates so we skip it
-	#doman docs/man/man1/*.1
+	doman docs/man/man1/*.1
 }
