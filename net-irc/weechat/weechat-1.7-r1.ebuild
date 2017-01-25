@@ -58,7 +58,10 @@ DOCS="AUTHORS.adoc ChangeLog.adoc Contributing.adoc ReleaseNotes.adoc README.ado
 # tests need to be fixed to not use system plugins if weechat is already installed
 RESTRICT="test"
 
-PATCHES=( "${FILESDIR}"/${PN}-1.2-tinfo.patch )
+PATCHES=(
+	"${FILESDIR}"/${PN}-1.2-tinfo.patch
+	"${FILESDIR}"/${PN}-1.7-ruby24.patch
+)
 
 pkg_setup() {
 	use python && python-single-r1_pkg_setup
