@@ -1,4 +1,4 @@
-# Copyright 1999-2016 Gentoo Foundation
+# Copyright 1999-2017 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
 # $Id$
 
@@ -7,10 +7,10 @@ EAPI=6
 inherit user systemd golang-vcs-snapshot
 
 KEYWORDS="~amd64"
-EGO_PN=github.com/coreos/etcd/...
+EGO_PN=github.com/coreos/etcd
 DESCRIPTION="A highly-available key value store for shared configuration and service discovery"
-HOMEPAGE="https://${EGO_PN%/*}/"
-SRC_URI="https://${EGO_PN%/*}/archive/v${PV}.tar.gz -> ${P}.tar.gz"
+HOMEPAGE="https://${EGO_PN}/"
+SRC_URI="https://${EGO_PN}/archive/v${PV}.tar.gz -> ${P}.tar.gz"
 LICENSE="Apache-2.0"
 SLOT="0"
 IUSE="doc"
@@ -20,7 +20,7 @@ RDEPEND="!dev-db/etcdctl"
 src_prepare() {
 	eapply_user
 	sed -e 's|GIT_SHA=.*|GIT_SHA=v${PV}|'\
-		-i "${S}"/src/${EGO_PN%/*}/build || die
+		-i "${S}"/src/${EGO_PN}/build || die
 }
 
 pkg_setup() {
@@ -30,12 +30,12 @@ pkg_setup() {
 
 src_compile() {
 	export GOPATH=${S}
-	cd "${S}"/src/${EGO_PN%/*} || die
+	cd "${S}"/src/${EGO_PN} || die
 	./build || die
 }
 
 src_install() {
-	cd "${S}"/src/${EGO_PN%/*} || die
+	cd "${S}"/src/${EGO_PN} || die
 	insinto /etc/${PN}
 	doins "${FILESDIR}/${PN}.conf"
 	dobin bin/*
@@ -56,6 +56,6 @@ src_install() {
 }
 
 src_test() {
-	cd "${S}"/src/${EGO_PN%/*} || die
+	cd "${S}"/src/${EGO_PN} || die
 	./test || die
 }
