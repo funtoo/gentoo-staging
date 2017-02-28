@@ -3,7 +3,7 @@
 # $Id$
 
 EAPI=6
-PYTHON_COMPAT=( python{2_7,3_{4,5}} )
+PYTHON_COMPAT=( python{2_7,3_{4,5,6}} )
 
 inherit check-reqs autotools eutils python-r1 udev user \
 	readme.gentoo-r1 systemd versionator flag-o-matic
@@ -135,16 +135,24 @@ user_setup() {
 }
 
 emake_python_bindings() {
-	local action="${1}" params binding
+	local action="${1}" params binding module
 	shift
 	params=("${@}")
 
 	__emake_python_bindings_do_impl() {
+		ceph_run_econf "${EPYTHON}"
 		emake "${params[@]}" PYTHON="${EPYTHON}" "${binding}-pybind-${action}"
 
 		# these don't work and aren't needed on python3
-		if [[ ${EBUILD_PHASE} == install ]] && python_is_python3; then
-			rm -f "${ED}/$(python_get_sitedir)"/ceph_{argparse,volume_client}.py
+		if [[ ${EBUILD_PHASE} == install ]]; then
+			for module in "${S}"/src/pybind/*.py; do
+				module_basename="$(basename "${module}")"
+				if [[ ${module_basename} == ceph_volume_client.py ]] && ! use cephfs; then
+					continue
+				elif [[ ! -e "${ED}/$(python_get_sitedir)/${module_basename}" ]]; then
+					python_domodule ${module}
+				fi
+			done
 		fi
 	}
 
@@ -182,7 +190,7 @@ src_prepare() {
 }
 
 src_configure() {
-	local myeconfargs=(
+	ECONFARGS=(
 		--without-hadoop
 		--includedir=/usr/include
 		$(use_with cephfs)
@@ -211,8 +219,25 @@ src_configure() {
 	)
 
 	# we can only use python2.7 for building at the moment
-	python_setup 'python2*'
-	econf "${myeconfargs[@]}"
+	ceph_run_econf "python2*"
+}
+
+ceph_run_econf() {
+	[[ -z ${ECONFARGS} ]] && die "called ${FUNCNAME[0]} with ECONFARGS unset"
+	[[ -z ${1} ]] && die "called ${FUNCNAME[0]} without passing python implementation"
+
+	pushd "${S}" >/dev/null || die
+	#
+	# This generates a QA warning about running econf in src_compile
+	# and src_install. Unfortunately the only other way to do this would
+	# involve building all of for each python implementation times, which
+	# wastes a _lot_ of CPU time and disk space. This hack will no longer
+	# be needed with >=ceph-11.2.
+	#
+	python_setup "${1}"
+	econf "${ECONFARGS[@]}"
+
+	popd >/dev/null || die
 }
 
 src_compile() {
