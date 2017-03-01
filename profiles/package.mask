@@ -1,5 +1,4 @@
 ####################################################################
-# $Id$
 #
 # When you add an entry to the top of this file, add your name, the date, and
 # an explanation of why something is getting masked. Please be extremely
@@ -29,11 +28,6 @@
 ## app-misc/some-package
 
 #--- END OF EXAMPLES ---
-
-# Ian Stakenvicius <axs@gentoo.org> (28 Feb 2017)
-# Installs symlinks to ${S} instead of copies of files,
-# will unmask once fixed
-dev-lang/spidermonkey:45
 
 # Matt Turner <mattst88@gentoo.org> (26 Feb 2017)
 # Integrated into xorg-server since 1.17. Removal in 30 days.
@@ -265,10 +259,6 @@ app-crypt/cryptkeeper
 # Removal in 30 days.
 dev-python/mwlib
 dev-python/mwlib-rl
-
-# Fabian Groffen <grobian@gentoo.org> (31 Jan 2017)
-# Mask upcoming Exim release candidates
-=mail-mta/exim-4.89_rc6
 
 # David Seifert <soap@gentoo.org> (30 Jan 2017)
 # No maintainer activity since git migration, dated eclass

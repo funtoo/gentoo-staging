@@ -1,6 +1,5 @@
 # Copyright 1999-2017 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Id$
 
 EAPI=6
 WANT_AUTOCONF="2.1"
@@ -38,7 +37,9 @@ pkg_setup(){
 src_prepare() {
 	eapply "${FILESDIR}"/${PN}-38-jsapi-tests.patch \
 		"${FILESDIR}"/mozjs45-1266366.patch \
-		"${FILESDIR}"/mozjs38-pkg-config-version.patch
+		"${FILESDIR}"/mozjs38-pkg-config-version.patch \
+		"${FILESDIR}"/mozilla_configure_regexp_esr.patch \
+		"${FILESDIR}"/${PN}-${SLOT}-dont-symlink-non-objfiles.patch
 
 	# apply relevant (modified) patches from gentoo's firefox-45 patchset
 	eapply "${FILESDIR}"/ff45
@@ -140,6 +141,6 @@ src_install() {
 	if ! use static-libs; then
 		# We can't actually disable building of static libraries
 		# They're used by the tests and in a few other places
-		find "${D}" -iname '*.a' -delete || die
+		find "${D}" -iname '*.a' -o -iname '*.ajs' -delete || die
 	fi
 }
