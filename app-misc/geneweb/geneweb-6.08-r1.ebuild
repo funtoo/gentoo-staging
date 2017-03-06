@@ -6,7 +6,8 @@ inherit eutils user
 
 DESCRIPTION="Genealogy software program with a Web interface"
 HOMEPAGE="http://opensource.geneanet.org/projects/geneweb"
-SRC_URI="https://github.com/geneweb/geneweb/archive/v6.08.tar.gz -> ${P}.tar.gz"
+SRC_URI="https://github.com/geneweb/geneweb/archive/v6.08.tar.gz -> ${P}.tar.gz
+	http://dev.gentoo.org/~tupone/${P}-ocaml-4.patch.gz"
 
 LICENSE="GPL-2"
 SLOT="0"
@@ -19,7 +20,8 @@ DEPEND="${RDEPEND}
 	!net-p2p/ghostwhitecrab"
 
 PATCHES=(
-	"${FILESDIR}"/${P}-gentoo.patch
+	"${WORKDIR}"/${P}-ocaml-4.patch
+	"${FILESDIR}"/${PF}-gentoo.patch
 	"${FILESDIR}"/${P}-parallellbuild.patch )
 
 src_compile() {

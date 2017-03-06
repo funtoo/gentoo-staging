@@ -11,16 +11,16 @@
  value lang_param = ref "";
  value only_file = ref "";
  
---- geneweb-6.08/tools/Makefile.inc.unix.old	2008-04-23 15:22:50.000000000 +0200
-+++ geneweb-6.08/tools/Makefile.inc.unix	2008-04-23 15:23:04.000000000 +0200
-@@ -5,11 +5,11 @@
+--- geneweb-6.08/tools/Makefile.inc.unix.old	2017-03-06 08:15:45.334667626 +0100
++++ geneweb-6.08/tools/Makefile.inc.unix	2017-03-06 08:16:10.162223399 +0100
+@@ -6,11 +6,11 @@
  CAMLP5F=-DUNIX
  CAMLP5D=+camlp5
  LIBUNIX=-cclib -lunix
--OCAMLC=ocamlc.opt -warn-error A
--OCAMLOPT=ocamlopt.opt -warn-error A
-+OCAMLC=ocamlc.opt
-+OCAMLOPT=ocamlopt.opt
+-OCAMLC=ocamlc.opt -w -3 -warn-error +a-52
+-OCAMLOPT=ocamlopt.opt -w -3 -warn-error +a-52
++OCAMLC=ocamlc.opt -w -3
++OCAMLOPT=ocamlopt.opt -w -3
  OCAMLI=
  OCAMLD=
 -STRIP=strip

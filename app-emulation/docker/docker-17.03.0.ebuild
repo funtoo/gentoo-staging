@@ -12,8 +12,8 @@ if [[ ${PV} = *9999* ]]; then
 	inherit git-r3
 else
 	MY_PV="${PV/_/-}"
-	DOCKER_GITCOMMIT="092cba3"
-	EGIT_COMMIT="v${MY_PV}"
+	DOCKER_GITCOMMIT="60ccb22"
+	EGIT_COMMIT="v${MY_PV}-ce"
 	SRC_URI="https://${EGO_PN}/archive/${EGIT_COMMIT}.tar.gz -> ${P}.tar.gz"
 	KEYWORDS="~amd64"
 	[ "$DOCKER_GITCOMMIT" ] || die "DOCKER_GITCOMMIT must be added manually for each bump!"
@@ -49,6 +49,8 @@ DEPEND="
 
 # https://github.com/docker/docker/blob/master/project/PACKAGERS.md#runtime-dependencies
 # https://github.com/docker/docker/blob/master/project/PACKAGERS.md#optional-dependencies
+# Runc/Containerd: Unfortunately docker does not version the releases, in order to avoid 
+# 	incompatiblities we depend on snapshots
 RDEPEND="
 	${CDEPEND}
 
@@ -58,8 +60,8 @@ RDEPEND="
 	>=dev-vcs/git-1.7
 	>=app-arch/xz-utils-4.9
 
-	>=app-emulation/containerd-0.2.5
-	app-emulation/docker-runc[apparmor?,seccomp?]
+	~app-emulation/containerd-0.2.3_p20170131
+	~app-emulation/docker-runc-1.0.0_rc2_p20170222[apparmor?,seccomp?]
 	app-emulation/docker-proxy
 	container-init? ( >=sys-process/tini-0.13.0[static] )
 "
@@ -107,6 +109,10 @@ ERROR_CGROUP_PERF="CONFIG_CGROUP_PERF: is optional for container statistics gath
 ERROR_CFS_BANDWIDTH="CONFIG_CFS_BANDWIDTH: is optional for container statistics gathering"
 ERROR_XFRM_ALGO="CONFIG_XFRM_ALGO: is optional for secure networks"
 ERROR_XFRM_USER="CONFIG_XFRM_USER: is optional for secure networks"
+
+PATCHES=(
+	"${FILESDIR}"/1.13.1-split-openrc-log.patch
+)
 
 pkg_setup() {
 	if kernel_is lt 3 10; then
