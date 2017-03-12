@@ -4,7 +4,7 @@
 EAPI=5
 
 #TL_UPSTREAM_PATCHLEVEL="1"
-PATCHLEVEL="64"
+PATCHLEVEL="65"
 TL_SOURCE_VERSION=20160523
 
 inherit eutils flag-o-matic toolchain-funcs libtool texlive-common
@@ -55,8 +55,8 @@ TL_CORE_BINEXTRA_SRC_MODULES="
 	texdef.source texosquery.source
 "
 
-TL_CORE_EXTRA_MODULES="tetex hyphen-base texconfig gsftopk ${TL_CORE_BINEXTRA_MODULES}"
-TL_CORE_EXTRA_DOC_MODULES="tetex.doc texconfig.doc gsftopk.doc ${TL_CORE_BINEXTRA_DOC_MODULES}"
+TL_CORE_EXTRA_MODULES="tetex hyphen-base texconfig gsftopk texlive.infra ${TL_CORE_BINEXTRA_MODULES}"
+TL_CORE_EXTRA_DOC_MODULES="tetex.doc texconfig.doc gsftopk.doc texlive.infra.doc ${TL_CORE_BINEXTRA_DOC_MODULES}"
 TL_CORE_EXTRA_SRC_MODULES="${TL_CORE_BINEXTRA_SRC_MODULES}"
 
 for i in ${TL_CORE_EXTRA_MODULES}; do
