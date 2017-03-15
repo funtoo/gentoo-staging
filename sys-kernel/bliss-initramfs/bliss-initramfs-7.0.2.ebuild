@@ -12,9 +12,9 @@ HOMEPAGE="https://github.com/${GITHUB_USER}/${GITHUB_REPO}"
 SRC_URI="https://github.com/${GITHUB_USER}/${GITHUB_REPO}/archive/${GITHUB_TAG}.tar.gz -> ${P}.tar.gz"
 
 RESTRICT="strip"
-LICENSE="GPL-3+"
+LICENSE="BSD-2"
 SLOT="0"
-KEYWORDS="-* ~amd64"
+KEYWORDS="-* amd64"
 
 RDEPEND="
 	>=dev-lang/python-3.3
@@ -34,7 +34,7 @@ src_install() {
 	cp -r "${S}/pkg" "${D}/opt/${PN}" || die
 
 	# Copy documentation files
-	dodoc CHANGES README USAGE
+	dodoc README USAGE
 
 	# Make a symbolic link: /sbin/bliss-initramfs
 	dosym "/opt/${PN}/${executable}" "/sbin/${PN}"

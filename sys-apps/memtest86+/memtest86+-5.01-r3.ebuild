@@ -1,7 +1,7 @@
-# Copyright 1999-2016 Gentoo Foundation
+# Copyright 1999-2017 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI=4
+EAPI="5"
 
 inherit mount-boot eutils toolchain-funcs
 
@@ -14,9 +14,9 @@ SLOT="0"
 KEYWORDS="-* ~amd64 ~x86"
 IUSE="floppy iso serial"
 
-BOOTDIR=/boot/memtest86plus
-QA_PRESTRIPPED="${BOOTDIR}/memtest.netbsd"
-QA_FLAGS_IGNORED="${BOOTDIR}/memtest.netbsd"
+BOOTDIR="/boot/memtest86plus"
+QA_PRESTRIPPED="${BOOTDIR}/memtest"
+QA_FLAGS_IGNORED="${BOOTDIR}/memtest"
 
 RDEPEND="floppy? ( >=sys-boot/grub-0.95:0 sys-fs/mtools )"
 DEPEND="iso? ( app-cdr/cdrtools )"
@@ -56,11 +56,9 @@ src_compile() {
 src_test() { :; }
 
 src_install() {
-	insinto ${BOOTDIR}
+	insinto "${BOOTDIR}"
 	use iso && newins mt*.iso memtest.iso
-	newins memtest.bin memtest
-	newins memtest memtest.netbsd
-	dosym memtest ${BOOTDIR}/memtest.bin
+	doins memtest memtest.bin
 
 	exeinto /etc/grub.d
 	doexe "${FILESDIR}"/39_memtest86+
@@ -84,9 +82,9 @@ pkg_postinst() {
 	elog " - For grub legacy: (replace '?' with correct numbers for your boot partition)"
 	elog "    > title=${PN}"
 	elog "    > root (hd?,?)"
-	elog "    > kernel ${BOOTDIR}/memtest"
+	elog "    > kernel ${BOOTDIR}/memtest.bin"
 	elog " - For lilo:"
-	elog "    > image  = ${BOOTDIR}/memtest"
+	elog "    > image  = ${BOOTDIR}/memtest.bin"
 	elog "    > label  = ${PN}"
 	elog
 }
