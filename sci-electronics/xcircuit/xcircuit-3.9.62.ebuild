@@ -1,4 +1,4 @@
-# Copyright 1999-2016 Gentoo Foundation
+# Copyright 1999-2017 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=5
@@ -19,12 +19,15 @@ IUSE=""
 DEPEND="
 	app-text/ghostscript-gpl
 	dev-lang/tk:0
+	media-libs/fontconfig:1.0
 	sys-libs/zlib
+	x11-libs/cairo
 	x11-libs/libX11
 	x11-libs/libXt
 	x11-libs/libXpm
 	x11-libs/libSM
-	x11-libs/libICE"
+	x11-libs/libICE
+"
 RDEPEND=${DEPEND}
 
 RESTRICT="test" #131024
@@ -47,6 +50,8 @@ src_configure() {
 		--disable-dependency-tracking
 		--with-tcl
 		--with-ngspice
+		--with-tk
+		--with-cairo
 	)
 	autotools-utils_src_configure
 }
