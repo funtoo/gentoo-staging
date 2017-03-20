@@ -10,9 +10,6 @@ extra_commands="stopall"
 depend() {
     need net
     use lxcfs
-
-    # remove with 2.0 release
-    need cgmanager
 }
 
 start() {
@@ -30,7 +27,7 @@ start() {
 }
 
 stop() {
-    if [[ $RC_GOINGDOWN = YES ]] || [[ $RC_REBOOT = YES ]]; then
+    if [ $RC_GOINGDOWN = YES ] || [ $RC_REBOOT = YES ]; then
 	stopall
     else
 	ebegin "Stopping lxd service (but not containers)"

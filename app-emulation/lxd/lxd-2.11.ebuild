@@ -1,4 +1,4 @@
-# Copyright 1999-2016 Gentoo Foundation
+# Copyright 1999-2017 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=6
@@ -22,7 +22,7 @@ LICENSE="Apache-2.0"
 SLOT="0"
 KEYWORDS="~amd64"
 
-PLOCALES="de fr ja"
+PLOCALES="de el fr ja nl ru"
 IUSE="+daemon nls test"
 
 # IUSE and PLOCALES must be defined before l10n inherited
@@ -31,6 +31,7 @@ inherit bash-completion-r1 golang-build l10n linux-info systemd user vcs-snapsho
 DEPEND="
 	>=dev-lang/go-1.7.1
 	dev-go/go-crypto
+	dev-go/go-net
 	dev-libs/protobuf
 	nls? ( sys-devel/gettext )
 	test? (
@@ -43,9 +44,8 @@ DEPEND="
 
 RDEPEND="
 	daemon? (
-		app-admin/cgmanager
 		app-arch/xz-utils
-		app-emulation/lxc[cgmanager,seccomp]
+		app-emulation/lxc[seccomp]
 		net-dns/dnsmasq[dhcp,ipv6]
 		net-misc/rsync[xattr]
 		sys-apps/iproute2[ipv6]
@@ -138,7 +138,10 @@ src_install() {
 
 	cd "${S}"
 	dobin bin/lxc
-	use daemon && dosbin bin/lxd
+	if use daemon; then
+		dosbin bin/lxd
+		dobin bin/fuidshift
+	fi
 
 	cd "src/${EGO_PN}"
 
@@ -154,7 +157,7 @@ src_install() {
 		newinitd "${FILESDIR}"/${P}.initd lxd
 		newconfd "${FILESDIR}"/${P}.confd lxd
 
-		systemd_dounit "${FILESDIR}"/lxd.service
+		systemd_dounit "${FILESDIR}"/${P}.service
 	fi
 
 	newbashcomp config/bash/lxd-client lxc
