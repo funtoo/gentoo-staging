@@ -2,10 +2,7 @@
 <!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
 <pkgmetadata>
 <maintainer type="project">
-	<email>x11@gentoo.org</email>
-	<name>X11</name>
+	<email>ml@gentoo.org</email>
+	<name>Gentoo ML Project</name>
 </maintainer>
-<use>
-	<flag name="gles">Build glamor based on gles2</flag>
-</use>
 </pkgmetadata>
