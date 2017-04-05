@@ -1,7 +1,8 @@
-# Copyright 1999-2015 Gentoo Foundation
+# Copyright 1999-2017 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI=5
+EAPI=6
+
 inherit eutils prefix
 
 DESCRIPTION="ASDF is Another System Definition Facility for Common Lisp"
@@ -23,27 +24,24 @@ DEPEND="!dev-lisp/cl-${PN}
 RDEPEND=""
 PDEPEND="~dev-lisp/uiop-${PV}"
 
-S="${WORKDIR}"
+install_docs() {
+	# Not installing info file at the moment, see bug #605752
+	(cd doc ; dodoc *.{html,css,ico,png} "${PN}.pdf" ; dodoc -r asdf)
+}
 
 src_compile() {
 	make
-	use doc && make doc
+	use doc && make -C doc
 }
 
 src_install() {
-	insinto /usr/share/common-lisp/source/${PN}
+	insinto "/usr/share/common-lisp/source/${PN}"
 	doins -r build version.lisp-expr
 	dodoc README.md TODO
-	dohtml doc/*.{html,css,ico,png}
-	if use doc; then
-		dohtml -r doc/${PN}
-		insinto /usr/share/doc/${PF}
-		doins doc/${PN}.pdf
-	fi
-
+	use doc && install_docs
 	insinto /etc/common-lisp
-	cd "${T}"
-	cp "${FILESDIR}"/gentoo-init.lisp "${FILESDIR}"/source-registry.conf .
+	cd "${T}" || die
+	cp "${FILESDIR}/gentoo-init.lisp" "${FILESDIR}/source-registry.conf" . || die
 	eprefixify gentoo-init.lisp source-registry.conf
 	doins gentoo-init.lisp source-registry.conf
 }
