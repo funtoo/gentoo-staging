@@ -1,15 +1,15 @@
-# Copyright 1999-2015 Gentoo Foundation
+# Copyright 1999-2017 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI=5
+EAPI=6
 inherit cmake-utils flag-o-matic multilib toolchain-funcs
 
 DESCRIPTION="PoDoFo is a C++ library to work with the PDF file format"
 HOMEPAGE="https://sourceforge.net/projects/podofo/"
-SRC_URI="mirror://sourceforge/podofo/${P}.tar.gz"
+SRC_URI="mirror://gentoo/${P}.tar.xz"
 
 LICENSE="GPL-2 LGPL-2.1"
-SLOT="0"
+SLOT="0/${PVR}"
 KEYWORDS="~amd64 ~arm ~hppa ~ppc ~ppc64 ~sparc ~x86"
 IUSE="+boost idn libressl debug test"
 
@@ -32,6 +32,10 @@ DOCS="AUTHORS ChangeLog TODO"
 
 src_prepare() {
 	local x sed_args
+
+	# The 0.9.6 ABI is not necessarily stable, so make PODOFO_SOVERSION
+	# equal to ${PV}.
+	sed -e 's|${PODOFO_VERSION_PATCH}|\0_'${PV##*_}'|' -i CMakeLists.txt || die
 
 	# bug 556962
 	sed -i -e 's|Decrypt( pEncryptedBuffer, nOutputLen, pDecryptedBuffer, m_lLen );|Decrypt( pEncryptedBuffer, (pdf_long)nOutputLen, pDecryptedBuffer, (pdf_long\&)m_lLen );|' \
@@ -104,6 +108,7 @@ src_prepare() {
 			tools/podofocolor/luaconverter.cpp \
 			tools/podofoimpose/planreader_lua.cpp || die
 	fi
+	eapply_user
 }
 
 src_configure() {
@@ -118,9 +123,9 @@ src_configure() {
 		"-DPODOFO_HAVE_TIFF_LIB=1"
 		"-DWANT_FONTCONFIG=1"
 		"-DUSE_STLPORT=0"
-		$(cmake-utils_use_want boost)
-		$(cmake-utils_use_has idn LIBIDN)
-		$(cmake-utils_use_has test CPPUNIT)
+		-DWANT_BOOST=$(usex boost ON OFF)
+		-DHAVE_LIBIDN=$(usex idn ON OFF)
+		-DHAVE_CPPUNIT=$(usex test ON OFF)
 		)
 
 	cmake-utils_src_configure

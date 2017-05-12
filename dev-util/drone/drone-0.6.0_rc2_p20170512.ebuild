@@ -4,8 +4,8 @@
 EAPI=6
 
 EGO_PN="github.com/drone/drone/..."
-EGIT_COMMIT="797bb4970fced3062c001c4de5842110b535731a"
-EGO_VENDOR=( "github.com/drone/drone-ui d8426a1658a71c0dd0c7a0aa6f5cc072e3328f9e" )
+EGIT_COMMIT="697cb0ea0e81a089742f30ad4f20699ca52484ef"
+EGO_VENDOR=( "github.com/drone/drone-ui 72dc649bc4ff81f4560ab70b29495830a4c1cf3d" )
 
 inherit golang-build golang-vcs-snapshot user
 
@@ -32,7 +32,7 @@ src_compile() {
 	GOPATH="${WORKDIR}/${P}:$(get_golibdir_gopath)"	emake -C src/github.com/drone/drone gen || die
 	pushd src || die
 	DRONE_BUILD_NUMBER="${EGIT_COMMIT:0:7}" GOPATH="${WORKDIR}/${P}:$(get_golibdir_gopath)"\
-		go install -ldflags "-extldflags '-static' -X github.com/drone/drone/version.VersionDev=${EGIT_COMMIT:0:7}" github.com/drone/drone/drone || die
+		go install -ldflags "-extldflags '-static' -X github.com/drone/drone/version.VersionDev=build.${EGIT_COMMIT:0:7}" github.com/drone/drone/drone || die
 	popd || die
 }
 
