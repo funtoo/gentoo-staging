@@ -1,4 +1,4 @@
-# Copyright 1999-2016 Gentoo Foundation
+# Copyright 1999-2017 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=6
@@ -7,14 +7,15 @@ inherit cmake-utils flag-o-matic linux-info linux-mod
 
 DESCRIPTION="High performance PPTP, PPPoE and L2TP server"
 HOMEPAGE="http://accel-ppp.sourceforge.net/"
-SRC_URI="mirror://sourceforge/${PN}/${P}.tar.bz2"
+SRC_URI="http://dev.gentoo.org/~pinkbyte/distfiles/snapshots/${P}.tar.bz2"
 
 LICENSE="GPL-2"
 SLOT="0"
 KEYWORDS="~amd64 ~x86"
-IUSE="debug doc ipoe postgres radius shaper snmp valgrind"
+IUSE="debug doc ipoe lua postgres radius shaper snmp valgrind"
 
-RDEPEND="postgres? ( dev-db/postgresql:* )
+RDEPEND="lua? ( dev-lang/lua:0 )
+	postgres? ( dev-db/postgresql:* )
 	snmp? ( net-analyzer/net-snmp )
 	dev-libs/libpcre
 	dev-libs/openssl:0"
@@ -27,6 +28,13 @@ DOCS=( README )
 CONFIG_CHECK="~L2TP ~PPPOE ~PPTP"
 
 REQUIRED_USE="valgrind? ( debug )"
+
+PATCHES=(
+	"${FILESDIR}/${PN}-1.11.1-linux-4.10.patch"
+	"${FILESDIR}/${PN}-1.11.1-socklen.patch"
+)
+
+S="${WORKDIR}"
 
 pkg_setup() {
 	if use ipoe; then
@@ -41,7 +49,11 @@ src_prepare() {
 	sed -i  -e "/mkdir/d" \
 		-e "/echo/d" \
 		-e "s: RENAME accel-ppp.conf.dist::" accel-pppd/CMakeLists.txt || die 'sed on accel-pppd/CMakeLists.txt failed'
-	sed -i -e '/modules_install/d' drivers/ipoe/CMakeLists.txt || die 'sed on drivers/ipoe/CMakeLists.txt failed'
+
+	# Do not install kernel modules like that - breaks sandbox!
+	sed -i -e '/modules_install/d' \
+		drivers/ipoe/CMakeLists.txt \
+		drivers/vlan_mon/CMakeLists.txt || die
 
 	# Bug #549918
 	append-ldflags -Wl,-z,lazy
@@ -56,8 +68,10 @@ src_configure() {
 		-DLIB_PATH_SUFFIX="${libdir#lib}"
 		-DBUILD_IPOE_DRIVER="$(usex ipoe)"
 		-DBUILD_PPTP_DRIVER=no
+		-DBUILD_VLAN_MON_DRIVER="$(usex ipoe)"
 		-DCRYPTO=OPENSSL
 		-DLOG_PGSQL="$(usex postgres)"
+		-DLUA="$(usex lua)"
 		-DMEMDEBUG="$(usex debug)"
 		-DNETSNMP="$(usex snmp)"
 		-DRADIUS="$(usex radius)"
@@ -73,7 +87,7 @@ src_compile() {
 
 src_install() {
 	if use ipoe; then
-		local MODULE_NAMES="ipoe(accel-ppp:${BUILD_DIR}/drivers/ipoe/driver)"
+		local MODULE_NAMES="ipoe(accel-ppp:${BUILD_DIR}/drivers/ipoe/driver) vlan_mon(accel-ppp:${BUILD_DIR}/drivers/vlan_mon/driver)"
 		linux-mod_src_install
 	fi
 
