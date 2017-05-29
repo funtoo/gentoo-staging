@@ -29,6 +29,13 @@
 
 #--- END OF EXAMPLES ---
 
+# Amadeusz Żołnowski <aidecoe@gentoo.org> (28 May 2017)
+# Masked for removal. Upstream has disappeared. Homepage is not
+# accessible anymore. There are open, long-standing bugs: #553888,
+# #532308, #548920, not worth fixing while there's active alternative.
+# Use app-admin/needrestart instead.
+app-admin/checkrestart
+
 # Pacho Ramos <pacho@gentoo.org> (28 May 2017)
 # Not compatible with python 3.5 neither 3.6, bug #388549
 # Removal in a month.
@@ -317,12 +324,6 @@ app-emulation/wine-any
 # Yixun Lan <dlan@gentoo.org> (30 Mar 2017)
 # Masked, broken due to emoji support which requre npm package installed (bug #612218)
 =app-i18n/ibus-1.5.15
-
-# Matt Turner <mattst88@gentoo.org> (29 Mar 2017)
-# Use sys-kernel/linux-firmware instead, which these packages are subsets of
-# Bug #614218
-sys-firmware/radeon-ucode
-sys-firmware/amdgpu-ucode
 
 # Lars Wendler <polynomial-c@gentoo.org> (24 Mar 2017)
 # Masked until Mozilla and Chrome agreed how to handle

@@ -3,22 +3,20 @@
 
 EAPI=6
 
-# Don't block arm. See bug #600134.
-#MULTILIB_COMPAT=( abi_ppc_64 abi_x86_{32,64} )
-KEYWORDS="-* amd64 ~arm ppc64 x86"
+MULTILIB_COMPAT=( abi_x86_{32,64} )
+KEYWORDS="-* ~amd64 ~x86"
 
-inherit java-vm-2 multilib-build toolchain-funcs
+inherit java-vm-2 multilib-build prefix toolchain-funcs
 
 BASE_URI="https://dev.gentoo.org/~chewi/distfiles"
 SRC_URI="doc? ( ${BASE_URI}/${PN}-doc-${PV}.tar.xz )
 	source? ( ${BASE_URI}/${PN}-src-${PV}.tar.xz )
-	multilib? ( amd64? ( abi_x86_32? ( ${BASE_URI}/${PN}-core-${PV}-x86.tar.xz ${BASE_URI}/${PN}-sunec-${PV}-x86.tar.xz ) ) )"
+	multilib? ( amd64? ( abi_x86_32? ( ${BASE_URI}/${PN}-core-${PV}-x86.tar.xz ) ) )"
 
-for abi in amd64 arm ppc64 x86; do
+for abi in amd64 x86; do
 	SRC_URI+="
 		${abi}? (
 			${BASE_URI}/${PN}-core-${PV}-${abi}.tar.xz
-			${BASE_URI}/${PN}-sunec-${PV}-${abi}.tar.xz
 			examples? ( ${BASE_URI}/${PN}-examples-${PV}-${abi}.tar.xz )
 		)"
 done
@@ -26,9 +24,9 @@ done
 DESCRIPTION="A Gentoo-made binary build of the IcedTea JDK"
 HOMEPAGE="http://icedtea.classpath.org"
 LICENSE="GPL-2-with-classpath-exception"
-SLOT="8"
+SLOT="7"
 
-IUSE="+alsa +cups doc examples +gtk headless-awt multilib nsplugin pulseaudio selinux source +webstart"
+IUSE="+alsa cjk +cups doc examples +gtk headless-awt multilib nsplugin nss pulseaudio selinux source +webstart"
 REQUIRED_USE="gtk? ( !headless-awt ) nsplugin? ( !headless-awt )"
 
 RESTRICT="preserve-libs strip"
@@ -50,7 +48,7 @@ RDEPEND=">=dev-libs/glib-2.42:2%
 		>=x11-libs/pango-1.36%
 	)
 	!headless-awt? (
-		media-libs/giflib:0/7%
+		>=media-libs/giflib-4.1.6-r1%
 		=media-libs/libpng-1.6*%
 		>=x11-libs/libX11-1.6%
 		>=x11-libs/libXcomposite-0.4%
@@ -58,14 +56,29 @@ RDEPEND=">=dev-libs/glib-2.42:2%
 		>=x11-libs/libXi-1.7%
 		>=x11-libs/libXrender-0.9.8%
 		>=x11-libs/libXtst-1.2%
+	)
+	nss? (
+		>=dev-libs/nss-3.16.1-r1%
+		>=dev-libs/nspr-4.10%
 	)"
 
-RDEPEND=">=sys-devel/gcc-4.9.4[multilib?]
+# gsettings-desktop-schemas is needed for native proxy support. #431972
+RDEPEND=">=gnome-base/gsettings-desktop-schemas-3.12.2
+	media-fonts/dejavu
+	>=sys-devel/gcc-4.9.3[multilib?]
 	>=sys-libs/glibc-2.22[multilib?]
-	virtual/ttf-fonts
+	cjk? (
+		media-fonts/arphicfonts
+		media-fonts/baekmuk-fonts
+		media-fonts/lklug
+		media-fonts/lohit-fonts
+		media-fonts/sazanami
+	)
 	selinux? ( sec-policy/selinux-java )
 	multilib? ( ${RDEPEND//%/[${MULTILIB_USEDEP}]} )
 	!multilib? ( ${RDEPEND//%/} )"
+
+DEPEND="!arm? ( dev-util/patchelf )"
 
 PDEPEND="webstart? ( >=dev-java/icedtea-web-1.6.1:0 )
 	nsplugin? ( >=dev-java/icedtea-web-1.6.1:0[nsplugin] )
@@ -87,8 +100,48 @@ src_prepare() {
 	fi
 
 	if use headless-awt; then
-		rm -vr */jre/lib/*/lib*{[jx]awt,splashscreen}* \
+		rm -vr */jre/lib/*/{xawt,libsplashscreen.*} \
 		   */{,jre/}bin/policytool */bin/appletviewer || die
+	fi
+
+	if ! use gtk; then
+		rm -v */jre/lib/*/libjavagtk.* || die
+	fi
+
+	local lib=${P}-${ABI}/jre/lib
+
+	# The nss flag in the icedtea package just (un)comments this line.
+	sed -i "/=sun\.security\.pkcs11\.SunPKCS11/s/^#*$(usex nss '/' '/#')/" \
+		${lib}/security/java.security || die
+
+	if [[ -n "${EPREFIX}" ]]; then
+		# The binaries are built on a non-prefixed system so the
+		# fontconfig needs to have prefixes inserted.
+		rm ${lib}/fontconfig.Gentoo.bfc || die
+		hprefixify ${lib}/fontconfig.Gentoo.properties.src
+		mv ${lib}/fontconfig.Gentoo.properties{.src,} || die
+	fi
+
+	# Fix the RPATHs, except on arm.
+	# https://bugs.gentoo.org/show_bug.cgi?id=543658#c3
+	# https://github.com/NixOS/patchelf/issues/8
+	if use arm; then
+		ewarn "The RPATHs on these binaries are normally modified to avoid"
+		ewarn "conflicts with an icedtea installation built from source. This"
+		ewarn "is currently not possible on ARM so please refrain from"
+		ewarn "installing dev-java/icedtea on the same system."
+	else
+		local old="/usr/$(get_libdir)/icedtea${SLOT}"
+		local new="${EPREFIX}/opt/${P}"
+		local elf rpath
+
+		for elf in $(find -type f -executable ! -name "*.cgi" || die); do
+			rpath=$(patchelf --print-rpath "${elf}" || die "patchelf ${elf}")
+
+			if [[ -n "${rpath}" ]]; then
+				patchelf --set-rpath "${rpath//${old}/${new}}" "${elf}" || die "patchelf ${elf}"
+			fi
+		done
 	fi
 }
 
