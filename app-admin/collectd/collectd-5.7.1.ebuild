@@ -3,7 +3,7 @@
 
 EAPI="6"
 
-PYTHON_COMPAT=( python{2_7,3_4,3_5} )
+PYTHON_COMPAT=( python{2_7,3_4,3_5,3_6} )
 JAVA_PKG_OPT_USE="collectd_plugins_java"
 
 inherit autotools fcaps flag-o-matic java-pkg-opt-2 linux-info multilib perl-functions python-single-r1 systemd user
@@ -15,7 +15,7 @@ SRC_URI="${HOMEPAGE%/}/files/${P}.tar.bz2"
 
 LICENSE="GPL-2"
 SLOT="0"
-KEYWORDS="amd64 ~arm x86"
+KEYWORDS="~amd64 ~arm ~x86"
 IUSE="contrib debug java kernel_Darwin kernel_FreeBSD kernel_linux perl selinux static-libs udev xfs"
 
 # The plugin lists have to follow here since they extend IUSE
@@ -24,7 +24,9 @@ IUSE="contrib debug java kernel_Darwin kernel_FreeBSD kernel_linux perl selinux 
 # apple_sensors: Requires libIOKit
 # aquaero:       Requires aerotools-ng/libaquaero5
 # barometer:     Requires libi2c (i2c_smbus_read_i2c_block_data)
+# dpdkstat:      Requires dpdk
 # grpc:          Requires libgrpc
+# intel_rdt      Requires libpqos from intel-cmt-cat project
 # lpar:          Requires libperfstat (AIX only)
 # mic:           Requires Intel Many Integrated Core Architecture API
 #                (part of Intel's  Xeon Phi software)
@@ -36,27 +38,28 @@ IUSE="contrib debug java kernel_Darwin kernel_FreeBSD kernel_linux perl selinux 
 # write_riemann: Requires riemann-c-client
 # xmms:          Requires libxmms (v1)
 # zone:          Solaris only...
-COLLECTD_IMPOSSIBLE_PLUGINS="apple_sensors aquaero barometer grpc lpar mic
-	netapp pf pinba tape write_kafka write_mongodb write_riemann xmms
-	zone"
+COLLECTD_IMPOSSIBLE_PLUGINS="apple_sensors aquaero barometer dpdkstat grpc
+	intel_rdt lpar mic netapp pf pinba tape write_mongodb
+	write_riemann xmms zone"
 
 # Plugins that have been (compile) tested and can be enabled via COLLECTD_PLUGINS
 COLLECTD_TESTED_PLUGINS="aggregation amqp apache apcups ascent battery bind
 	ceph cgroups chrony conntrack contextswitch cpu cpufreq cpusleep
-	csv curl curl_json curl_xml dbi df disk dns drbd email entropy
-	ethstat exec fhcount filecount fscache gmond gps hddtemp interface
-	ipc ipmi iptables ipvs irq java lua load logfile log_logstash lvm
-	madwifi match_empty_counter match_hashed match_regex match_timediff
-	match_value mbmon md memcachec memcached memory modbus mqtt
-	multimeter mysql netlink network network nfs nginx notify_desktop
-	notify_email notify_nagios ntpd numa nut olsrd onewire openldap
-	openvpn oracle perl ping postgresql powerdns processes protocols
-	python python redis routeros rrdcached rrdtool sensors serial
-	sigrok smart snmp statsd swap syslog table tail tail_csv
-	target_notification target_replace target_scale target_set tcpconns
-	teamspeak2 ted thermal threshold tokyotyrant turbostat unixsock
-	uptime users uuid varnish virt vmem vserver wireless write_graphite
-	write_http write_kafka write_log write_redis write_sensu write_tsdb
+	csv curl curl_json curl_xml dbi df disk dns drbd email
+	entropy ethstat exec fhcount filecount fscache gmond gps hddtemp
+	hugepages interface ipc ipmi iptables ipvs irq java lua
+	load logfile log_logstash lvm madwifi match_empty_counter
+	match_hashed match_regex match_timediff match_value mbmon md
+	memcachec memcached memory modbus mqtt multimeter mysql netlink
+	network network nfs nginx notify_desktop notify_email notify_nagios
+	ntpd numa nut olsrd onewire openldap openvpn oracle perl ping
+	postgresql powerdns processes protocols python python redis
+	routeros rrdcached rrdtool sensors serial sigrok smart snmp statsd
+	swap syslog table tail tail_csv target_notification target_replace
+	target_scale target_set tcpconns teamspeak2 ted thermal threshold
+	tokyotyrant turbostat unixsock uptime users uuid varnish virt
+	vmem vserver wireless write_graphite write_http write_kafka
+	write_log write_prometheus write_redis write_sensu write_tsdb
 	xencpu zfs_arc zookeeper"
 
 COLLECTD_DISABLED_PLUGINS="${COLLECTD_IMPOSSIBLE_PLUGINS}"
@@ -122,6 +125,7 @@ COMMON_DEPEND="
 	collectd_plugins_virt?			( app-emulation/libvirt:= dev-libs/libxml2:2= )
 	collectd_plugins_write_http?		( net-misc/curl:0= dev-libs/yajl:= )
 	collectd_plugins_write_kafka?		( >=dev-libs/librdkafka-0.9.0.99:= dev-libs/yajl:= )
+	collectd_plugins_write_prometheus?	( >=dev-libs/protobuf-c-1.2.1-r1:= net-libs/libmicrohttpd:= )
 	collectd_plugins_write_redis?		( dev-libs/hiredis:= )
 	collectd_plugins_xencpu?		( app-emulation/xen-tools:= )
 
@@ -134,9 +138,9 @@ COMMON_DEPEND="
 		collectd_plugins_users?		( sys-libs/libstatgrab:= )
 	)"
 
-# Enforcing <=sys-kernel/linux-headers-4.4 due to #577846
+# Enforcing !=sys-kernel/linux-headers-4.5 > due to #577846
 DEPEND="${COMMON_DEPEND}
-	collectd_plugins_iptables?		( <=sys-kernel/linux-headers-4.4 )
+	collectd_plugins_iptables?		( || ( <=sys-kernel/linux-headers-4.4 >=sys-kernel/linux-headers-4.6 ) )
 	collectd_plugins_java?			( >=virtual/jdk-1.6 )
 	virtual/pkgconfig"
 
@@ -153,6 +157,7 @@ REQUIRED_USE="
 PATCHES=(
 	"${FILESDIR}"/${PN}-5.6.0-gentoo.patch
 	"${FILESDIR}"/${PN}-5.6.2-CVE-2017-7401.patch
+	"${FILESDIR}"/${PN}-5.6.2-issue2303.patch
 )
 
 # @FUNCTION: collectd_plugin_kernel_linux
@@ -308,10 +313,11 @@ src_configure() {
 	# Now come the lists of os-dependent plugins. Any plugin that is not listed anywhere here
 	# should work independent of the operating system.
 
-	local linux_plugins="barometer battery cpu cpufreq disk drbd entropy
-		ethstat interface iptables ipvs irq ipc load memory md netlink nfs
-		numa processes serial swap tcpconns thermal turbostat users vmem
-		wireless zfc_arc"
+	local linux_plugins="barometer battery cpu cpufreq disk
+		drbd entropy ethstat hugepages interface iptables
+		ipvs irq ipc load memory md netlink nfs numa processes
+		serial swap tcpconns thermal turbostat users vmem wireless
+		zfc_arc"
 
 	local need_libstatgrab=0
 	local libstatgrab_plugins="cpu disk interface load memory swap users"
@@ -443,7 +449,7 @@ src_install() {
 	fowners root:collectd /etc/collectd.conf
 	fperms u=rw,g=r,o= /etc/collectd.conf
 
-	dodoc AUTHORS ChangeLog NEWS README TODO
+	dodoc AUTHORS ChangeLog README
 
 	if use contrib ; then
 		insinto /usr/share/doc/${PF}
