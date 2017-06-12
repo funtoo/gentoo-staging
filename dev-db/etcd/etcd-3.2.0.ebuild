@@ -6,9 +6,9 @@ EAPI=6
 inherit user systemd golang-vcs-snapshot
 
 KEYWORDS="~amd64"
-EGO_PN=github.com/coreos/etcd
+EGO_PN="github.com/coreos/etcd"
 DESCRIPTION="Highly-available key value store for shared configuration and service discovery"
-HOMEPAGE="https://${EGO_PN}/"
+HOMEPAGE="https://github.com/coreos/etcd"
 SRC_URI="https://${EGO_PN}/archive/v${PV}.tar.gz -> ${P}.tar.gz"
 LICENSE="Apache-2.0"
 SLOT="0"
