@@ -9,7 +9,7 @@ if [[ ${PV} = *9999* ]]; then
 	inherit git-r3
 else
 	SRC_URI="mirror://pypi/${PN:0:1}/${PN}/${P}.tar.gz"
-	KEYWORDS="amd64 x86"
+	KEYWORDS="~amd64 ~x86"
 fi
 
 inherit distutils-r1
@@ -22,12 +22,8 @@ SLOT="0"
 IUSE=""
 RESTRICT="test"
 
-DEPEND="${PYTHON_DEPS}
-	>=dev-util/ninja-1.6.0
-"
-RDEPEND="${DEPEND}"
-
-DOCS=( authors.txt contributing.txt )
+DEPEND="dev-python/setuptools[${PYTHON_USEDEP}]"
+RDEPEND=""
 
 python_test() {
 	${EPYTHON} run_tests.py || die
