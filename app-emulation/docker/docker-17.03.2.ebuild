@@ -11,11 +11,9 @@ if [[ ${PV} = *9999* ]]; then
 	EGIT_CHECKOUT_DIR="${WORKDIR}/${P}/src/${EGO_PN}"
 	inherit git-r3
 else
-	inherit versionator
-	MY_PV="$(get_version_component_range 1-3)"
-	[[ -n "$(get_version_component_range 4)" ]] && MY_PVRC="-$(get_version_component_range 4)" || MY_PVRC=""
-	DOCKER_GITCOMMIT="89658be"
-	EGIT_COMMIT="v${MY_PV}-ce${MY_PVRC}"
+	MY_PV="${PV/_/-}"
+	DOCKER_GITCOMMIT="f5ec1e2"
+	EGIT_COMMIT="v${MY_PV}-ce"
 	SRC_URI="https://${EGO_PN}/archive/${EGIT_COMMIT}.tar.gz -> ${P}.tar.gz"
 	KEYWORDS="~amd64 ~arm"
 	[ "$DOCKER_GITCOMMIT" ] || die "DOCKER_GITCOMMIT must be added manually for each bump!"
@@ -62,10 +60,10 @@ RDEPEND="
 	>=dev-vcs/git-1.7
 	>=app-arch/xz-utils-4.9
 
-	>=app-emulation/containerd-0.2.7
-	~app-emulation/docker-runc-1.0.0_rc2_p20170310[apparmor?,seccomp?]
+	>=app-emulation/containerd-0.2.5_p20170308
+	~app-emulation/docker-runc-1.0.0_rc2_p20170308[apparmor?,seccomp?]
 	app-emulation/docker-proxy
-	container-init? ( >=sys-process/tini-0.13.1[static] )
+	container-init? ( >=sys-process/tini-0.13.0[static] )
 "
 
 RESTRICT="installsources strip"
@@ -111,6 +109,10 @@ ERROR_CGROUP_PERF="CONFIG_CGROUP_PERF: is optional for container statistics gath
 ERROR_CFS_BANDWIDTH="CONFIG_CFS_BANDWIDTH: is optional for container statistics gathering"
 ERROR_XFRM_ALGO="CONFIG_XFRM_ALGO: is optional for secure networks"
 ERROR_XFRM_USER="CONFIG_XFRM_USER: is optional for secure networks"
+
+PATCHES=(
+	"${FILESDIR}"/1.13.1-split-openrc-log.patch
+)
 
 pkg_setup() {
 	if kernel_is lt 3 10; then
