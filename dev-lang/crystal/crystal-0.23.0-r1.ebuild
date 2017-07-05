@@ -3,9 +3,9 @@
 
 EAPI=6
 
-inherit multiprocessing toolchain-funcs
+inherit bash-completion-r1 multiprocessing toolchain-funcs
 
-BV=0.21.1-1
+BV=0.23.0-1
 BV_AMD64=${BV}-linux-x86_64
 BV_X86=${BV}-linux-i686
 
@@ -18,7 +18,7 @@ SRC_URI="https://github.com/crystal-lang/crystal/archive/${PV}.tar.gz -> ${P}.ta
 LICENSE="Apache-2.0"
 SLOT="0"
 KEYWORDS="~amd64"
-IUSE="doc debug examples +xml +yaml"
+IUSE="doc debug examples blocking-stdio-hack +xml +yaml"
 
 # dev-libs/boehm-gc[static-libs] dependency problem,  check the issue: https://github.com/manastech/crystal/issues/1382
 DEPEND="
@@ -37,13 +37,19 @@ RDEPEND="${DEPEND}
 "
 
 PATCHES=(
-	"${FILESDIR}"/${PN}-0.20.5-verbose.patch
-	"${FILESDIR}"/${PN}-0.20.5-LDFLAGS.patch
+	"${FILESDIR}"/${PN}-0.23.0-verbose-LDFLAGS.patch
 )
+
+src_prepare() {
+	default
+
+	use blocking-stdio-hack && eapply "${FILESDIR}"/"${PN}"-0.22.0-blocking-stdio-hack.patch
+}
 
 src_compile() {
 	emake \
 		$(usex debug "" release=1) \
+		progress=true \
 		stats=1 \
 		threads=$(makeopts_jobs) \
 		verbose=1 \
@@ -62,6 +68,7 @@ src_compile() {
 src_test() {
 	emake spec \
 		$(usex debug "" release=1) \
+		progress=true \
 		stats=1 \
 		threads=$(makeopts_jobs) \
 		verbose=1 \
@@ -88,4 +95,6 @@ src_install() {
 		docinto api
 		dodoc -r doc/.
 	fi
+
+	newbashcomp etc/completion.bash ${PN}
 }
