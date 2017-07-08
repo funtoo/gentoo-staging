@@ -10,7 +10,7 @@ HOMEPAGE="https://bitbucket.org/skskeyserver/sks-keyserver"
 SRC_URI="https://bitbucket.org/skskeyserver/sks-keyserver/downloads/${P}.tgz"
 LICENSE="GPL-2"
 SLOT="0"
-KEYWORDS="amd64 ~x86"
+KEYWORDS="~amd64 ~x86"
 IUSE="optimize test"
 DOC_CONTENTS="To get sks running, first build the database,
 start the database, import atleast one key, then
@@ -29,12 +29,12 @@ Important: It is strongly recommended to set up SKS behind a
 reverse proxy. Instructions on properly configuring SKS can be
 found at https://bitbucket.org/skskeyserver/sks-keyserver/wiki/Peering"
 
-DEPEND=">=dev-lang/ocaml-4.0
-	dev-ml/findlib
-	dev-ml/camlp4
-	dev-ml/cryptokit:0/1.10
+RDEPEND=">=dev-lang/ocaml-4.0:=
+	dev-ml/camlp4:=
+	dev-ml/cryptokit:=
 	sys-libs/db:5.3"
-RDEPEND="${DEPEND}"
+DEPEND="${RDEPEND}
+	dev-ml/findlib"
 
 pkg_setup() {
 	ebegin "Creating named group and user"
@@ -43,7 +43,8 @@ pkg_setup() {
 }
 
 src_prepare() {
-	eapply "${FILESDIR}/${P}-unbundle-cryptokit.patch"
+	eapply "${FILESDIR}/${P}-unbundle-cryptokit.patch" \
+		   "${FILESDIR}/${P}-use-ocamlfind.patch"
 	cp Makefile.local.unused Makefile.local || die
 	sed -i \
 		-e "s:^BDBLIB=.*$:BDBLIB=-L/usr/$(get_libdir):g" \
