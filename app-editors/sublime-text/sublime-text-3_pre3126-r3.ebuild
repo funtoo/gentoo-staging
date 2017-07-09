@@ -35,7 +35,7 @@ S="${WORKDIR}/sublime_text_${MV}"
 
 src_install() {
 	insinto /opt/${PN}${MV}
-	doins -r Packages
+	doins -r Packages Icon
 	doins changelog.txt sublime_plugin.py sublime.py python3.3.zip
 
 	exeinto /opt/${PN}${MV}
@@ -44,10 +44,21 @@ src_install() {
 
 	local size
 	for size in 32 48 128 256; do
-		newicon -s ${size} Icon/${size}x${size}/sublime-text.png sublime-text.png
+		dosym ../../../../../../opt/${PN}${MV}/Icon/${size}x${size}/sublime-text.png \
+			/usr/share/icons/hicolor/${size}x${size}/apps/subl.png
 	done
 
-	make_desktop_entry "subl" "Sublime Text ${MV}" \
-		/usr/share/icons/hicolor/48x48/apps/sublime-text.png \
+	make_desktop_entry "subl" "Sublime Text ${MV}" "subl" \
 		"TextEditor;IDE;Development" "StartupNotify=true"
+
+	# needed to get WM_CLASS lookup right
+	mv "${ED%/}"/usr/share/applications/subl{-sublime-text,}.desktop || die
+}
+
+pkg_postrm() {
+	gnome2_icon_cache_update
+}
+
+pkg_postinst() {
+	gnome2_icon_cache_update
 }
