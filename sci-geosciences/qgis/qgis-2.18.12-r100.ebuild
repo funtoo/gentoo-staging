@@ -14,7 +14,7 @@ else
 	GIT_ECLASS="git-r3"
 	EGIT_REPO_URI="https://github.com/${PN}/${PN^^}.git"
 fi
-inherit cmake-utils eutils fdo-mime ${GIT_ECLASS} gnome2-utils python-single-r1
+inherit cmake-utils eutils ${GIT_ECLASS} gnome2-utils python-single-r1 qmake-utils xdg-utils
 unset GIT_ECLASS
 
 DESCRIPTION="User friendly Geographic Information System"
@@ -36,7 +36,7 @@ COMMON_DEPEND="
 	dev-qt/qtconcurrent:5
 	dev-qt/qtcore:5
 	dev-qt/qtgui:5
-	dev-qt/qtnetwork:5
+	dev-qt/qtnetwork:5[ssl]
 	dev-qt/qtpositioning:5
 	dev-qt/qtprintsupport:5
 	dev-qt/qtscript:5
@@ -79,6 +79,7 @@ COMMON_DEPEND="
 	)
 "
 DEPEND="${COMMON_DEPEND}
+	dev-qt/linguist-tools:5
 	dev-qt/qttest:5
 	dev-qt/qtxmlpatterns:5
 	sys-devel/bison
@@ -95,6 +96,10 @@ PATCHES=(
 	# TODO upstream
 	"${FILESDIR}/${PN}-2.18.6-featuresummary.patch"
 	"${FILESDIR}/${PN}-2.18.6-python.patch"
+	# Taken from redhat
+	"${FILESDIR}/${P}-sip.patch"
+	# git master
+	"${FILESDIR}/${P}-cmake-lib-suffix.patch"
 )
 
 pkg_setup() {
@@ -103,6 +108,14 @@ pkg_setup() {
 
 src_prepare() {
 	cmake-utils_src_prepare
+
+	sed -e "s:\${QT_BINARY_DIR}:$(qt5_get_bindir):" \
+		-i CMakeLists.txt || die "Failed to fix lrelease path"
+
+	sed -e "/QT_LRELEASE_EXECUTABLE/d" \
+		-e "/QT_LUPDATE_EXECUTABLE/s/set/find_program/" \
+		-e "s:lupdate-qt5:NAMES lupdate PATHS $(qt5_get_bindir) NO_DEFAULT_PATH:" \
+		-i cmake/modules/ECMQt4To5Porting.cmake || die "Failed to fix ECMQt4To5Porting.cmake"
 
 	cd src/plugins || die
 	use georeferencer || cmake_comment_add_subdirectory georeferencer
@@ -210,12 +223,12 @@ pkg_postinst() {
 	fi
 
 	gnome2_icon_cache_update
-	fdo-mime_mime_database_update
-	fdo-mime_desktop_database_update
+	xdg_mimeinfo_database_update
+	xdg_desktop_database_update
 }
 
 pkg_postrm() {
 	gnome2_icon_cache_update
-	fdo-mime_mime_database_update
-	fdo-mime_desktop_database_update
+	xdg_mimeinfo_database_update
+	xdg_desktop_database_update
 }
