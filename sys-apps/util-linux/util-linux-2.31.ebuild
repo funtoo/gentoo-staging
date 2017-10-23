@@ -18,8 +18,6 @@ else
 	[[ "${PV}" = *_rc* ]] || \
 	KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~hppa ~ia64 ~m68k ~mips ~ppc ~ppc64 ~s390 ~sh ~sparc ~x86 ~amd64-linux ~arm-linux ~x86-linux"
 	SRC_URI="mirror://kernel/linux/utils/util-linux/v${PV:0:4}/${MY_P}.tar.xz"
-
-	SRC_URI+=" https://github.com/karelzak/util-linux/commit/c4e60bc0807b04ab104594abc83301481d5d5995.patch -> ${PN}-2.31_rc2-losetup_types.patch"
 fi
 
 DESCRIPTION="Various useful Linux utilities"
@@ -63,10 +61,6 @@ RDEPEND+="
 REQUIRED_USE="python? ( ${PYTHON_REQUIRED_USE} )"
 
 S="${WORKDIR}/${MY_P}"
-
-PATCHES=(
-	"${DISTDIR}/${P}-losetup_types.patch"
-)
 
 pkg_setup() {
 	use python && python-single-r1_pkg_setup
@@ -113,7 +107,6 @@ multilib_src_configure() {
 		--disable-chfn-chsh
 		--disable-login
 		--disable-nologin
-		--disable-reset
 		--disable-su
 		--docdir='${datarootdir}'/doc/${PF}
 		--enable-agetty
