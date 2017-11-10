@@ -11,7 +11,9 @@ KEYWORDS="~amd64 ~x86"
 IUSE="debug"
 
 DEPEND="
-	media-libs/musicbrainz:3
+	media-libs/musicbrainz:5
 	media-libs/phonon[qt4]
 "
 RDEPEND="${DEPEND}"
+
+PATCHES=( "${FILESDIR}/${P}-musicbrainz5.patch" )
