@@ -29,6 +29,11 @@
 
 #--- END OF EXAMPLES ---
 
+# Patrick Lauer <patrick@gentoo.org> (13 Dec 2017)
+# distfile no longer available, upstream seems to have
+# withdrawn this version #640896
+=dev-libs/icu-60.2
+
 # Andreas Sturmlechner <asturm@gentoo.org> (12 Dec 2017)
 # Depends on dead kdelibs4/qt4, unmaintained upstream. No port to
 # KF5 released. If you depend on this package, please help test KF5-based
@@ -60,10 +65,6 @@ sci-electronics/cirkuit
 # to decide on a possible snapshot. Bugs #640846, 639960, 635816.
 # Masked for removal in 30 days.
 app-accessibility/simon:4
-
-# Patrick Lauer <patrick@gentoo.org> (12 Dec 2017)
-# Unfetchable / wrong checksum #640718
-=dev-libs/nettle-3.4
 
 # Patrice Clement <monsieurp@gentoo.org> (12 Dec 2017)
 # Masked due to a hard dependency on an ancient versions of dev-libs/msgpack
