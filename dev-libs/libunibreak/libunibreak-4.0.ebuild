@@ -17,23 +17,37 @@ DEPEND="man? ( app-doc/doxygen )"
 RDEPEND="!dev-libs/liblinebreak"
 
 src_prepare() {
-	use man && echo -e 'GENERATE_MAN=YES\nGENERATE_HTML=NO' >> Doxyfile
+	if use man; then
+		echo 'GENERATE_MAN=YES' >> Doxyfile || die
+		echo 'GENERATE_HTML=NO' >> Doxyfile || die
+	fi
 	default
 }
 
 src_configure() {
-	econf \
-		$(use_enable static-libs static)
-	use doc && export HTML_DOCS=( doc/html/. )
+	econf $(use_enable static-libs static)
 }
 
 src_compile() {
 	default
-	use man && doxygen || die
+	if use man; then
+		doxygen || die 'doxygen failed'
+		pushd "${S}"/doc/man > /dev/null
+		mv man3 x || die
+		mkdir man3 || die
+		for h in graphemebreak linebreak linebreakdef unibreakbase unibreakdef wordbreak; do
+			mv x/${h}.h.3 man3/ || die "man ${h} not found"
+		done
+		rm -rf x || die
+		popd > /dev/null
+	fi
 }
 
 src_install() {
+	use doc && HTML_DOCS=( doc/html/. )
 	default
-	prune_libtool_files
-	use man && find "${D}/usr/include" -type f -execdir doman "${S}/doc/man/man3/{}.3" \;
+	find "${D}" -name '*.la' -delete || die
+	if use man; then
+		doman doc/man/man3/*.3
+	fi
 }
