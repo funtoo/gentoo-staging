@@ -29,6 +29,11 @@
 
 #--- END OF EXAMPLES ---
 
+# David Seifert <soap@gentoo.org> (31 Dec 2017)
+# Dead upstream, broken use of GTK+, unmaintained.
+# Removal in 30 days
+app-i18n/scim-wijesekera
+
 # Alice Ferrazzi <alicef@gentoo.org> (30 Dec 2017)
 # Masked for removal in 30 days.
 # Upstream is no more backporting security fixes for 4.12.
@@ -261,9 +266,10 @@ net-voip/ekiga
 
 # Alice Ferrazzi <alicef@gentoo.org> (27 Dec 2017)
 # Masked for removal in 30 days.
-# There are issue on this kernel version due to a heavy changeset.
+# This kernel doesn't boot on hardened profiles.
 # (bug #642268)
 =sys-kernel/gentoo-sources-4.14.9
+=sys-kernel/gentoo-sources-4.14.10
 
 # Andreas K. Hüttel <dilfridge@gentoo.org> (27 Dec 2017)
 # Ancient. EAPI=3. (Nearly) no consumers. Needs to go.
