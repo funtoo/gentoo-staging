@@ -1,9 +1,9 @@
 # Copyright 1999-2018 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI="5"
+EAPI=6
 
-inherit eutils flag-o-matic autotools versionator
+inherit autotools desktop flag-o-matic versionator
 
 # HINTS:
 # -> non-free modules are x86 and amd64 only
@@ -20,37 +20,26 @@ inherit eutils flag-o-matic autotools versionator
 # TODO:
 # (re)add closed-source binary modules which are needed for some scanners.
 
-KEYWORDS="amd64 x86"
-
 MY_PV="$(get_version_component_range 1-3)"
 MY_PVR="$(replace_version_separator 3 -)"
 MY_DOC="userg_revQ"
 
 DESCRIPTION="EPSON Image Scan! for Linux (including sane-epkowa backend)"
 HOMEPAGE="http://download.ebz.epson.net/dsc/search/01/search/?OSC=LX"
-# Use a gentoo hosted url since upstream uses a session based url that causes the
-# files to no longer be available after the session expires.
-SRC_URI="
-	https://dev.gentoo.org/~idella4/tarballs/${PN}_${MY_PVR}.tar.gz
-	https://dev.gentoo.org/~flameeyes/avasys/${PN}_${MY_PVR}.tar.gz
+SRC_URI="http://support.epson.net/linux/src/scanner/iscan/${PN}_${MY_PVR}.tar.gz
 	doc? (
 		https://dev.gentoo.org/~flameeyes/avasys/${MY_DOC}_e.pdf
 		l10n_ja? ( https://dev.gentoo.org/~flameeyes/avasys/${MY_DOC}_j.pdf )
 	)"
+
 LICENSE="GPL-2 AVASYS"
 SLOT="0"
-
+KEYWORDS="~amd64 ~x86"
 IUSE="X doc gimp jpeg png tiff l10n_ja"
-
 REQUIRED_USE="gimp? ( X )
 	jpeg? ( X )
 	png? ( X )
 	tiff? ( X )"
-
-QA_PRESTRIPPED="usr/$(get_libdir)/libesmod.so.*"
-QA_TEXTRELS="${QA_PRESTRIPPED}"
-QA_FLAGS_IGNORED="${QA_PRESTRIPPED}"
-
 # Upstream ships broken sanity test
 RESTRICT="test"
 
@@ -71,14 +60,26 @@ DEPEND="${RDEPEND}
 
 S="${WORKDIR}/${PN}-${MY_PV}"
 
+PATCHES=(
+	"${FILESDIR}"/iscan-2.29.1-drop-ltdl.patch
+	"${FILESDIR}"/iscan-2.28.1.3+libpng-1.5.patch
+	"${FILESDIR}"/iscan-2.29.1-png-libs.patch
+	"${FILESDIR}"/iscan-2.30.1-fix-g++-test.patch
+	"${FILESDIR}"/iscan-2.30.1.1-gcc6.patch
+)
+
+QA_PRESTRIPPED="usr/lib*/libesmod.so.*"
+QA_TEXTRELS="${QA_PRESTRIPPED}"
+QA_FLAGS_IGNORED="${QA_PRESTRIPPED}"
+
 src_prepare() {
 	local i
 
 	# convert japanese docs to UTF-8
 	if use l10n_ja; then
 		for i in {NEWS,README}.ja non-free/*.ja.txt; do
-			if [ -f "${i}" ]; then
-				echo ">>> Converting ${i} to UTF-8"
+			if [[ -f ${i} ]]; then
+				elog ">>> Converting ${i} to UTF-8"
 				iconv -f eucjp -t utf8 -o "${i}~" "${i}" && mv -f "${i}~" "${i}" || rm -f "${i}~"
 			fi
 		done
@@ -90,11 +91,7 @@ src_prepare() {
 			-e "s:\(PKG_CHECK_MODULES(GDK_IMLIB,.*)\):#\1:g" configure.ac || die
 	fi
 
-	epatch "${FILESDIR}"/iscan-2.29.1-drop-ltdl.patch
-	epatch "${FILESDIR}"/iscan-2.28.1.3+libpng-1.5.patch
-	epatch "${FILESDIR}"/iscan-2.29.1-png-libs.patch
-	epatch "${FILESDIR}"/iscan-2.30.1-fix-g++-test.patch
-
+	default
 	eautoreconf
 }
 
@@ -112,12 +109,12 @@ src_configure() {
 		$(use_enable png)
 		$(use_enable tiff)
 	)
-	econf ${myconf[@]}
+	econf "${myconf[@]}"
 }
 
 src_install() {
-	local MY_LIB="/usr/$(get_libdir)"
-	emake DESTDIR="${D}" install || die "emake install failed"
+	local MY_LIB="${EPREFIX}/usr/$(get_libdir)"
+	emake DESTDIR="${D}" install
 
 	# install docs
 	dodoc AUTHORS NEWS README
@@ -128,21 +125,14 @@ src_install() {
 	doins backend/epkowa.conf
 
 	# install extra docs
-	if use doc; then
-		insinto /usr/share/doc/${PF}
-		if use l10n_ja; then
-			doins "${DISTDIR}/${MY_DOC}_j.pdf"
-		else
-			doins "${DISTDIR}/${MY_DOC}_e.pdf"
-		fi
-	fi
+	use doc && dodoc "${DISTDIR}"/${MY_DOC}_$(usex l10n_ja j e).pdf
 
 	# link iscan so it is seen as a plugin in gimp
 	if use X && use gimp; then
 		local plugindir
-		if [ -x /usr/bin/gimptool ]; then
+		if [[ -x ${EPREFIX}/usr/bin/gimptool ]]; then
 			plugindir="$(gimptool --gimpplugindir)/plug-ins" || die "Failed to get gimpplugindir"
-		elif [ -x /usr/bin/gimptool-2.0 ]; then
+		elif [[ -x ${EPREFIX}/usr/bin/gimptool-2.0 ]]; then
 			plugindir="$(gimptool-2.0 --gimpplugindir)/plug-ins" || die "Failed to get gimpplugindir"
 		else
 			die "Can't find GIMP plugin directory."
@@ -159,8 +149,8 @@ src_install() {
 
 pkg_postinst() {
 	local i
-	local DLL_CONF="/etc/sane.d/dll.conf"
-	local EPKOWA_CONF="/etc/sane.d/epkowa.conf"
+	local DLL_CONF="${EPREFIX}/etc/sane.d/dll.conf"
+	local EPKOWA_CONF="${EPREFIX}/etc/sane.d/epkowa.conf"
 
 	elog
 	if grep -q "^[ \t]*\<epkowa\>" ${DLL_CONF}; then
@@ -169,7 +159,7 @@ pkg_postinst() {
 		elog "Hint: to enable the backend, add 'epkowa' to ${DLL_CONF}"
 		elog "Then edit ${EPKOWA_CONF} to suit your needs."
 	else
-		echo "epkowa" >> ${DLL_CONF}
+		echo "epkowa" >> ${DLL_CONF} || die
 		elog "A new entry 'epkowa' was added to ${DLL_CONF}"
 		elog "Please edit ${EPKOWA_CONF} to suit your needs."
 	fi
