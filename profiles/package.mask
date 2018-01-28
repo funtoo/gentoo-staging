@@ -29,6 +29,16 @@
 
 #--- END OF EXAMPLES ---
 
+# Patrice Clement <monsieurp@gentoo.org> (28 Jan 2018)
+# Duplicate of app-admin/clog. My apologies.
+# Masked for removal in 30 days.
+app-misc/clog
+
+# Andreas Sturmlechner <asturm@gentoo.org> (28 Jan 2018)
+# Dead upstream, depends on deprecated Qt4.
+# Masked for removal in 30 days. Bug #644558
+media-video/qgifer
+
 # Patrice Clement <monsieurp@gentoo.org> (26 Jan 2018)
 # Has different symbols. Known to cause issues with i3bar/swaybar.
 media-fonts/fontawesome:0/5
@@ -68,7 +78,6 @@ dev-ruby/test-unit:0
 dev-ruby/tilt:0
 virtual/ruby-minitest
 www-apps/jekyll-gist
-
 
 # Andreas Sturmlechner <asturm@gentoo.org> (23 Jan 2018)
 # Depends on deprecated Qt4, no revdeps left.
@@ -516,44 +525,6 @@ gnome-extra/zeitgeist-explorer
 gnome-extra/activity-log-manager
 gnome-extra/zeitgeist
 dev-libs/libzeitgeist
-
-# Pacho Ramos <pacho@gentoo.org> (28 Dec 2017)
-# Dead for ages, relies on old gnome2 python bindings (#640036). Removal in
-# a month.
-gnome-extra/cameramonitor
-
-# Pacho Ramos <pacho@gentoo.org> (28 Dec 2017)
-# Upstream gone, relies on old gnome2 python bindings (#640042). Removal in
-# a month.
-media-gfx/gnome-specimen
-
-# Pacho Ramos <pacho@gentoo.org> (28 Dec 2017)
-# Upstream dead for ages, relies on old gnome2 python bindings (#640050).
-# Removal in a month.
-net-misc/polly
-
-# Pacho Ramos <pacho@gentoo.org> (28 Dec 2017)
-# Upstream gone, relies on old gnome2 python bindings (#640052). Removal in
-# a month.
-sys-apps/pyrenamer
-
-# Pacho Ramos <pacho@gentoo.org> (28 Dec 2017)
-# Upstream dead since 2006, relies on old gnome2 python bindings and many
-# other dead libs (#640068). Removal in a month.
-media-sound/ifp-gnome
-
-# David Seifert <soap@gentoo.org> (28 Dec 2017)
-# Last release in 2001, doesn't support amd64, EAPI 2.
-# Removal in 30 days
-app-crypt/nistp224
-
-# Jonas Stein <jstein@gentoo.org> (28 Dec 2017)
-# Upstream deleted all files more than 6 years ago and is inactive. 
-# See also bug #628960
-# Masked for removal on 2018-02-01
-app-doc/linux-gazette-base
-app-doc/linux-gazette-all
-app-doc/linux-gazette
 
 # Pacho Ramos <pacho@gentoo.org> (27 Dec 2017)
 # Out ebuild is completely obsolete (#381073), download manually PPD is
