@@ -6,7 +6,7 @@
     <name>Python</name>
   </maintainer>
   <upstream>
-    <remote-id type="google-code">python-poppler-qt4</remote-id>
-    <remote-id type="github">wbsoft/python-poppler-qt4</remote-id>
+    <remote-id type="pypi">parso</remote-id>
+    <remote-id type="github">davidhalter/parso</remote-id>
   </upstream>
 </pkgmetadata>
