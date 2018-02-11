@@ -4,7 +4,7 @@
 EAPI=6
 
 MY_P="${PN}2-${PV}-1"
-inherit qmake-utils
+inherit desktop gnome2-utils qmake-utils
 
 DESCRIPTION="Tool to render 3D fractals"
 HOMEPAGE="http://www.mandelbulber.com"
@@ -34,6 +34,7 @@ RDEPEND="
 	tiff? ( media-libs/tiff:0 )
 "
 DEPEND="${RDEPEND}
+	dev-qt/designer:5
 	virtual/pkgconfig
 "
 
@@ -68,4 +69,14 @@ src_install() {
 
 	insinto /usr/share/applications
 	doins ${PN}2.desktop
+
+	newicon -s 256 qt/icons/${PN}.png ${PN}2.png
+}
+
+pkg_postinst() {
+	gnome2_icon_cache_update
+}
+
+pkg_postrm() {
+	gnome2_icon_cache_update
 }
