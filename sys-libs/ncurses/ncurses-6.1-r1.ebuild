@@ -153,6 +153,7 @@ do_configure() {
 		$(use_with test tests)
 		$(use_with trace)
 		$(use_with tinfo termlib)
+		--disable-stripping
 	)
 
 	if [[ ${target} == ncurses*w ]] ; then
