@@ -29,6 +29,11 @@
 
 #--- END OF EXAMPLES ---
 
+# Thomas Deutschmann <whissi@gentoo.org> (23 Feb 2018)
+# Unmaintained in Gentoo, known critical vulnerabilities like
+# auth bypass. Removal in 30 days. Bugs #559658, #592080.
+sys-cluster/ganglia-web
+
 # Mart Raudsepp <leio@gentoo.org> (23 Feb 2018)
 # Old net-libs/webkit-gtk SLOTs have hundreds of known security issues.
 # Use the security safe net-libs webkit-gtk SLOT=4 instead via
@@ -797,8 +802,8 @@ net-wireless/cpyrit-cuda
 # Bernard Cafarelli <voyageur@gentoo.org> (8 May 2017)
 # Coordinated conversion to wxGTK:3.0-gtk3
 # Drop mask after migration of existing wxGTK:3.0 users
-=net-ftp/filezilla-3.29.0-r300
 =net-ftp/filezilla-3.30.0-r300
+=net-ftp/filezilla-3.31.0-r300
 
 # Rick Farina <zerochaos@gentoo.org> (17 Apr 2017)
 # Masking old versions because upstream changed versioning
