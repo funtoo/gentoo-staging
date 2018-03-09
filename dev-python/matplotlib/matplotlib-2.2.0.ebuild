@@ -18,7 +18,7 @@ SLOT="0"
 # matplotlib/backends/qt4_editor: MIT
 # Fonts: BitstreamVera, OFL-1.1
 LICENSE="BitstreamVera BSD matplotlib MIT OFL-1.1"
-KEYWORDS="~amd64 ~arm64 ~x86"
+KEYWORDS="~amd64 ~x86"
 IUSE="cairo doc excel examples gtk2 gtk3 latex pyside qt5 test tk wxwidgets"
 
 PY2_FLAGS="|| ( $(python_gen_useflags python2_7) )"
@@ -48,6 +48,7 @@ COMMON_DEPEND="
 	media-libs/freetype:2
 	media-libs/libpng:0
 	>=media-libs/qhull-2013
+	dev-python/kiwisolver[${PYTHON_USEDEP}]
 	cairo? ( dev-python/cairocffi[${PYTHON_USEDEP}] )
 	gtk2? (
 		dev-libs/glib:2=
@@ -79,7 +80,6 @@ DEPEND="${COMMON_DEPEND}
 		dev-texlive/texlive-fontsrecommended
 		dev-texlive/texlive-latexrecommended
 		media-gfx/graphviz[cairo]
-		dev-python/kiwisolver[${PYTHON_USEDEP}]
 	)
 	test? (
 		dev-python/mock[${PYTHON_USEDEP}]
