@@ -31,6 +31,7 @@ COMMON_DEPS="
 	media-libs/fontconfig
 	x11-libs/libXcursor
 	x11-libs/libXrandr
+	x11-libs/libXi
 	x11-libs/libXinerama
 	x11-libs/libxkbcommon[X]
 	wayland? (
@@ -54,10 +55,6 @@ PATCHES=(
 src_prepare() {
 	default
 
-	# respect libdir
-	sed -i "/libdir =/s/'lib'/'$(get_libdir)'/" setup.py || die
-	sed -i "s#/../lib/kitty#/../$(get_libdir)/kitty#" linux-launcher.c || die
-
 	# disable wayland as required
 	if ! use wayland; then
 		sed -i "/'x11 wayland'/s/ wayland//" setup.py || die
@@ -72,7 +69,7 @@ doecho() {
 }
 
 src_compile() {
-	doecho "${EPYTHON}" setup.py --verbose $(usex debug --debug "") linux-package
+	doecho "${EPYTHON}" setup.py --verbose $(usex debug --debug "") --libdir-name $(get_libdir) linux-package
 }
 
 src_test() {

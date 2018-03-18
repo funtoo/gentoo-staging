@@ -6,13 +6,19 @@ PYTHON_COMPAT=( python3_{5,6} )
 
 inherit python-single-r1 toolchain-funcs
 
+if [[ ${PV} == "9999" ]] ; then
+	EGIT_REPO_URI="https://github.com/kovidgoyal/kitty.git"
+	inherit git-r3
+else
+	SRC_URI="https://github.com/kovidgoyal/kitty/archive/v${PV}.tar.gz -> ${P}.tar.gz"
+	KEYWORDS="~amd64 ~x86"
+fi
+
 DESCRIPTION="A modern, hackable, featureful, OpenGL-based terminal emulator"
 HOMEPAGE="https://github.com/kovidgoyal/kitty"
-SRC_URI="https://github.com/kovidgoyal/kitty/archive/v${PV}.tar.gz -> ${P}.tar.gz"
 
 LICENSE="GPL-3"
 SLOT="0"
-KEYWORDS="~amd64 ~x86"
 IUSE="debug imagemagick wayland"
 REQUIRED_USE="${PYTHON_REQUIRED_USE}"
 
@@ -25,6 +31,7 @@ COMMON_DEPS="
 	media-libs/fontconfig
 	x11-libs/libXcursor
 	x11-libs/libXrandr
+	x11-libs/libXi
 	x11-libs/libXinerama
 	x11-libs/libxkbcommon[X]
 	wayland? (
@@ -41,16 +48,12 @@ DEPEND="${RDEPEND}
 "
 
 PATCHES=(
-	"${FILESDIR}"/${P}-flags.patch
-	"${FILESDIR}"/${P}-svg-icon.patch
+	"${FILESDIR}"/${PN}-0.7.1-flags.patch
+	"${FILESDIR}"/${PN}-0.7.1-svg-icon.patch
 )
 
 src_prepare() {
 	default
-
-	# respect libdir
-	sed -i "/libdir =/s/'lib'/'$(get_libdir)'/" setup.py || die
-	sed -i "s#/../lib/kitty#/../$(get_libdir)/kitty#" linux-launcher.c || die
 
 	# disable wayland as required
 	if ! use wayland; then
@@ -66,7 +69,7 @@ doecho() {
 }
 
 src_compile() {
-	doecho "${EPYTHON}" setup.py --verbose $(usex debug --debug "") linux-package
+	doecho "${EPYTHON}" setup.py --verbose $(usex debug --debug "") --libdir-name $(get_libdir) linux-package
 }
 
 src_test() {
