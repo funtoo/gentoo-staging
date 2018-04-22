@@ -1,4 +1,4 @@
-# Copyright 1999-2017 Gentoo Foundation
+# Copyright 1999-2018 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=6
@@ -17,7 +17,7 @@ else
 fi
 
 LICENSE="LGPL-2.1"
-SLOT="0"
+SLOT="0/${PV}"
 IUSE="debug static-libs"
 
 RDEPEND=">=dev-cpp/libbinio-1.4"
