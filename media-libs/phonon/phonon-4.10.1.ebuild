@@ -41,8 +41,6 @@ PDEPEND="
 	vlc? ( >=media-libs/phonon-vlc-0.9.0[qt5(+)] )
 "
 
-PATCHES=( "${FILESDIR}/${P}-qt-5.11.patch" )
-
 src_configure() {
 	local mycmakeargs=(
 		-DPHONON_BUILD_PHONON4QT5=ON
