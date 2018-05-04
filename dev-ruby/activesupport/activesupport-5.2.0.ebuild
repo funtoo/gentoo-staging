@@ -3,7 +3,7 @@
 
 EAPI=6
 
-USE_RUBY="ruby23 ruby24 ruby25"
+USE_RUBY="ruby22 ruby23 ruby24"
 
 RUBY_FAKEGEM_TASK_DOC=""
 
@@ -28,7 +28,7 @@ RUBY_S="rails-${PV}/${PN}"
 
 ruby_add_rdepend "
 	>=dev-ruby/concurrent-ruby-1.0.2:1
-	>=dev-ruby/i18n-0.7:* =dev-ruby/i18n-0*:*
+	|| ( dev-ruby/i18n:1 dev-ruby/i18n:0.9 dev-ruby/i18n:0.8 dev-ruby/i18n:0.7 )
 	>=dev-ruby/tzinfo-1.1:1
 	>=dev-ruby/minitest-5.1:5"
 
@@ -40,7 +40,7 @@ ruby_add_bdepend "test? (
 	>=dev-ruby/builder-3.1.0
 	>=dev-ruby/listen-3.0.5:3
 	dev-ruby/rack
-	dev-ruby/mocha:0.14
+	dev-ruby/mocha
 	<dev-ruby/minitest-5.4
 	)"
 
@@ -50,7 +50,7 @@ all_ruby_prepare() {
 
 	# Remove items from the common Gemfile that we don't need for this
 	# test run. This also requires handling some gemspecs.
-	sed -i -e "/\(system_timer\|sdoc\|w3c_validators\|pg\|execjs\|jquery-rails\|mysql\|journey\|ruby-prof\|stackprof\|benchmark-ips\|kindlerb\|turbolinks\|coffee-rails\|debugger\|sprockets-rails\|redcarpet\|bcrypt\|uglifier\|minitest\|sprockets\|stackprof\|rack-cache\|sqlite\)/ s:^:#:" \
+	sed -i -e "/\(system_timer\|sdoc\|w3c_validators\|pg\|execjs\|jquery-rails\|mysql\|journey\|ruby-prof\|stackprof\|benchmark-ips\|kindlerb\|turbolinks\|coffee-rails\|debugger\|sprockets-rails\|redcarpet\|bcrypt\|uglifier\|minitest\|sprockets\|stackprof\|rack-cache\|redis\|sqlite\)/ s:^:#:" \
 		-e '/:job/,/end/ s:^:#:' \
 		-e '/group :doc/,/^end/ s:^:#:' \
 		-e 's/gemspec/gemspec path: "activesupport"/' \
@@ -64,5 +64,9 @@ all_ruby_prepare() {
 	rm -f test/evented_file_update_checker_test.rb || die
 
 	# Avoid test that generates filename that is too long
-	sed -i -e '/test_filename_max_size/askip "gentoo"' test/caching_test.rb || die
+	sed -i -e '/test_filename_max_size/askip "gentoo"' test/cache/stores/file_store_test.rb || die
+
+	# Avoid tests requiring a live redis running
+	rm -f test/cache/stores/redis_cache_store_test.rb || die
+	sed -i -e '/cache_stores:redis/ s:^:#:' Rakefile || die
 }
