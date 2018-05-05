@@ -108,10 +108,6 @@ x11-libs/xpyb
 x11-proto/printproto
 x11-libs/libXp
 
-# Andreas Sturmlechner <asturm@gentoo.org> (21 Apr 2018)
-# Package moved into kde-apps/kate as a feature. Masked for removal.
-kde-misc/ktexteditorpreviewplugin
-
 # Alexis Ballier <aballier@gentoo.org> (21 Apr 2018)
 # Needs porting of revdeps
 # See: https://bugs.gentoo.org/653678
@@ -323,11 +319,6 @@ sys-libs/uclibc
 net-libs/webkit-gtk:2
 net-libs/webkit-gtk:3
 
-# Steve Dibb <beandog@gentoo.org> (22 Feb 2018)
-# Dead upstream, long since replaced by libaacs for functionality.
-# Masked for removal in 30 days. Bug #648560
-media-video/aacskeys
-
 # Eray Aslan <eras@gentoo.org> (08 Feb 2018)
 # Mask experimental software
 =mail-mta/postfix-3.4*
@@ -474,11 +465,6 @@ sys-kernel/hardened-sources
 # it is unmasked. Possibly some slotting is still needed.
 # Package testing tracked in bug #611022.
 >=dev-libs/msgpack-1.4.2
-
-# Hanno Boeck <hanno@gentoo.org> (21 Aug 2017)
-# Open security bugs, no upstream, bug 628432
-# Alternatives: app-arch/libarchive, app-arch/unar
-app-arch/unrar-gpl
 
 # Sébastien Fabbro <bicatali@gentoo.org> (19 Aug 2017)
 # ipython-6 is python-3 only and causes circular dependencies
