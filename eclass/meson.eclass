@@ -159,20 +159,26 @@ _meson_create_cross_file() {
 
 	cat > "${T}/meson.${CHOST}" <<-EOF
 	[binaries]
-	ar = '$(tc-getAR)'
-	c = '$(tc-getCC)'
-	cpp = '$(tc-getCXX)'
+	ar = $(_meson_env_array "$(tc-getAR)")
+	c = $(_meson_env_array "$(tc-getCC)")
+	cpp = $(_meson_env_array "$(tc-getCXX)")
+	fortran = $(_meson_env_array "$(tc-getFC)")
+	objc = $(_meson_env_array "$(tc-getPROG OBJC cc)")
+	objcpp = $(_meson_env_array "$(tc-getPROG OBJCXX c++)")
 	pkgconfig = '$(tc-getPKG_CONFIG)'
-	strip = '$(tc-getSTRIP)'
+	strip = $(_meson_env_array "$(tc-getSTRIP)")
 
 	[properties]
-	c_args = $(_meson_env_array "${CFLAGS}")
-	c_link_args = $(_meson_env_array "${LDFLAGS}")
-	cpp_args = $(_meson_env_array "${CXXFLAGS}")
-	cpp_link_args = $(_meson_env_array "${LDFLAGS}")
+	c_args = $(_meson_env_array "${CFLAGS} ${CPPFLAGS}")
+	c_link_args = $(_meson_env_array "${CFLAGS} ${LDFLAGS}")
+	cpp_args = $(_meson_env_array "${CXXFLAGS} ${CPPFLAGS}")
+	cpp_link_args = $(_meson_env_array "${CXXFLAGS} ${LDFLAGS}")
 	fortran_args = $(_meson_env_array "${FCFLAGS}")
-	objc_args = $(_meson_env_array "${OBJCFLAGS}")
-	objcpp_args = $(_meson_env_array "${OBJCXXFLAGS}")
+	fortran_link_args = $(_meson_env_array "${FCFLAGS} ${LDFLAGS}")
+	objc_args = $(_meson_env_array "${OBJCFLAGS} ${CPPFLAGS}")
+	objc_link_args = $(_meson_env_array "${OBJCFLAGS} ${LDFLAGS}")
+	objcpp_args = $(_meson_env_array "${OBJCXXFLAGS} ${CPPFLAGS}")
+	objcpp_link_args = $(_meson_env_array "${OBJCXXFLAGS} ${LDFLAGS}")
 
 	[host_machine]
 	system = '${system}'
