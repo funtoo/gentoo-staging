@@ -62,7 +62,7 @@ RDEPEND="${DEPEND}
 
 RESTRICT+=" test"
 
-PATCHES=( "${FILESDIR}/${P}-flto.patch" )
+PATCHES=( "${FILESDIR}/${PN}-18.04.1-flto.patch" )
 
 src_configure() {
 	local mycmakeargs=(
