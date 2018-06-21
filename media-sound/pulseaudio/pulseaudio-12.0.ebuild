@@ -2,8 +2,7 @@
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=6
-
-inherit autotools bash-completion-r1 eutils flag-o-matic gnome2-utils linux-info systemd user versionator udev multilib-minimal
+inherit autotools bash-completion-r1 flag-o-matic gnome2-utils linux-info systemd user udev multilib-minimal
 
 DESCRIPTION="A networked sound server with an advanced plugin system"
 HOMEPAGE="https://www.freedesktop.org/wiki/Software/PulseAudio/"
@@ -13,15 +12,14 @@ SRC_URI="https://freedesktop.org/software/pulseaudio/releases/${P}.tar.xz"
 # library and can link to gdbm and other GPL-only libraries. In this
 # cases, we have a fully GPL-2 package. Leaving the rest of the
 # GPL-forcing USE flags for those who use them.
-# qpaeq equalizer pyqt GUI frontend is AGPL-3+
-LICENSE="!gdbm? ( LGPL-2.1 ) gdbm? ( GPL-2 ) equalizer? ( AGPL-3+ )"
+LICENSE="!gdbm? ( LGPL-2.1 ) gdbm? ( GPL-2 )"
 
 SLOT="0"
-KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~hppa ia64 ~ppc ~ppc64 ~sh ~sparc ~x86 ~amd64-fbsd ~amd64-linux ~x86-linux"
+KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~hppa ~ia64 ~ppc ~ppc64 ~sh ~sparc ~x86 ~amd64-fbsd ~amd64-linux ~x86-linux"
 
 # +alsa-plugin as discussed in bug #519530
 IUSE="+alsa +alsa-plugin +asyncns bluetooth +caps dbus doc equalizer +gdbm +glib
-gnome gtk ipv6 jack libsamplerate libressl lirc native-headset neon ofono-headset
+gnome gsettings gtk ipv6 jack libsamplerate libressl lirc native-headset neon ofono-headset
 +orc oss qt5 realtime selinux sox ssl systemd system-wide tcpd test +udev
 +webrtc-aec +X zeroconf"
 
@@ -32,6 +30,7 @@ REQUIRED_USE="
 	ofono-headset? ( bluetooth )
 	native-headset? ( bluetooth )
 	udev? ( || ( alsa oss ) )
+	gsettings? ( !gnome )
 "
 
 # libpcre needed in some cases, bug #472228
@@ -60,6 +59,7 @@ RDEPEND="
 	dbus? ( >=sys-apps/dbus-1.0.0[${MULTILIB_USEDEP}] )
 	gtk? ( x11-libs/gtk+:3 )
 	gnome? ( >=gnome-base/gconf-2.4.0 )
+	gsettings? ( >=dev-libs/glib-2.26.0 )
 	bluetooth? (
 		>=net-wireless/bluez-5
 		>=sys-apps/dbus-1.0.0
@@ -76,6 +76,7 @@ RDEPEND="
 		!libressl? ( dev-libs/openssl:0= )
 		libressl? ( dev-libs/libressl:= )
 	)
+	>=media-libs/speex-1.2.0
 	media-libs/speexdsp
 	gdbm? ( sys-libs/gdbm:= )
 	webrtc-aec? ( >=media-libs/webrtc-audio-processing-0.2 )
@@ -116,9 +117,7 @@ RDEPEND="${RDEPEND}
 "
 
 PATCHES=(
-	"${FILESDIR}/${P}"-qpaeq-pyqt5-{1,2}.patch
-	"${FILESDIR}/${P}"-glibc-2.27.patch
-	"${FILESDIR}/${P}"-disable-flat-volumes.patch # bug 627894
+	"${FILESDIR}"/pulseaudio-11.1-disable-flat-volumes.patch # bug 627894
 )
 
 pkg_pretend() {
@@ -158,87 +157,59 @@ src_prepare() {
 }
 
 multilib_src_configure() {
-	local myconf=()
-
-	if use gdbm; then
-		myconf+=( --with-database=gdbm )
-	else
-		myconf+=( --with-database=simple )
-	fi
-
-	if use bluetooth; then
-		if multilib_is_native_abi; then
-			myconf+=( --enable-bluez5 --disable-bluez4
-				$(use_enable native-headset bluez5-native-headset)
-				$(use_enable ofono-headset bluez5-ofono-headset) )
-		fi
-	else
-		myconf+=( --disable-bluez5 --disable-bluez4 )
-	fi
-
-	myconf+=(
-		--enable-largefile
-		$(use_enable glib glib2)
+	local myconf=(
+		--disable-adrian-aec
+		--disable-bluez4
+		--disable-esound
 		--disable-solaris
+		--enable-largefile
+		--localstatedir="${EPREFIX}"/var
+		--with-systemduserunitdir=$(systemd_get_userunitdir)
+		--with-udev-rules-dir="${EPREFIX}/$(get_udevdir)"/rules.d
+		$(multilib_native_use_enable alsa)
+		$(multilib_native_use_enable bluetooth bluez5)
+		$(multilib_native_use_enable gnome gconf)
+		$(multilib_native_use_enable gsettings)
+		$(multilib_native_use_enable gtk gtk3)
+		$(multilib_native_use_enable jack)
+		$(multilib_native_use_enable libsamplerate samplerate)
+		$(multilib_native_use_enable lirc)
+		$(multilib_native_use_enable orc)
+		$(multilib_native_use_enable oss oss-output)
+		$(multilib_native_use_enable ssl openssl)
+		# tests involve random modules, so just do them for the native
+		$(multilib_native_use_enable test default-build-tests)
+		$(multilib_native_use_enable udev)
+		$(multilib_native_use_enable webrtc-aec)
+		$(multilib_native_use_enable zeroconf avahi)
+		$(multilib_native_use_with equalizer fftw)
+		$(multilib_native_use_with sox soxr)
+		$(multilib_native_usex gdbm '--with-database=gdbm' '--with-database=simple')
+		$(use_enable glib glib2)
 		$(use_enable asyncns)
-		$(use_enable oss oss-output)
-		$(use_enable alsa)
-		$(use_enable lirc)
 		$(use_enable neon neon-opt)
 		$(use_enable tcpd tcpwrap)
-		$(use_enable jack)
-		$(use_enable zeroconf avahi)
 		$(use_enable dbus)
-		$(use_enable gnome gconf)
-		$(use_enable gtk gtk3)
-		$(use_enable libsamplerate samplerate)
-		$(use_enable orc)
 		$(use_enable X x11)
-		$(use_enable test default-build-tests)
-		$(use_enable udev)
-		$(use_with sox soxr)
 		$(use_enable systemd systemd-daemon)
 		$(use_enable systemd systemd-login)
 		$(use_enable systemd systemd-journal)
 		$(use_enable ipv6)
-		$(use_enable ssl openssl)
-		$(use_enable webrtc-aec)
 		$(use_with caps)
-		$(use_with equalizer fftw)
-		--disable-adrian-aec
-		--disable-esound
-		--localstatedir="${EPREFIX}"/var
-		--with-udev-rules-dir="${EPREFIX}/$(get_udevdir)"/rules.d
-		--with-systemduserunitdir=$(systemd_get_userunitdir)
 	)
 
-	if ! multilib_is_native_abi; then
-		# disable all the modules and stuff
+	if use bluetooth; then
 		myconf+=(
-			--disable-oss-output
-			--disable-alsa
-			--disable-lirc
-			--disable-jack
-			--disable-avahi
-			--disable-gconf
-			--disable-gtk3
-			--disable-samplerate
-			--disable-bluez4
-			--disable-bluez5
-			--disable-udev
-			--disable-openssl
-			--disable-orc
-			--disable-webrtc-aec
-			--without-fftw
-			--without-soxr
+			$(multilib_native_use_enable native-headset bluez5-native-headset)
+			$(multilib_native_use_enable ofono-headset bluez5-ofono-headset)
+		)
+	fi
 
-			# tests involve random modules, so just do them for the native
-			--disable-default-build-tests
-
+	if ! multilib_is_native_abi; then
+		myconf+=(
 			# hack around unnecessary checks
 			# (results don't matter, we're not building anything using it)
 			ac_cv_lib_ltdl_lt_dladvise_init=yes
-			--with-database=simple
 			LIBSPEEX_CFLAGS=' '
 			LIBSPEEX_LIBS=' '
 		)
@@ -271,7 +242,10 @@ multilib_src_test() {
 multilib_src_install() {
 	if multilib_is_native_abi; then
 		emake -j1 DESTDIR="${D}" bashcompletiondir="$(get_bashcompdir)" install
-		use doc && dohtml -r doxygen/html/
+		if use doc ; then
+			docinto html
+			dodoc -r doxygen/html/
+		fi
 	else
 		local targets=( libpulse.la libpulse-simple.la )
 		use glib && targets+=( libpulse-mainloop-glib.la )
@@ -286,7 +260,9 @@ multilib_src_install() {
 
 multilib_src_install_all() {
 	# Drop the script entirely if X is disabled
-	use X || rm "${ED}"/usr/bin/start-pulseaudio-x11
+	if ! use X ; then
+		rm "${ED%/}"/usr/bin/start-pulseaudio-x11 || die
+	fi
 
 	if use system-wide; then
 		newconfd "${FILESDIR}/pulseaudio.conf.d" pulseaudio
@@ -309,7 +285,10 @@ multilib_src_install_all() {
 		systemd_dounit "${FILESDIR}/${PN}.service"
 	fi
 
-	use zeroconf && sed -i -e '/module-zeroconf-publish/s:^#::' "${ED}/etc/pulse/default.pa"
+	if use zeroconf ; then
+		sed -e '/module-zeroconf-publish/s:^#::' \
+			-i "${ED%/}/etc/pulse/default.pa" || die
+	fi
 
 	dodoc NEWS README todo
 
@@ -320,9 +299,11 @@ multilib_src_install_all() {
 	use system-wide && systemd_newtmpfilesd "${FILESDIR}/${PN}.tmpfiles" "${PN}.conf"
 
 	# Prevent warnings when system-wide is not used, bug #447694
-	use system-wide || rm "${ED}"/etc/dbus-1/system.d/pulseaudio-system.conf
+	if ! use system-wide ; then
+		rm "${ED}"/etc/dbus-1/system.d/pulseaudio-system.conf || die
+	fi
 
-	prune_libtool_files --all
+	find "${ED}" \( -name '*.a' -o -name '*.la' \) -delete || die
 }
 
 pkg_postinst() {
