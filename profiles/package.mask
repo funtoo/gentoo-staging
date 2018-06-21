@@ -29,6 +29,11 @@
 
 #--- END OF EXAMPLES ---
 
+# Matt Turner <mattst88@gentoo.org> (20 Jun 2018)
+# No reverse deps after removal of app-i18n/fbiterm
+# Removal in 30 days. Bug #658528
+x11-libs/libiterm-mbt
+
 # Michał Górny <mgorny@gentoo.org> (20 Jun 2018)
 # Multiple serious bugs.  Upstream does not support Gentoo, and getting
 # any fixes applied is very difficult.  Regularly fails to build.
@@ -272,11 +277,6 @@ games-puzzle/hoh-bin
 # Doesn't run (#654554, #654650). Removal in a month.
 games-sports/miniracer
 games-strategy/heroes3-demo
-
-# Pacho Ramos <pacho@gentoo.org> (17 Jun 2018)
-# Doesn't build (#655174), not required by any package, upstream dead for a
-# long time. Removal in a month.
-x11-themes/wm-icons
 
 # Mart Raudsepp <leio@gentoo.org> (16 Jun 2018)
 # No upstream (website disappeared), no upstream plugin maintainer,
