@@ -3,20 +3,26 @@
 
 EAPI="6"
 
-inherit toolchain-funcs eutils systemd
-
-# bogus commit to force manifest regeneration #596462
+inherit toolchain-funcs eutils systemd savedconfig
 
 DESCRIPTION="IEEE 802.11 wireless LAN Host AP daemon"
-HOMEPAGE="http://hostap.epitest.fi"
-SRC_URI="http://hostap.epitest.fi/releases/${P}.tar.gz"
+HOMEPAGE="http://w1.fi"
+EXTRAS_VER="2.6-r6"
+EXTRAS_NAME="${CATEGORY}_${PN}_${EXTRAS_VER}_extras"
+SRC_URI="http://w1.fi/releases/${P}.tar.gz
+	https://dev.gentoo.org/~andrey_utkin/distfiles/${EXTRAS_NAME}.tar.xz"
 
 LICENSE="BSD"
 SLOT="0"
-KEYWORDS="amd64 ~arm ~mips ppc x86"
-IUSE="ipv6 logwatch netlink sqlite +ssl +wps +crda"
+KEYWORDS="~amd64 ~arm ~mips ~ppc ~x86"
+IUSE="internal-tls ipv6 libressl logwatch netlink sqlite +wps +crda"
 
-DEPEND="ssl? ( dev-libs/openssl:*[-bindist] )
+DEPEND="
+	libressl? ( dev-libs/libressl:0= )
+	!libressl? (
+		internal-tls? ( dev-libs/libtommath )
+		!internal-tls? ( dev-libs/openssl:0=[-bindist] )
+	)
 	kernel_linux? (
 		dev-libs/libnl:3
 		crda? ( net-wireless/crda )
@@ -28,18 +34,35 @@ RDEPEND="${DEPEND}"
 
 S="${S}/${PN}"
 
+pkg_pretend() {
+	if use internal-tls; then
+		if use libressl; then
+			elog "libressl flag takes precedence over internal-tls"
+		else
+			ewarn "internal-tls implementation is experimental and provides fewer features"
+		fi
+	fi
+}
+
 src_prepare() {
 	# Allow users to apply patches to src/drivers for example,
 	# i.e. anything outside ${S}/${PN}
 	pushd ../ >/dev/null || die
+
+	# Add LibreSSL compatibility patch bug (#567262)
+	eapply "${WORKDIR}/${EXTRAS_NAME}/${P}-libressl-compatibility.patch"
+
 	# https://w1.fi/security/2017-1/wpa-packet-number-reuse-with-replayed-messages.txt
-	eapply "${FILESDIR}/2017-1/rebased-v2.6-0001-hostapd-Avoid-key-reinstallation-in-FT-handshake.patch"
-	eapply "${FILESDIR}/2017-1/rebased-v2.6-0002-Prevent-reinstallation-of-an-already-in-use-group-ke.patch"
-	eapply "${FILESDIR}/2017-1/rebased-v2.6-0003-Extend-protection-of-GTK-IGTK-reinstallation-of-WNM-.patch"
-	eapply "${FILESDIR}/2017-1/rebased-v2.6-0004-Prevent-installation-of-an-all-zero-TK.patch"
-	eapply "${FILESDIR}/2017-1/rebased-v2.6-0005-Fix-PTK-rekeying-to-generate-a-new-ANonce.patch"
-	eapply "${FILESDIR}/2017-1/rebased-v2.6-0006-TDLS-Reject-TPK-TK-reconfiguration.patch"
-	eapply "${FILESDIR}/2017-1/rebased-v2.6-0008-FT-Do-not-allow-multiple-Reassociation-Response-fram.patch"
+	eapply "${WORKDIR}/${EXTRAS_NAME}/2017-1/rebased-v2.6-0001-hostapd-Avoid-key-reinstallation-in-FT-handshake.patch"
+	eapply "${WORKDIR}/${EXTRAS_NAME}/2017-1/rebased-v2.6-0002-Prevent-reinstallation-of-an-already-in-use-group-ke.patch"
+	eapply "${WORKDIR}/${EXTRAS_NAME}/2017-1/rebased-v2.6-0003-Extend-protection-of-GTK-IGTK-reinstallation-of-WNM-.patch"
+	eapply "${WORKDIR}/${EXTRAS_NAME}/2017-1/rebased-v2.6-0004-Prevent-installation-of-an-all-zero-TK.patch"
+	eapply "${WORKDIR}/${EXTRAS_NAME}/2017-1/rebased-v2.6-0005-Fix-PTK-rekeying-to-generate-a-new-ANonce.patch"
+	eapply "${WORKDIR}/${EXTRAS_NAME}/2017-1/rebased-v2.6-0006-TDLS-Reject-TPK-TK-reconfiguration.patch"
+	eapply "${WORKDIR}/${EXTRAS_NAME}/2017-1/rebased-v2.6-0008-FT-Do-not-allow-multiple-Reassociation-Response-fram.patch"
+
+	eapply "${WORKDIR}/${EXTRAS_NAME}/nl80211-Fix-NL80211_ATTR_SMPS_MODE-encoding.patch"
+
 	default
 	popd >/dev/null || die
 
@@ -51,6 +74,12 @@ src_prepare() {
 src_configure() {
 	local CONFIG="${S}/.config"
 
+	restore_config "${CONFIG}"
+	if [[ -f "${CONFIG}" ]]; then
+		default_src_configure
+		return 0
+	fi
+
 	# toolchain setup
 	echo "CC = $(tc-getCC)" > ${CONFIG}
 
@@ -59,7 +88,9 @@ src_configure() {
 	echo "CONFIG_ERP=y" >> ${CONFIG}
 	echo "CONFIG_EAP_MD5=y" >> ${CONFIG}
 
-	if use ssl; then
+	if use internal-tls && ! use libressl; then
+		echo "CONFIG_TLS=internal" >> ${CONFIG}
+	else
 		# SSL authentication methods
 		echo "CONFIG_EAP_FAST=y" >> ${CONFIG}
 		echo "CONFIG_EAP_TLS=y" >> ${CONFIG}
@@ -68,6 +99,7 @@ src_configure() {
 		echo "CONFIG_EAP_PEAP=y" >> ${CONFIG}
 		echo "CONFIG_TLSV11=y" >> ${CONFIG}
 		echo "CONFIG_TLSV12=y" >> ${CONFIG}
+		echo "CONFIG_EAP_PWD=y" >> ${CONFIG}
 	fi
 
 	if use wps; then
@@ -91,7 +123,6 @@ src_configure() {
 	echo "CONFIG_EAP_SAKE=y" >> ${CONFIG}
 	echo "CONFIG_EAP_GPSK=y" >> ${CONFIG}
 	echo "CONFIG_EAP_GPSK_SHA256=y" >> ${CONFIG}
-	echo "CONFIG_EAP_PWD=y" >> ${CONFIG}
 
 	einfo "Enabling drivers: "
 
@@ -100,8 +131,6 @@ src_configure() {
 	einfo "  HostAP driver enabled"
 	echo "CONFIG_DRIVER_WIRED=y" >> ${CONFIG}
 	einfo "  Wired driver enabled"
-	echo "CONFIG_DRIVER_PRISM54=y" >> ${CONFIG}
-	einfo "  Prism54 driver enabled"
 	echo "CONFIG_DRIVER_NONE=y" >> ${CONFIG}
 	einfo "  None driver enabled"
 
@@ -160,7 +189,7 @@ src_configure() {
 src_compile() {
 	emake V=1
 
-	if use ssl; then
+	if use libressl || ! use internal-tls; then
 		emake V=1 nt_password_hash
 		emake V=1 hlr_auc_gw
 	fi
@@ -175,11 +204,13 @@ src_install() {
 	dosbin ${PN}
 	dobin ${PN}_cli
 
-	use ssl && dobin nt_password_hash hlr_auc_gw
+	if use libressl || ! use internal-tls; then
+		dobin nt_password_hash hlr_auc_gw
+	fi
 
-	newinitd "${FILESDIR}"/${PN}-init.d ${PN}
-	newconfd "${FILESDIR}"/${PN}-conf.d ${PN}
-	systemd_dounit "${FILESDIR}"/${PN}.service
+	newinitd "${WORKDIR}/${EXTRAS_NAME}"/${PN}-init.d ${PN}
+	newconfd "${WORKDIR}/${EXTRAS_NAME}"/${PN}-conf.d ${PN}
+	systemd_dounit "${WORKDIR}/${EXTRAS_NAME}"/${PN}.service
 
 	doman ${PN}{.8,_cli.1}
 
@@ -196,6 +227,8 @@ src_install() {
 		exeinto /etc/log.d/scripts/services/
 		doexe logwatch/${PN}
 	fi
+
+	save_config .config
 }
 
 pkg_postinst() {
