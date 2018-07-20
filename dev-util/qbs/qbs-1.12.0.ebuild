@@ -1,7 +1,7 @@
 # Copyright 1999-2018 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI=6
+EAPI=7
 
 inherit qmake-utils
 
@@ -13,7 +13,7 @@ SRC_URI="http://download.qt.io/official_releases/${PN}/${PV}/${MY_P}.tar.gz"
 
 LICENSE="|| ( LGPL-2.1 LGPL-3 )"
 SLOT="0"
-KEYWORDS="amd64 ~arm ~x86"
+KEYWORDS="~amd64 ~arm ~x86"
 IUSE="doc examples test"
 
 # see bug 581874 for the qttest dep in RDEPEND
@@ -39,22 +39,15 @@ S=${WORKDIR}/${MY_P}
 src_prepare() {
 	default
 
-	# don't add /usr/include to INCLUDEPATH
-	# avoids a build failure in qt-creator with gcc-6 (bug 618424)
-	sed -i -e '/^INCLUDEPATH/ s:$${PWD}/\.\.::' src/lib/corelib/use_installed_corelib.pri || die
-
 	if ! use examples; then
 		sed -i -e '/INSTALLS +=/ s:examples::' static.pro || die
 	fi
 
-	if use test; then
-		sed -i -e '/SUBDIRS =/ s:=.*:= auto:' tests/tests.pro || die
-	else
-		sed -i -e '/SUBDIRS =/ d' tests/tests.pro || die
-	fi
+	# the qbsres target uses the newly built qbs binary, so we have to tell it where to find its libraries
+	sed -i -e '/qbsres\.commands =/ a\LD_LIBRARY_PATH=$$shell_quote($$shell_path($$QBS_LIBRARY_DIRNAME)) \\' \
+		static-res.pro || die
 
-	# since 1.10, TestApi is either broken or requires more configuration
-	sed -i -e '/\<api\>/ d' tests/auto/auto.pro || die
+	echo "SUBDIRS = $(usex test auto '')" >> tests/tests.pro
 
 	# skip several tests that fail and/or have additional deps
 	sed -i \
@@ -86,9 +79,10 @@ src_test() {
 
 	export HOME=${T}
 	export LD_LIBRARY_PATH=${S}/$(get_libdir)
+	export QBS_AUTOTEST_PROFILE=autotests
 
-	"${S}"/bin/qbs-setup-toolchains /usr/bin/gcc gcc || die
-	"${S}"/bin/qbs-setup-qt "$(qt5_get_bindir)/qmake" qbs_autotests || die
+	"${S}"/bin/qbs-setup-toolchains --detect || die
+	"${S}"/bin/qbs-setup-qt "$(qt5_get_bindir)/qmake" autotests || die
 
 	einfo "Running autotests"
 
