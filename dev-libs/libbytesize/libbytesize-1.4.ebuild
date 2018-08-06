@@ -1,19 +1,21 @@
 # Copyright 1999-2018 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI=6
+EAPI=7
 
-PYTHON_COMPAT=( python{2_7,3_{4,5,6}} )
+PYTHON_COMPAT=( python{2_7,3_{4,5,6,7}} )
 
 inherit autotools python-r1
 
 DESCRIPTION="Tiny library providing a C \"class\" for working with arbitrary big sizes in bytes"
-HOMEPAGE="https://github.com/rhinstaller/libbytesize"
-SRC_URI="https://github.com/rhinstaller/${PN}/archive/${PV}.tar.gz -> ${P}.tar.gz"
+HOMEPAGE="https://github.com/storaged-project/libbytesize"
+SRC_URI="https://github.com/storaged-project/${PN}/archive/${PV}.tar.gz -> ${P}.tar.gz"
 LICENSE="LGPL-2+"
 SLOT="0"
-KEYWORDS="alpha amd64 arm ~arm64 ia64 ~mips ppc ppc64 ~sparc x86"
+KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~ia64 ~mips ~ppc ~ppc64 ~sparc ~x86"
 IUSE="doc test"
+
+REQUIRED_USE="${PYTHON_REQUIRED_USE}"
 
 RDEPEND="
 	${PYTHON_DEPS}
@@ -59,4 +61,6 @@ src_install() {
 		python_optimize
 	}
 	python_foreach_impl python_install
+
+	find "${ED}" -name "*.la*" -delete || die
 }
