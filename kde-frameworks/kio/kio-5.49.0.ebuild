@@ -63,8 +63,6 @@ PDEPEND="
 	$(add_frameworks_dep kded)
 "
 
-PATCHES=( "${FILESDIR}/${P}-memleak.patch" )
-
 # tests hang
 RESTRICT+=" test"
 
