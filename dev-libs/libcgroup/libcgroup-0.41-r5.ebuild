@@ -37,6 +37,7 @@ PATCHES=(
 	"${FILESDIR}"/${P}-replace_DECLS.patch
 	"${FILESDIR}"/${P}-replace_INLCUDES.patch
 	"${FILESDIR}"/${P}-reorder-headers.patch
+	"${FILESDIR}"/${P}-remove-umask.patch
 )
 
 src_prepare() {
