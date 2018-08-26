@@ -1,7 +1,7 @@
 # Copyright 1999-2018 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI=6
+EAPI=7
 
 inherit flag-o-matic qmake-utils
 
@@ -13,7 +13,7 @@ SRC_URI="mirror://sourceforge/pyqt/${MY_P}.tar.gz"
 
 LICENSE="GPL-3"
 SLOT="0/13"
-KEYWORDS="amd64 ~arm ppc ~ppc64 x86"
+KEYWORDS="~amd64 ~arm ~ppc ~ppc64 ~x86"
 IUSE="designer doc"
 
 DEPEND="
@@ -32,7 +32,7 @@ src_unpack() {
 
 	# Sub-slot sanity check
 	local subslot=${SLOT#*/}
-	local version=$(sed -nre 's:.*VERSION\s*=\s*([0-9\.]+):\1:p' "${S}"/Qt4Qt5/qscintilla.pro)
+	local version=$(sed -nre 's:.*VERSION\s*=\s*([0-9\.]+):\1:p' "${S}"/Qt4Qt5/qscintilla.pro || die)
 	local major=${version%%.*}
 	if [[ ${subslot} != ${major} ]]; then
 		eerror
