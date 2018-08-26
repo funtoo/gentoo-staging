@@ -45,13 +45,6 @@ app-emulation/qemu static
 sys-block/fio static
 sys-cluster/ceph static-libs
 
-# Arfrever Frehtes Taifersar Arahesis <arfrever.fta@gmail.com> (01 Jun 2018)
-# Qt 4 not available.
-app-i18n/fcitx:4 qt4
-app-i18n/scim qt4
-app-i18n/scim-bridge qt4
-app-i18n/uim qt4
-
 # Michał Górny <mgorny@gentoo.org> (16 May 2018)
 # Depends on last-rited sci-libs/coinhsl.
 sci-libs/ipopt hsl
@@ -72,11 +65,6 @@ sci-libs/ipopt hsl
 dev-lang/rust extended
 
 # Pacho Ramos <pacho@gentoo.org> (18 Mar 2018)
-# media-sound/mp3gain and media-sound/aacgain will be removed (#630954).
-media-sound/abcde lame
-media-sound/split2flac mp3 mp4
-
-# Pacho Ramos <pacho@gentoo.org> (18 Mar 2018)
 # dev-python/visual will be removed (#630252)
 net-analyzer/scapy visual
 
@@ -88,10 +76,6 @@ sys-freebsd/freebsd-lib hesiod
 # Pacho Ramos <pacho@gentoo.org> (17 Mar 2018)
 # sys-fabric/mstflint will be removed (#594908)
 sys-fabric/ofed mstflint
-
-# Pacho Ramos <pacho@gentoo.org> (17 Mar 2018)
-# x11-themes/vdrgraphtft-avp is being removed (#592066)
-media-plugins/vdr-music graphtft
 
 # Lars Wendler <polynomial-c@gentoo.org> (14 Mar 2018)
 # Broken on all 32bit arches. Globally masked because of sys-apps/dmapi having
@@ -201,12 +185,6 @@ www-plugins/gnash vaapi
 # Example: https://bugs.gentoo.org/619628
 sys-boot/gnu-efi custom-cflags
 sys-boot/refind custom-cflags
-
-# Michał Górny <mgorny@gentoo.org> (8 Jul 2017)
-# The clutter backend is broken with new GTK+3 versions and upstream
-# haven't been able to fix it so far. Enforcing an old GTK+3 version
-# is not a good solution long-term, so mask the flag entirely.
-media-video/parole clutter
 
 # Michał Górny <mgorny@gentoo.org> (29 Jun 2017)
 # Upstream switched to CMake and no longer provides option to build
@@ -434,10 +412,6 @@ dev-java/gcj-jdk awt
 # Gentoo bug: 554484
 >=dev-lang/mono-3.12.1 doc
 
-# Manuel Rüger <mrueg@gentoo.org> (05 Jul 2015)
-# app-text/migemo is masked because it fails for ruby20
-app-text/cmigemo emacs
-
 # Mike Gilbert <floppym@gentoo.org> (16 May 2015)
 # dev-lang/python[berkdb] fails with recent multilib sys-libs/db (bug 519584).
 dev-lang/python berkdb
@@ -446,10 +420,6 @@ net-nds/nsscache nssdb
 # Jason Zaman <perfinion@gentoo.org> (08 May 2015)
 # java wrappers fail to build (bug #548858)
 =app-admin/setools-3.3.8-r7 java
-
-# James Le Cuirot <chewi@gentoo.org> (05 Apr 2015)
-# dev-java/sun-j2me-bin is going away.
-dev-java/proguard j2me
 
 # Lars Wendler <polynomial-c@gentoo.org> (19 Mar 2015)
 # >=games-strategy/freeciv-2.5.0 requires >=dev-lang/lua-5.2
@@ -522,7 +492,6 @@ dev-java/jboss-logging doc
 # Mask ruby18-only compatible flags
 # Bugs: 483104, 483102
 <media-libs/libcaca-0.99_beta19 ruby
-media-sound/podcatcher bittorrent
 
 # Mike Frysinger <vapier@gentoo.org> (03 Feb 2014)
 # Upstream says to not use this for now.
