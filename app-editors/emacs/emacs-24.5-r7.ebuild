@@ -3,17 +3,17 @@
 
 EAPI=7
 
-inherit elisp-common flag-o-matic multilib readme.gentoo-r1
+inherit autotools elisp-common eutils flag-o-matic multilib readme.gentoo-r1
 
 DESCRIPTION="The extensible, customizable, self-documenting real-time display editor"
 HOMEPAGE="https://www.gnu.org/software/emacs/"
 SRC_URI="mirror://gnu/emacs/${P}.tar.xz
-	https://dev.gentoo.org/~ulm/emacs/${P}-patches-1.tar.xz"
+	https://dev.gentoo.org/~ulm/emacs/${P}-patches-5.tar.xz"
 
 LICENSE="GPL-3+ FDL-1.3+ BSD HPND MIT W3C unicode PSF-2"
-SLOT="25"
-KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~hppa ~ia64 ~m68k ~mips ~ppc ~ppc64 ~sh ~sparc ~x86 ~amd64-fbsd ~x86-fbsd ~amd64-linux ~x86-linux ~ppc-macos ~x64-macos ~x86-macos"
-IUSE="acl alsa aqua athena cairo dbus dynamic-loading games gconf gfile gif gpm gsettings gtk gtk2 gzip-el imagemagick +inotify jpeg kerberos libxml2 livecd m17n-lib motif png selinux sound source ssl svg tiff toolkit-scroll-bars wide-int X Xaw3d xft +xpm zlib"
+SLOT="24"
+KEYWORDS="~alpha ~amd64 ~arm ~hppa ~ia64 ~mips ~ppc ~ppc64 ~sh ~sparc ~x86 ~amd64-fbsd ~x86-fbsd ~amd64-linux ~x86-linux ~ppc-macos ~x64-macos ~x86-macos"
+IUSE="acl alsa aqua athena dbus games gconf gfile gif gpm gsettings gtk gtk2 gzip-el imagemagick +inotify jpeg kerberos libxml2 livecd m17n-lib motif png selinux sound source ssl svg tiff toolkit-scroll-bars wide-int X Xaw3d xft +xpm zlib"
 REQUIRED_USE="?? ( aqua X )"
 
 RDEPEND="sys-libs/ncurses:0=
@@ -35,10 +35,8 @@ RDEPEND="sys-libs/ncurses:0=
 		x11-libs/libSM
 		x11-libs/libX11
 		x11-libs/libXext
-		x11-libs/libXfixes
 		x11-libs/libXinerama
 		x11-libs/libXrandr
-		x11-libs/libxcb
 		x11-misc/xbitmaps
 		gconf? ( >=gnome-base/gconf-2.26.2 )
 		gsettings? ( >=dev-libs/glib-2.28.6 )
@@ -54,7 +52,6 @@ RDEPEND="sys-libs/ncurses:0=
 			media-libs/freetype
 			x11-libs/libXft
 			x11-libs/libXrender
-			cairo? ( >=x11-libs/cairo-1.12.18 )
 			m17n-lib? (
 				>=dev-libs/libotf-0.9.4
 				>=dev-libs/m17n-lib-1.5.1
@@ -112,13 +109,14 @@ src_prepare() {
 	sed -i -e "/^\\.so/s/etags/&-${EMACS_SUFFIX}/" doc/man/ctags.1 \
 		|| die "unable to sed ctags.1"
 
-	#AT_M4DIR=m4 eautoreconf
-	#touch src/stamp-h.in || die
+	AT_M4DIR=m4 eautoreconf
+	touch src/stamp-h.in || die
 }
 
 src_configure() {
 	strip-flags
 	filter-flags -pie					#526948
+	append-ldflags $(test-flags -no-pie)	#639570
 
 	if use sh; then
 		replace-flags "-O[1-9]" -O0		#262359
@@ -156,15 +154,11 @@ src_configure() {
 
 		if use xft; then
 			myconf+=" --with-xft"
-			myconf+=" $(use_with cairo)"
 			myconf+=" $(use_with m17n-lib libotf)"
 			myconf+=" $(use_with m17n-lib m17n-flt)"
 		else
 			myconf+=" --without-xft"
-			myconf+=" --without-cairo"
 			myconf+=" --without-libotf --without-m17n-flt"
-			use cairo && ewarn \
-				"USE flag \"cairo\" has no effect if \"xft\" is not set."
 			use m17n-lib && ewarn \
 				"USE flag \"m17n-lib\" has no effect if \"xft\" is not set."
 		fi
@@ -182,7 +176,6 @@ src_configure() {
 				Motif toolkit instead.
 			EOF
 			myconf+=" --with-x-toolkit=$(usex gtk2 gtk2 gtk3)"
-			myconf+=" --without-xwidgets"
 			for f in motif Xaw3d athena; do
 				use ${f} && ewarn \
 					"USE flag \"${f}\" has no effect if \"gtk\" is set."
@@ -222,7 +215,6 @@ src_configure() {
 		--with-file-notification=$(usev inotify || usev gfile || echo no) \
 		$(use_enable acl) \
 		$(use_with dbus) \
-		$(use_with dynamic-loading modules) \
 		$(use_with gpm) \
 		$(use_with kerberos) $(use_with kerberos kerberos5) \
 		$(use_with libxml2 xml2) \
@@ -254,7 +246,7 @@ src_install () {
 
 	# avoid collision between slots, see bug #169033 e.g.
 	rm "${ED}"/usr/share/emacs/site-lisp/subdirs.el
-	rm -rf "${ED}"/usr/share/{appdata,applications,icons}
+	rm -rf "${ED}"/usr/share/{applications,icons}
 	rm -rf "${ED}"/var
 
 	# remove unused <version>/site-lisp dir
@@ -301,7 +293,7 @@ src_install () {
 	EOF
 	elisp-site-file-install "${T}/${SITEFILE}" || die
 
-	dodoc README BUGS CONTRIBUTE
+	dodoc README BUGS
 
 	if use aqua; then
 		dodir /Applications/Gentoo
