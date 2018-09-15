@@ -5,7 +5,7 @@ EAPI=6
 
 inherit flag-o-matic eapi7-ver systemd
 
-MY_PV=${PV/_/}
+MY_PV=${PV/_rc/RC}
 DESCRIPTION="The PHP language runtime engine"
 HOMEPAGE="https://secure.php.net/"
 SRC_URI="https://downloads.php.net/~cmb/${PN}-${MY_PV}.tar.xz"
