@@ -29,6 +29,26 @@
 
 #--- END OF EXAMPLES ---
 
+# Mike Gilbert <floppym@gentoo.org> (24 Sep 2018)
+# Breaks multilib builds.
+# https://bugs.gentoo.org/666968
+=dev-util/meson-0.48.0
+
+# Michał Górny <mgorny@gentoo.org> (24 Sep 2018)
+# Apparently breaks sys-devel/gcc.  Bug #666954.
+=dev-util/debugedit-4.14.2
+
+# Michał Górny <mgorny@gentoo.org> (17 Sep 2018)
+# Obsolete LogiLab packages that are full of issues and were never
+# maintained properly.  Recently dev-python/logilab-common started
+# colliding with dev-python/pytest, making it practically non-
+# installable.  The only revdep left is app-vim/python-mode where
+# the dep looks completely mistaken.  Bug #666152.
+app-vim/python-mode
+dev-python/astng
+dev-python/logilab-common
+dev-python/logilab-constraint
+
 # Andreas Sturmlechner <asturm@gentoo.org> (16 Sep 2018)
 # was merged into the IETF Opus codec and is now obsolete
 # Removal in 30 days, bug #664154
@@ -70,11 +90,6 @@ dev-lang/solidity
 =dev-db/postgresql-11_beta1
 =dev-db/postgresql-11_beta2
 =dev-db/postgresql-11_beta3
-
-# Lars Wendler <polynomial-c@gentoo.org> (05 Sep 2018)
-# Broken "killall -SIG". Breaks many scripts.
-# See https://bugs.gentoo.org/664066
-=sys-process/psmisc-23.2
 
 # Joerg Bornkessel <hd_brummy@gentoo.org> (02/Sep/2018)
 # homepage dead
@@ -146,13 +161,6 @@ sys-boot/winusb
 # Masked for removal in 30 days. Multiple build failures. Upstream inactive.
 # (bugs #321017, #581284, #588692, #602786, #649006, #654140)
 www-plugins/gnash
-
-# Virgil Dupras <vdupras@gentoo.org> (27 Aug 2018)
-# Unmaintained for a long time, outdated, no revdep. Removal in 30 days.
-# Bug #626550
-dev-python/scrapy
-dev-python/w3lib
-dev-python/queuelib
 
 # James Le Cuirot <chewi@gentoo.org> (26 Aug 2018)
 # Unused Java virtual from the days when the JDK was proprietary. Now
@@ -297,14 +305,6 @@ dev-python/wxpython:2.8
 # Doesn't pass QA full boot test
 =sys-kernel/ck-sources-4.16.17
 
-# Michał Górny <mgorny@gentoo.org> (20 Jun 2018)
-# Multiple serious bugs.  Upstream does not support Gentoo, and getting
-# any fixes applied is very difficult.  Regularly fails to build.
-# Does not support modern EAPIs, Manifests, news items...  Most severe
-# issues are tracked in bug #658278.  Somebody really needs to step up
-# and start actively maintaining it.  Otherwise -- removal in 90 days.
-sys-apps/paludis
-
 # Mart Raudsepp <leio@gentoo.org> (16 Jun 2018)
 # No upstream (website disappeared), no upstream plugin maintainer,
 # and pretty much a fringe format anyway.
@@ -359,19 +359,8 @@ media-libs/libglvnd
 >=dev-db/mysql-connector-c++-8.0.0
 
 # Jeroen Roovers <jer@gentoo.org> (6 Apr 2018)
-# Requires >=dev-libs/icu-61.1
-# https://bugs.gentoo.org/651698
-=net-libs/nodejs-9.11*
-
-# Jeroen Roovers <jer@gentoo.org> (6 Apr 2018)
 # Requires >=dev-libs/openssl-1.1.0
 =net-libs/nodejs-10*
-
-# Lars Wendler <polynomial-c@gentoo.org> (27 Mar 2018)
-# Breaks a couple of revdeps. See tracker bug at
-# https://bugs.gentoo.org/651698
->=dev-libs/icu-61.1
->=dev-libs/icu-layoutex-61.1
 
 # Tony Vroon <chainsaw@gentoo.org> (24 Mar 2018)
 # This is a vulnerable version of Asterisk and should not be used except
