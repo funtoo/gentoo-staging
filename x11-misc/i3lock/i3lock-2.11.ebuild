@@ -19,6 +19,7 @@ RDEPEND="
 	x11-libs/cairo[xcb]
 	x11-libs/libxcb[xkb]
 	x11-libs/xcb-util
+	x11-libs/xcb-util-xrm
 "
 DEPEND="
 	${RDEPEND}
@@ -34,7 +35,7 @@ src_prepare() {
 
 	echo ${PV} > I3LOCK_VERSION
 
-	sed -i -e 's:login:system-auth:' ${PN}.pam || die
+	sed -i -e 's:login:system-auth:' pam/${PN} || die
 
 	eautoreconf
 
