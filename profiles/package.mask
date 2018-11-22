@@ -29,6 +29,16 @@
 
 #--- END OF EXAMPLES ---
 
+# Tiziano Müller <dev-zero@gentoo.org> (21 Nov 2018)
+# Project is in maintenance-only mode with the last big release in 2012.
+# Needs a dedicated maintainer with a matching LDAP setup (extra schemas required).
+# Several open issues (#370985, #356827, #399845, #544562, #651092) and one security
+# bug (bug #66912). Therefore removal in 30 days.
+net-nds/gosa-core
+net-nds/gosa-plugin-mail
+net-nds/gosa-plugin-samba
+net-nds/gosa-plugin-systems
+
 # Virgil Dupras <vdupras@gentoo.org> (14 Nov 2018)
 # Unmaintained and depending on an purged version (1.8) of Django.
 # Removal in 30 days. bug #664012
@@ -121,11 +131,6 @@ dev-db/mysql-proxy
 # Unmaintained, fails to build, nothing requires it anymore (#630400).
 # Removal in a month.
 app-forensics/libbfio
-
-# Pacho Ramos <pacho@gentoo.org> (11 Nov 2018)
-# Needs someone to finally take care of it, bump it and let it be
-# installable again (#635476, #645740). Removal in a month.
-net-analyzer/nessus-bin
 
 # Pacho Ramos <pacho@gentoo.org> (11 Nov 2018)
 # Pending version bump (#648380), doesn't build (#637350). Removal in a
