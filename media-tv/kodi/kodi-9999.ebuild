@@ -73,7 +73,7 @@ COMMON_DEPEND="${PYTHON_DEPS}
 	>=dev-libs/lzo-2.04
 	dev-libs/tinyxml[stl]
 	dev-python/pillow[${PYTHON_USEDEP}]
-	dev-python/pycryptodome[${PYTHON_USEDEP}]
+	$(python_gen_cond_dep 'dev-python/pycryptodome[${PYTHON_USEDEP}]' 'python3*')
 	>=dev-libs/libcdio-0.94
 	dev-libs/libfmt
 	dev-libs/libfstrcmp
@@ -138,12 +138,7 @@ RDEPEND="${COMMON_DEPEND}
 	lirc? ( app-misc/lirc )
 	!media-tv/xbmc
 	udisks? ( sys-fs/udisks:2 )
-	upower? (
-		systemd? ( sys-power/upower )
-		!systemd? (
-			|| ( sys-power/upower-pm-utils sys-power/upower )
-		)
-	)
+	upower? ( sys-power/upower )
 "
 DEPEND="${COMMON_DEPEND}
 	app-arch/bzip2
