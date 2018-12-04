@@ -229,7 +229,7 @@ RDEPEND="
 	samba? ( >=net-fs/samba-3.6.23-r1[client,${MULTILIB_USEDEP}] )
 	sdl? ( media-libs/libsdl2[sound,video,${MULTILIB_USEDEP}] )
 	speex? ( >=media-libs/speex-1.2_rc1-r1[${MULTILIB_USEDEP}] )
-	srt? ( net-libs/srt[${MULTILIB_USEDEP}] )
+	srt? ( >=net-libs/srt-1.3.0[${MULTILIB_USEDEP}] )
 	ssh? ( >=net-libs/libssh-0.5.5[${MULTILIB_USEDEP}] )
 	svg? ( gnome-base/librsvg:2=[${MULTILIB_USEDEP}] )
 	truetype? ( >=media-libs/freetype-2.5.0.1:2[${MULTILIB_USEDEP}] )
@@ -311,6 +311,10 @@ PATCHES=(
 MULTILIB_WRAPPED_HEADERS=(
 	/usr/include/libavutil/avconfig.h
 )
+
+build_separate_libffmpeg() {
+	use opencl
+}
 
 src_prepare() {
 	if [[ "${PV%_p*}" != "${PV}" ]] ; then # Snapshot
@@ -452,7 +456,7 @@ multilib_src_configure() {
 	echo "${@}"
 	"${@}" || die
 
-	if multilib_is_native_abi && use chromium; then
+	if multilib_is_native_abi && use chromium && build_separate_libffmpeg; then
 		einfo "Configuring for Chromium"
 		mkdir -p ../chromium || die
 		pushd ../chromium >/dev/null || die
@@ -460,7 +464,7 @@ multilib_src_configure() {
 			--disable-shared \
 			--enable-static \
 			--enable-pic \
-			--extra-cflags="-DFF_API_CONVERGENCE_DURATION=0"
+			--disable-opencl
 		echo "${@}"
 		"${@}" || die
 		popd >/dev/null || die
@@ -478,10 +482,14 @@ multilib_src_compile() {
 		done
 
 		if use chromium; then
-			einfo "Compiling for Chromium"
-			pushd ../chromium >/dev/null || die
-			emake V=1 libffmpeg
-			popd >/dev/null || die
+			if build_separate_libffmpeg; then
+				einfo "Compiling for Chromium"
+				pushd ../chromium >/dev/null || die
+				emake V=1 libffmpeg
+				popd >/dev/null || die
+			else
+				emake V=1 libffmpeg
+			fi
 		fi
 	fi
 }
@@ -497,10 +505,14 @@ multilib_src_install() {
 		done
 
 		if use chromium; then
-			einfo "Installing for Chromium"
-			pushd ../chromium >/dev/null || die
-			emake V=1 DESTDIR="${D}" install-libffmpeg
-			popd >/dev/null || die
+			if build_separate_libffmpeg; then
+				einfo "Installing for Chromium"
+				pushd ../chromium >/dev/null || die
+				emake V=1 DESTDIR="${D}" install-libffmpeg
+				popd >/dev/null || die
+			else
+				emake V=1 DESTDIR="${D}" install-libffmpeg
+			fi
 		fi
 	fi
 }
