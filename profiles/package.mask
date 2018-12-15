@@ -231,10 +231,6 @@ dev-db/pgadmin3
 # See #669278
 =xfce-base/xfconf-4.13.6
 
-# Sobhan Mohammadpour <sobhan@gentoo.org> (15 Oct 2018)
-# Masked for testing.
-sys-apps/bubblewrap
-
 # Thomas Deutschmann <whissi@gentoo.org> (12 Oct 2018)
 # EOL and has known vulnerabilities. Please move to
 # Firefox 60 or newer if you can.
@@ -617,11 +613,14 @@ games-strategy/smac
 app-eselect/eselect-lua
 =dev-lang/lua-5.1.5-r100
 =dev-lang/lua-5.1.5-r101
+=dev-lang/lua-5.1.5-r102
 =dev-lang/lua-5.2.3
 =dev-lang/lua-5.2.3-r1
 =dev-lang/lua-5.2.3-r2
+=dev-lang/lua-5.2.3-r3
 =dev-lang/lua-5.3.3
 =dev-lang/lua-5.3.3-r1
+=dev-lang/lua-5.3.3-r2
 
 # Samuli Suominen <ssuominen@gentoo.org> (06 Mar 2012)
 # Masked for testing since this is known to break nearly
