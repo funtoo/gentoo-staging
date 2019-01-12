@@ -1,4 +1,4 @@
-# Copyright 1999-2018 Gentoo Authors
+# Copyright 1999-2019 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=6
@@ -36,7 +36,7 @@ pkg_setup() {
 src_configure() {
 	local mycmakeargs=(
 		$(cmake-utils_use_find_package epub EPub)
-		$(cmake-utils_use_find_package exif Exiv2)
+		$(cmake-utils_use_find_package exif LibExiv2)
 		$(cmake-utils_use_find_package ffmpeg FFmpeg)
 		$(cmake-utils_use_find_package office KF5Archive)
 		$(cmake-utils_use_find_package pdf Poppler)
